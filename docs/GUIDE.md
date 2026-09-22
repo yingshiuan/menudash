@@ -2,6 +2,8 @@
 
 The menu page builds itself from two things you upload: **the menu spreadsheet as a CSV file** and **the dish photos**. You never edit the page itself. Everything happens in the WordPress dashboard under **MenuDash** (the fork-and-knife icon in the left bar).
 
+<img src="dashboard/01-menudash-page.png" alt="The MenuDash page in the WordPress dashboard" width="820"> <img src="dashboard/09-phone.png" alt="The same page on a phone" width="200">
+
 ---
 
 ## Changing the menu (prices, dishes, texts)
@@ -21,7 +23,11 @@ The menu page changes right away, and a message says how many categories and dis
 - **Yellow:** the menu was updated, but something looks odd (see *Messages* below).
 - **Red:** the file was not used. The old menu stays online, so a wrong file can never break the page.
 
+<img src="dashboard/02b-report-message.png" alt="The message after uploading the CSV" width="720">
+
 **Undo:** open *Earlier files* under the upload button and click **Put back** next to an older upload. The last five uploads are kept.
+
+<img src="dashboard/03-earlier-files.png" alt="Earlier files, each with a Put back button" width="460">
 
 ### How the spreadsheet is read
 
@@ -50,6 +56,8 @@ The menu page changes right away, and a message says how many categories and dis
 
 In **MenuDash → 2. Dish photos**, click **Choose photos**, select all the photos in the folder (**⌘A** / **Ctrl+A**) and confirm, or drag them onto the box. They upload one by one, and the list shows which dish each photo went to.
 
+<img src="dashboard/04-photos-uploaded.png" alt="After uploading: which dish each photo went to" width="460">
+
 **How to name a photo:**
 - **The dish number first:** `22_Vegetable Dumplings.png`. Everything after the number is only for you.
 - **Dishes without a number:** the exact dish name, e.g. `Jasmine Rice.png`.
@@ -65,11 +73,15 @@ In **MenuDash → 2. Dish photos**, click **Choose photos**, select all the phot
 
 Below the uploads is a list of every dish with its photo, or **"no photo"**, plus its marks and price. **Photos not shown** lists photos that are not on the menu, either because they match no dish or because a newer photo fits the same dish. Rename and upload them again, or delete them.
 
+<img src="dashboard/06-check.png" alt="The check: photo count, photos not shown, and every dish" width="820">
+
 ---
 
 ## Diet icons
 
 The five marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free) come with icons. To use your own, go to **MenuDash → 3. Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
+
+<img src="dashboard/05-diet-icons.png" alt="The Diet icons box: one slot per mark" width="720">
 
 - **Best:** an **SVG**. It stays sharp at any size and keeps its colours. For safety, only the drawing is kept; anything else in the file (scripts, links, embedded pictures) is removed. If the colours disappear, export the SVG again with "presentation attributes" instead of CSS classes.
 - **Also fine:** a square **PNG** (or WebP/JPEG) with a transparent background. It is shrunk to icon size automatically.
@@ -85,6 +97,8 @@ Your icons are kept when the plugin is updated or reinstalled.
 2. On the menu page, add a **Shortcode** block containing `[menudash]`.
 3. Upload the CSV and the photos as described above.
 
+<img src="dashboard/08-plugins-list.png" alt="MenuDash in the Plugins list" width="720">
+
 **Try it privately first:** put the shortcode on a new **draft** page and open it with *Preview*.
 
 **Updating the plugin:** upload a newer `menudash.zip` the same way; WordPress asks whether to replace the current version. The menu and the photos are kept, even if the plugin is deleted and installed again.
@@ -93,3 +107,5 @@ Your icons are kept when the plugin is updated or reinstalled.
 - PHP 7.4 or newer.
 - An image editor.
 - WebP. Without it, photos are stored as PNG/JPG, which also works.
+
+<img src="dashboard/07-server-details.png" alt="Server details" width="720">

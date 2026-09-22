@@ -29,7 +29,11 @@ A restaurant menu for a WordPress site, kept in a spreadsheet. The restaurant up
 4. **Optionally, use its own diet icons:** an SVG or a transparent PNG per mark, with **Back to default** to undo.
    - SVGs are cleaned to plain shapes: scripts, event handlers, links, embedded HTML, external images and DOCTYPE/entity tricks are all removed or refused. `dev/svg-test.php` covers this.
 
-A step-by-step guide for restaurant staff is in [docs/GUIDE.md](docs/GUIDE.md).
+| Dashboard → MenuDash | The check after an upload |
+|---|---|
+| ![The MenuDash upload page after a menu upload](docs/dashboard/02-menu-uploaded.png) | ![Every dish with its photo, marks and price](docs/dashboard/06-check.png) |
+
+A step-by-step guide for restaurant staff is in [docs/GUIDE.md](docs/GUIDE.md). It has a screenshot for every step.
 
 ## Install
 
