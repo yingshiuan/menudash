@@ -121,4 +121,4 @@ GPL-2.0-or-later. See [LICENSE](LICENSE).
 
 **Credits:**
 - **DM Sans** and **Abril Fatface** fonts, under the SIL Open Font License. Licence files are in `menudash/assets/fonts/`.
-- **Default diet icons:** four are adapted from Google Material Symbols (recommended, spicy, vegetarian, vegan), under the Apache License 2.0. See `menudash/assets/ICONS-LICENSE.txt`. Any icon can be replaced under *MenuDash → Diet icons*.
+- **Default diet icons:** four are adapted from Google Material Symbols (recommended, spicy, vegetarian, vegan), under the Apache License 2.0. See `menudash/assets/ICONS-LICENSE.txt`. The gluten-free icon was drawn by insdash. Any icon can be replaced under *MenuDash → Diet icons*.
