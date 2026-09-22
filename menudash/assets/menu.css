@@ -1,0 +1,271 @@
+/* MenuDash guest menu. Everything is scoped under .menudash so the theme is untouched, and
+   sizes are in px so a theme's root font-size can't shrink or blow it up.
+   Colours and fonts are the custom properties on .menudash below; set them again in the
+   theme's Additional CSS to restyle the menu (see README). */
+
+@font-face { font-family: "MenuDash Sans"; src: url("fonts/DMSans-Variable.woff2") format("woff2"); font-weight: 100 1000; font-display: swap; }
+@font-face { font-family: "MenuDash Display"; src: url("fonts/AbrilFatface-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+
+.menudash {
+  --mdash-accent: #A31E2C;
+  --mdash-cream: #FAF8F1;
+  --mdash-paper: #FFFFFF;
+  --mdash-ink: #2B1D1A;
+  --mdash-ink-2: #4A3833;
+  --mdash-muted: #75625C;
+  --mdash-line: rgba(43, 29, 26, .12);
+  --mdash-line-strong: rgba(43, 29, 26, .22);
+  --mdash-bg: var(--mdash-cream);
+  --mdash-sans: "MenuDash Sans", "DM Sans", "Helvetica Neue", Arial, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  --mdash-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+  --mdash-display: "MenuDash Display", "Bodoni 72", Didot, Georgia, serif;
+  --mdash-top: 0px;      /* space the theme's fixed header takes; menu.js measures it */
+  --mdash-bar-h: 104px;  /* height of the sticky bar; menu.js measures it */
+  --mdash-pad: 16px;
+  --mdash-ph: 84px;      /* photo size */
+  --mdash-nw: 46px;      /* number column: the Recommended icon and up to three digits */
+
+  container-type: inline-size;
+  box-sizing: border-box;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 20px var(--mdash-pad) 28px;
+  background: var(--mdash-bg);
+  color: var(--mdash-ink);
+  font-family: var(--mdash-sans);
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+/* Until menu.js has measured the header (or without JS): room for the WordPress admin bar. */
+body.admin-bar .menudash { --mdash-top: 32px; }
+@media (max-width: 782px) { body.admin-bar .menudash { --mdash-top: 46px; } }
+@media (max-width: 600px) { body.admin-bar .menudash { --mdash-top: 0px; } }
+
+/* Theme reset. :where() keeps these at two classes of weight, so the component rules below
+   (also two classes, later in the file) win, and so do they against most theme rules. */
+.menudash.menudash :where(*, *::before, *::after) { box-sizing: border-box; }
+/* Some themes set a font on every element ("* { font-family: … }", as the GloriaFood
+   Restaurant theme does), which beats inheritance. Inside the menu everything takes
+   the menu's fonts; the rules below that name a font still win, being later. */
+.menudash.menudash :where(*) { font-family: inherit; }
+.menudash.menudash :where(h2, h3, p, ul, li, nav, footer, section, form, figure) {
+  margin: 0; padding: 0; border: 0; background: none; font: inherit; color: inherit;
+  letter-spacing: normal; text-transform: none; text-align: inherit; list-style: none;
+}
+.menudash.menudash :where(li)::before, .menudash.menudash :where(li)::marker { content: none; }
+.menudash.menudash :where(button) {
+  appearance: none; margin: 0; padding: 0; border: 0; border-radius: 0; background: none;
+  box-shadow: none; color: inherit; font: inherit; letter-spacing: normal; line-height: inherit;
+  text-transform: none; text-decoration: none; text-shadow: none;
+  width: auto; height: auto; min-width: 0; min-height: 0; cursor: pointer;
+}
+.menudash.menudash :where(a) { color: inherit; text-decoration: none; box-shadow: none; border: 0; }
+.menudash.menudash :where(img) { display: block; max-width: none; border: 0; border-radius: 0; box-shadow: none; }
+.menudash.menudash :where(button, a):focus-visible { outline: 2px solid var(--mdash-accent); outline-offset: 2px; }
+.menudash.menudash [hidden] { display: none; }
+
+/* ---------- Which language shows ----------
+   data-lang on the root is the view (all / en / de / zh). Menu text (.mdash-t) lists in
+   data-l the views that show it. Buttons and tabs (.mdash-u) follow data-ui, the language
+   of the interface, which is the view itself or, in the all view, the guest's browser. */
+.menudash[data-lang="all"] .mdash-t:not([data-l~="all"]),
+.menudash[data-lang="en"] .mdash-t:not([data-l~="en"]),
+.menudash[data-lang="de"] .mdash-t:not([data-l~="de"]),
+.menudash[data-lang="zh"] .mdash-t:not([data-l~="zh"]),
+.menudash[data-ui="en"] .mdash-u:not([data-l="en"]),
+.menudash[data-ui="de"] .mdash-u:not([data-l="de"]),
+.menudash[data-ui="zh"] .mdash-u:not([data-l="zh"]) { display: none; }
+
+.menudash [lang="zh-Hant"] { font-family: var(--mdash-zh); }
+
+/* ---------- Language switch ---------- */
+.menudash .mdash-langs {
+  display: inline-flex; margin-bottom: 12px; padding: 3px;
+  border: 1.5px solid var(--mdash-accent); border-radius: 999px; background: var(--mdash-paper);
+}
+.menudash .mdash-langs button {
+  padding: 6px 14px; border-radius: 999px; color: var(--mdash-accent);
+  font-size: 14px; font-weight: 700; letter-spacing: .04em; line-height: 1.2;
+}
+.menudash .mdash-langs button[aria-pressed="true"] { background: var(--mdash-accent); color: var(--mdash-cream); }
+.menudash .mdash-langs button:not([aria-pressed="true"]):hover { background: rgba(163, 30, 44, .08); }
+
+/* ---------- Sticky bar: filters + category tabs ---------- */
+.menudash .mdash-bar {
+  position: sticky; top: var(--mdash-top); z-index: 20;
+  margin: 0 calc(-1 * var(--mdash-pad)); padding: 8px var(--mdash-pad) 0;
+  background: var(--mdash-bg); border-bottom: 1px solid var(--mdash-line);
+}
+.menudash .mdash-chips, .menudash .mdash-cats {
+  display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  margin: 0 calc(-1 * var(--mdash-pad)); padding: 2px var(--mdash-pad);
+  scroll-padding-inline: var(--mdash-pad);
+}
+.menudash .mdash-chips::-webkit-scrollbar, .menudash .mdash-cats::-webkit-scrollbar { display: none; }
+
+.menudash .mdash-chip {
+  display: inline-flex; flex: none; align-items: center; gap: 6px;
+  padding: 5px 13px 5px 6px; border: 1.5px solid var(--mdash-line-strong); border-radius: 999px;
+  background: var(--mdash-paper); color: var(--mdash-ink);
+  font-size: 14px; font-weight: 600; line-height: 1.2; white-space: nowrap;
+}
+.menudash .mdash-chip:hover { border-color: var(--mdash-accent); }
+.menudash .mdash-chip[aria-pressed="true"] { border-color: var(--mdash-accent); background: var(--mdash-accent); color: var(--mdash-cream); }
+.menudash .mdash-chip-ico { position: relative; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--mdash-paper); }
+.menudash .mdash-chip-ico .mdash-ico { width: 20px; height: 20px; }
+/* "Not spicy": the chilli, struck through. */
+.menudash .mdash-not::after {
+  content: ""; position: absolute; left: 3px; right: 3px; top: 50%; height: 2px;
+  background: var(--mdash-ink); border-radius: 2px; transform: rotate(-45deg); box-shadow: 0 0 0 1.5px var(--mdash-paper);
+}
+
+.menudash .mdash-cats { gap: 2px; margin-top: 6px; }
+.menudash .mdash-cats a {
+  flex: none; padding: 8px 10px 9px; border-bottom: 2.5px solid transparent;
+  color: var(--mdash-muted); font-size: 13px; font-weight: 700; letter-spacing: .06em; white-space: nowrap;
+}
+.menudash .mdash-cats a:hover { color: var(--mdash-ink); }
+.menudash .mdash-cats a.mdash-on { color: var(--mdash-ink); border-bottom-color: var(--mdash-ink); }
+
+/* ---------- Sections ---------- */
+.menudash .mdash-section { padding-top: 28px; scroll-margin-top: calc(var(--mdash-top) + var(--mdash-bar-h) + 4px); }
+.menudash .mdash-h {
+  display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0;
+  padding-bottom: 8px; border-bottom: 1.5px solid var(--mdash-ink);
+  color: var(--mdash-ink); font-family: var(--mdash-display); font-size: 26px; font-weight: 400; line-height: 1.1;
+}
+.menudash .mdash-h [lang="zh-Hant"] { font-family: var(--mdash-zh); font-weight: 700; }
+.menudash .mdash-h .mdash-sep { padding: 0 .3em; opacity: .5; }
+/* All languages: the first name large, the others smaller on a line of their own. */
+.menudash[data-lang="all"] .mdash-h .mdash-h2 { flex-basis: 100%; margin-top: 4px; font-size: .6em; }
+.menudash[data-lang="all"] .mdash-h .mdash-sep { display: none; }
+.menudash .mdash-note { margin-top: 6px; color: var(--mdash-muted); font-size: 14px; font-style: italic; }
+.menudash .mdash-note .mdash-t + .mdash-t::before { content: " · "; }
+.menudash[data-lang="en"] .mdash-note .mdash-t + .mdash-t::before,
+.menudash[data-lang="de"] .mdash-note .mdash-t + .mdash-t::before,
+.menudash[data-lang="zh"] .mdash-note .mdash-t + .mdash-t::before { content: none; }
+
+.menudash .mdash-list { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 40px; }
+
+/* ---------- One dish ----------
+   Phone: text on the left; on the right the price with the photo under it. The number
+   (with the Recommended thumb) opens the name line instead of taking a column, so the
+   text keeps the width; a dish without a photo only gives up the price's width. */
+.menudash .mdash-dish {
+  position: relative;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 12px; align-items: start;
+  padding: 14px 0; border-bottom: 1px solid var(--mdash-line);
+}
+.menudash .mdash-body { grid-column: 1; grid-row: 1; }
+.menudash .mdash-side { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+
+/* Number, with the Recommended thumb in front of it, one name line high. */
+.menudash .mdash-no {
+  display: inline-flex; align-items: center; gap: 3px; height: 22px; margin-right: 8px;
+  vertical-align: top; white-space: nowrap; color: var(--mdash-ink);
+  font-family: var(--mdash-sans); font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.menudash .mdash-pick { display: block; flex: none; width: 19px; height: 19px; }
+.menudash .mdash-name { color: var(--mdash-ink); font-size: 17px; font-weight: 700; line-height: 1.3; }
+.menudash .mdash-qty { color: var(--mdash-muted); font-size: 13px; font-weight: 500; white-space: nowrap; }
+.menudash .mdash-name [lang="zh-Hant"] { font-weight: 600; }
+.menudash .mdash-zh { color: var(--mdash-ink); white-space: nowrap; }
+.menudash .mdash-slash { color: var(--mdash-line-strong); font-family: var(--mdash-sans); font-weight: 400; }
+.menudash .mdash-sub { margin-top: 1px; color: var(--mdash-ink-2); font-size: 15px; font-weight: 600; line-height: 1.3; }
+.menudash .mdash-desc { margin-top: 4px; color: var(--mdash-muted); font-size: 14.5px; line-height: 1.45; }
+.menudash .mdash-desc + .mdash-desc { margin-top: 2px; }
+.menudash[data-lang="all"] .mdash-desc[lang="en"] { font-style: italic; } /* the second language */
+/* Diet icons in front of the price, on the name's line. */
+.menudash .mdash-tag { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-height: 22px; }
+.menudash .mdash-icons { display: flex; gap: 2px; }
+.menudash .mdash-mark { display: block; width: 18px; height: 18px; }
+.menudash .mdash-ico { display: block; width: 100%; height: 100%; }
+.menudash img.mdash-ico { object-fit: contain; } /* a custom icon uploaded as a picture */
+.menudash .mdash-price {
+  padding-top: 1px; color: var(--mdash-ink); font-size: 16px; font-weight: 700;
+  font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap;
+}
+.menudash .mdash-price small { display: block; color: var(--mdash-muted); font-size: 12px; font-weight: 500; }
+
+.menudash .mdash-photo { display: block; width: var(--mdash-ph); height: var(--mdash-ph); border-radius: 50%; }
+.menudash button.mdash-photo { cursor: zoom-in; transition: transform .15s ease; }
+.menudash button.mdash-photo:hover { transform: scale(1.06); }
+.menudash .mdash-photo img { width: 100%; height: 100%; object-fit: contain; }
+/* A photo without transparency (a plain JPEG) is cropped round like the cut-outs. */
+.menudash .mdash-photo.mdash-square { overflow: hidden; }
+.menudash .mdash-photo.mdash-square img { object-fit: cover; }
+
+/* Wider: as on the printed menu: number column · text · price · photo. The side box
+   dissolves so price and photo become columns of the row; the photo column is kept even
+   when a dish has none, so the prices line up. Then bigger photos, two dishes per row. */
+/* "Name / 中文" that doesn't fit on one line: the Chinese gets a line of its own, without
+   the slash, rather than a line starting with "/". menu.js marks those names (mdash-own). On a
+   phone showing all languages it is always one language per line: German, 中文, English. */
+.menudash .mdash-name.mdash-own .mdash-zh { display: block; margin-top: 1px; }
+.menudash .mdash-name.mdash-own .mdash-slash { display: none; }
+@container (max-width: 559.98px) {
+  .menudash[data-lang="all"] .mdash-name .mdash-zh { display: block; margin-top: 1px; font-size: 16px; }
+  .menudash[data-lang="all"] .mdash-name .mdash-slash { display: none; }
+}
+
+@container (min-width: 560px) {
+  .menudash .mdash-dish { grid-template-columns: var(--mdash-nw) minmax(0, 1fr) auto var(--mdash-ph); }
+  .menudash .mdash-body { grid-column: 2; }
+  .menudash .mdash-side { display: contents; }
+  .menudash .mdash-tag { grid-column: 3; grid-row: 1; }
+  .menudash .mdash-mark { width: 20px; height: 20px; }
+  .menudash .mdash-photo { grid-column: 4; grid-row: 1; }
+  .menudash .mdash-dish .mdash-no {
+    position: absolute; top: 14px; left: 0; width: var(--mdash-nw); justify-content: flex-end; margin: 0;
+  }
+}
+@container (min-width: 700px) {
+  /* On the rows, not the root: a container query can't restyle the container itself. */
+  .menudash .mdash-dish { --mdash-ph: 104px; --mdash-nw: 48px; }
+  .menudash .mdash-h { font-size: 30px; }
+}
+@container (min-width: 900px) {
+  .menudash .mdash-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 700px) { .menudash { --mdash-pad: 28px; } }
+
+/* ---------- Nothing matches / footer ---------- */
+.menudash .mdash-nomatch { padding: 48px 0 24px; text-align: center; color: var(--mdash-muted); }
+.menudash .mdash-reset {
+  margin-top: 12px; padding: 8px 18px; border: 1.5px solid var(--mdash-accent); border-radius: 999px;
+  color: var(--mdash-accent); font-size: 14px; font-weight: 700;
+}
+.menudash .mdash-reset:hover { background: var(--mdash-accent); color: var(--mdash-cream); }
+.menudash .mdash-foot { margin-top: 28px; color: var(--mdash-muted); font-size: 13px; line-height: 1.5; }
+.menudash .mdash-empty-menu { padding: 40px 0; text-align: center; color: var(--mdash-muted); }
+
+/* ---------- Photo, large ---------- */
+.menudash .mdash-dlg {
+  width: min(92vw, 560px); max-height: 92vh; padding: 20px; overflow: auto;
+  border: 0; border-radius: 20px; background: var(--mdash-cream); color: var(--mdash-ink);
+  box-shadow: 0 20px 60px rgba(43, 29, 26, .35);
+}
+/* Closed means hidden, also under themes whose Bootstrap 4 sets "dialog { display: block }"
+   (the GloriaFood Restaurant theme does). */
+.menudash .mdash-dlg:not([open]) { display: none; }
+.menudash .mdash-dlg::backdrop { background: rgba(43, 29, 26, .6); }
+.menudash .mdash-dlg img { width: 100%; height: auto; max-height: 70vh; object-fit: contain; }
+.menudash .mdash-dlg.mdash-square img { border-radius: 50%; aspect-ratio: 1; object-fit: cover; }
+.menudash .mdash-close {
+  position: absolute; top: 10px; right: 10px; z-index: 1; width: 40px; height: 40px;
+  border-radius: 50%; background: var(--mdash-paper); color: var(--mdash-ink);
+  font-size: 26px; line-height: 40px; text-align: center; box-shadow: 0 1px 4px rgba(43, 29, 26, .2);
+}
+.menudash .mdash-cap { margin-top: 10px; text-align: center; }
+.menudash .mdash-cap .mdash-name { font-size: 18px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.menudash) { scroll-behavior: smooth; }
+}
+@media print {
+  .menudash .mdash-langs, .menudash .mdash-bar, .menudash .mdash-dlg { display: none; }
+  .menudash .mdash-dish { break-inside: avoid; }
+}

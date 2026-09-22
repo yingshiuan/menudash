@@ -1,0 +1,46 @@
+.mdash-admin .mdash-lead { font-size: 14px; }
+.mdash-admin .mdash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.mdash-admin .mdash-card { padding: 4px 20px 16px; background: #fff; border: 1px solid #dcdcde; border-radius: 6px; }
+.mdash-admin .mdash-card h2 { margin: 16px 0 8px; }
+.mdash-admin .mdash-check, .mdash-admin .mdash-diag { margin-top: 16px; }
+.mdash-admin .mdash-diag { padding-top: 12px; }
+.mdash-admin .mdash-diag summary { cursor: pointer; font-weight: 600; }
+.mdash-admin .mdash-diag table { margin-top: 10px; }
+.mdash-admin .mdash-now { margin-top: 12px; }
+.mdash-admin .mdash-warn { margin: 0 0 8px 18px; list-style: disc; }
+.mdash-admin details > summary { cursor: pointer; }
+.mdash-admin .mdash-restore { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+
+.mdash-admin .mdash-drop { display: block; padding: 22px; border: 2px dashed #c3c4c7; border-radius: 8px; text-align: center; cursor: pointer; background: #f6f7f7; }
+.mdash-admin .mdash-drop.over { border-color: #A31E2C; background: #fbf0f1; }
+.mdash-admin .mdash-drop input { display: block; margin: 0 auto 8px; }
+.mdash-admin .mdash-drop span { color: #50575e; }
+.mdash-admin .mdash-meter { height: 8px; margin-top: 12px; background: #f0f0f1; border-radius: 4px; overflow: hidden; }
+.mdash-admin .mdash-meter span { display: block; width: 0; height: 100%; background: #A31E2C; transition: width .2s; }
+.mdash-admin .mdash-log { max-height: 220px; overflow: auto; margin: 8px 0 0 0; list-style: none; font-size: 12px; }
+.mdash-admin .mdash-log .ok { color: #1a7f37; }
+.mdash-admin .mdash-log .warn { color: #996800; }
+.mdash-admin .mdash-log .err { color: #b32d2e; }
+
+.mdash-admin .mdash-unused { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+.mdash-admin .mdash-unused li { display: flex; align-items: center; gap: 10px; margin: 0; padding: 6px; background: #fcf9e8; border-radius: 6px; }
+.mdash-admin .mdash-unused img { width: 56px; height: 56px; object-fit: contain; }
+.mdash-admin .mdash-unused span { flex: 1; }
+.mdash-admin .mdash-del { color: #b32d2e; }
+
+.mdash-admin .mdash-table td, .mdash-admin .mdash-table th { vertical-align: middle; }
+.mdash-admin .mdash-table .mdash-sec th { background: #A31E2C; color: #fff; font-weight: 600; letter-spacing: .04em; }
+.mdash-admin .mdash-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.mdash-admin .mdash-thumb { width: 52px; }
+.mdash-admin .mdash-thumb img { display: block; width: 44px; height: 44px; object-fit: contain; }
+.mdash-admin .mdash-missing { color: #996800; font-size: 12px; }
+.mdash-admin .mdash-marks span { display: inline-block; width: 20px; height: 20px; margin-right: 2px; }
+.mdash-admin .mdash-marks .mdash-ico { display: block; width: 20px; height: 20px; object-fit: contain; }
+
+.mdash-admin .mdash-icons-card { margin-top: 16px; }
+.mdash-admin .mdash-icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; margin: 12px 0; }
+.mdash-admin .mdash-icon-item { display: grid; grid-template-columns: 44px 1fr; gap: 6px 12px; align-items: center; padding: 10px; background: #f6f7f7; border-radius: 6px; }
+.mdash-admin .mdash-icon-prev { grid-row: span 2; display: grid; place-items: center; width: 44px; height: 44px; background: #fff; border-radius: 50%; }
+.mdash-admin .mdash-icon-prev .mdash-ico { display: block; width: 30px; height: 30px; object-fit: contain; }
+.mdash-admin .mdash-icon-item input[type="file"] { grid-column: 2; max-width: 100%; }
+.mdash-admin .mdash-icon-item .button-link { grid-column: 2; justify-self: start; color: #b32d2e; }
