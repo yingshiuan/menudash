@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       MenuDash
  * Description:       A restaurant menu for your website, kept in a spreadsheet: upload the menu as CSV and the dish photos under MenuDash, then put [menudash] on a page. Guests read it in German, English and Chinese, all at once or one at a time, and filter by diet.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            insdash
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MENUDASH_VERSION', '1.1.0' );
+define( 'MENUDASH_VERSION', '1.1.1' );
 define( 'MENUDASH_NAME', 'MenuDash' );
 define( 'MENUDASH_FILE', __FILE__ );
 define( 'MENUDASH_DIR', plugin_dir_path( __FILE__ ) );

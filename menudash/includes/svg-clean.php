@@ -41,6 +41,11 @@ function mdash_clean_svg( $svg ) {
 	// PHP builds (WordPress Playground's PHP 7.4) on broken XML.
 	$doc  = new DOMDocument();
 	$ok   = @$doc->loadXML( $svg, LIBXML_NONET ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+	// The text check above misses a DOCTYPE written in another encoding (UTF-16), so ask
+	// the parser too.
+	if ( $ok && null !== $doc->doctype ) {
+		return $fail( 'The SVG declares a DOCTYPE or entities, which icons never need.' );
+	}
 	$root = $ok ? $doc->documentElement : null;
 	if ( ! $root || 'svg' !== strtolower( $root->localName ) ) {
 		return $fail( 'This is not an SVG file.' );

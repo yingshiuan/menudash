@@ -77,6 +77,9 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 .menudash[data-ui="en"] .mdash-u:not([data-l="en"]),
 .menudash[data-ui="de"] .mdash-u:not([data-l="de"]),
 .menudash[data-ui="zh"] .mdash-u:not([data-l="zh"]) { display: none; }
+/* In the all view the category tabs are German, like the headings they jump to. */
+.menudash[data-lang="all"] .mdash-cats .mdash-u[data-l="de"] { display: inline; }
+.menudash[data-lang="all"] .mdash-cats .mdash-u:not([data-l="de"]) { display: none; }
 
 .menudash [lang="zh-Hant"] { font-family: var(--mdash-zh); }
 

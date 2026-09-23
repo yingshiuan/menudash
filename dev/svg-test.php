@@ -53,6 +53,8 @@ check( '<path d="M1 1h2"/><path d="M2 2h2"/><path d="M3 3h2"/>' === $r['body'], 
 // Entity tricks (XXE, "billion laughs") are refused outright.
 $xxe = '<?xml version="1.0"?><!DOCTYPE svg [<!ENTITY x SYSTEM "file:///etc/passwd">]><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0" fill="&x;"/></svg>';
 check( ! mdash_clean_svg( $xxe )['ok'], 'DOCTYPE / entities are refused' );
+$utf16 = "\xFF\xFE" . mb_convert_encoding( '<?xml version="1.0" encoding="UTF-16"?><!DOCTYPE svg [<!ENTITY x "#e33">]><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0" fill="&x;"/></svg>', 'UTF-16LE', 'UTF-8' );
+check( ! mdash_clean_svg( $utf16 )['ok'], 'a DOCTYPE hidden in UTF-16 is refused too' );
 
 check( ! mdash_clean_svg( '<html><body>not an icon</body></html>' )['ok'], 'HTML is refused' );
 check( ! mdash_clean_svg( 'not xml at all' )['ok'], 'broken XML is refused' );

@@ -38,9 +38,12 @@
 .mdash-admin .mdash-marks .mdash-ico { display: block; width: 20px; height: 20px; object-fit: contain; }
 
 .mdash-admin .mdash-icons-card { margin-top: 16px; }
-.mdash-admin .mdash-icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; margin: 12px 0; }
-.mdash-admin .mdash-icon-item { display: grid; grid-template-columns: 44px 1fr; gap: 6px 12px; align-items: center; padding: 10px; background: #f6f7f7; border-radius: 6px; }
-.mdash-admin .mdash-icon-prev { grid-row: span 2; display: grid; place-items: center; width: 44px; height: 44px; background: #fff; border-radius: 50%; }
+.mdash-admin .mdash-icon-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+.mdash-admin .mdash-icon-item { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; min-width: 0; padding: 12px 10px; background: #f6f7f7; border-radius: 6px; }
+.mdash-admin .mdash-icon-prev { display: grid; place-items: center; width: 44px; height: 44px; background: #fff; border-radius: 50%; }
 .mdash-admin .mdash-icon-prev .mdash-ico { display: block; width: 30px; height: 30px; object-fit: contain; }
-.mdash-admin .mdash-icon-item input[type="file"] { grid-column: 2; max-width: 100%; }
-.mdash-admin .mdash-icon-item .button-link { grid-column: 2; justify-self: start; color: #b32d2e; }
+.mdash-admin .mdash-icon-name { line-height: 1.35; overflow-wrap: anywhere; }
+.mdash-admin .mdash-icon-item input[type="file"] { grid-column: 1 / -1; width: 100%; max-width: 100%; font-size: 12px; }
+.mdash-admin .mdash-icon-item .button-link { grid-column: 1 / -1; justify-self: start; color: #b32d2e; }
+@media (max-width: 1100px) { .mdash-admin .mdash-icon-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .mdash-admin .mdash-icon-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
