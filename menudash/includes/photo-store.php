@@ -12,6 +12,8 @@
 defined( 'ABSPATH' ) || exit;
 
 const MDASH_SIZES = array( 800, 400 );
+// 40 megapixels, e.g. 7300 × 5500. Opening a larger image could run the server out of memory.
+const MDASH_MAX_PIXELS = 40000000;
 
 function mdash_photo_index() {
 	$f   = mdash_dir( 'photos' ) . '/index.json';
@@ -68,6 +70,9 @@ function mdash_photo_add( $tmp, $name ) {
 	$mime = $info ? $info['mime'] : '';
 	if ( ! in_array( $mime, array( 'image/png', 'image/jpeg', 'image/webp' ), true ) ) {
 		return array( 'ok' => false, 'error' => "$name is not a PNG, JPEG or WebP image." );
+	}
+	if ( $info[0] * $info[1] > MDASH_MAX_PIXELS ) {
+		return array( 'ok' => false, 'error' => "$name is too large ({$info[0]} × {$info[1]} px); save it at most 6000 px wide." );
 	}
 	$alpha               = mdash_has_alpha( $tmp, $mime );
 	list( $ext, $out )   = mdash_photo_format( $alpha );

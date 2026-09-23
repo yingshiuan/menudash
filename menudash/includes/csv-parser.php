@@ -207,8 +207,11 @@ function mdash_parse_csv( $bytes ) {
 		}
 	}
 
+	// A menu cell is a few words; 1000 characters keeps the text handling on the page fast
+	// whatever the file holds.
 	$cell = function ( $row, $field ) use ( $col ) {
-		return isset( $col[ $field ], $row[ $col[ $field ] ] ) ? trim( $row[ $col[ $field ] ] ) : '';
+		$s = isset( $col[ $field ], $row[ $col[ $field ] ] ) ? trim( $row[ $col[ $field ] ] ) : '';
+		return strlen( $s ) > 1000 ? trim( preg_replace( '/^(.{0,1000}).*$/su', '$1', $s ) ) : $s;
 	};
 
 	$sections = array();

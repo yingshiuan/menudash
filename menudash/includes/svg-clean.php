@@ -111,7 +111,9 @@ function mdash_svg_attrs( $el ) {
 	$keep = array_merge( $keep, $style );
 	$out = '';
 	foreach ( $keep as $name => $value ) {
-		if ( ! in_array( $name, MDASH_SVG_ATTRS, true ) || preg_match( '/url\s*\(|javascript:|expression\s*\(|[<>"]/i', $value ) ) {
+		// Values are numbers, colours and path data: a short list of characters. That
+		// rules out CSS escapes ("\75rl(" reads as "url("), quotes, colons and markup.
+		if ( ! in_array( $name, MDASH_SVG_ATTRS, true ) || ! preg_match( '/^[#\w\s.,%()+-]*$/', $value ) || preg_match( '/url\s*\(|expression\s*\(/i', $value ) ) {
 			continue;
 		}
 		$out .= ' ' . $name . '="' . htmlspecialchars( $value, ENT_QUOTES | ENT_XML1, 'UTF-8' ) . '"';

@@ -56,6 +56,12 @@ check( ! mdash_clean_svg( $xxe )['ok'], 'DOCTYPE / entities are refused' );
 $utf16 = "\xFF\xFE" . mb_convert_encoding( '<?xml version="1.0" encoding="UTF-16"?><!DOCTYPE svg [<!ENTITY x "#e33">]><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0" fill="&x;"/></svg>', 'UTF-16LE', 'UTF-8' );
 check( ! mdash_clean_svg( $utf16 )['ok'], 'a DOCTYPE hidden in UTF-16 is refused too' );
 
+// CSS escapes: browsers read "\75rl(" in a paint value as "url(".
+$esc = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1 1h2" fill="\75rl(https://example.com/a.svg#p)"/><path d="M2 2h2" style="fill:u\rl(#x);stroke:#e33;stroke-width:1.5"/><rect width="4" height="4" fill="rgb(10, 20, 30)" transform="translate(2 3) rotate(-45)"/></svg>';
+$r = mdash_clean_svg( $esc );
+check( $r['ok'] && false === strpos( $r['body'], '\\' ) && false === stripos( $r['body'], 'rl(' ), 'CSS-escaped url() values are dropped', $r['body'] );
+check( false !== strpos( $r['body'], 'stroke="#e33"' ) && false !== strpos( $r['body'], 'stroke-width="1.5"' ) && false !== strpos( $r['body'], 'fill="rgb(10, 20, 30)"' ) && false !== strpos( $r['body'], 'transform="translate(2 3) rotate(-45)"' ), 'ordinary colours and transforms are kept', $r['body'] );
+
 check( ! mdash_clean_svg( '<html><body>not an icon</body></html>' )['ok'], 'HTML is refused' );
 check( ! mdash_clean_svg( 'not xml at all' )['ok'], 'broken XML is refused' );
 check( ! mdash_clean_svg( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><script>x</script></svg>' )['ok'], 'an SVG with nothing to draw is refused' );

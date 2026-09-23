@@ -23,6 +23,10 @@ function mdash_dir( $sub = '' ) {
 	if ( ! file_exists( "$dir/index.php" ) ) {
 		@file_put_contents( "$dir/index.php", "<?php // Silence is golden.\n" ); // phpcs:ignore
 	}
+	// Only PHP reads the CSVs; on Apache the web can't fetch them at all.
+	if ( 'csv' === $sub && ! file_exists( "$dir/.htaccess" ) ) {
+		@file_put_contents( "$dir/.htaccess", "<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n\tDeny from all\n</IfModule>\n" ); // phpcs:ignore
+	}
 	return $dir;
 }
 
@@ -64,7 +68,9 @@ function mdash_load_csv( $path, $original_name ) {
 /** Keep an uploaded CSV in csv/ under a dated name, then drop all but the newest few. */
 function mdash_store_csv( $tmp_path, $original_name ) {
 	$dir  = mdash_dir( 'csv' );
-	$base = 'menu-' . gmdate( 'Y-m-d-His' );
+	// The random part keeps the file from being guessed by its upload time: the CSV may
+	// hold columns the menu never shows (costs, notes). csv/ is also closed to the web.
+	$base = 'menu-' . gmdate( 'Y-m-d-His' ) . '-' . wp_generate_password( 12, false );
 	$dest = "$dir/$base.csv";
 	for ( $i = 2; file_exists( $dest ); $i++ ) {
 		$dest = "$dir/$base-$i.csv";

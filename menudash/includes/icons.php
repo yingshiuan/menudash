@@ -71,6 +71,9 @@ function mdash_icon_set( $key, $tmp, $name ) {
 		if ( ! $info || ! in_array( $info['mime'], array( 'image/png', 'image/jpeg', 'image/webp' ), true ) ) {
 			return array( 'ok' => false, 'error' => "$name is not an SVG, PNG, JPEG or WebP image." );
 		}
+		if ( $info[0] * $info[1] > MDASH_MAX_PIXELS ) {
+			return array( 'ok' => false, 'error' => "$name is too large ({$info[0]} × {$info[1]} px); an icon needs about 96 px." );
+		}
 		$editor = wp_get_image_editor( $tmp );
 		if ( is_wp_error( $editor ) ) {
 			return array( 'ok' => false, 'error' => "$name could not be opened: " . $editor->get_error_message() );
