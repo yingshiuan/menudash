@@ -11,7 +11,7 @@ A restaurant menu for a WordPress site, kept in a spreadsheet. The restaurant up
 ## What guests get
 
 - **Languages:** all three languages at once, or one at a time, via **All · DE · EN · 中文**. The choice is remembered, and `?lang=de` links straight to one language.
-- **Diet filters:** Recommended, Vegetarian (includes vegan), Vegan, Gluten-free and Not spicy. Filters combine, and categories with nothing left are hidden.
+- **Diet filters:** Recommended, Vegetarian (includes vegan), Vegan, Gluten-free, Spicy and Not spicy. Filters combine (Spicy and Not spicy switch each other off), and categories with nothing left are hidden.
 - **Navigation:** a sticky bar with the filters and the category tabs. It sits under the theme's own fixed header automatically.
 - **Photos:** dish photos next to each dish; tap one for a large view.
 - **Phone layout:** each language gets its own line, and a Chinese name that doesn't fit next to the German one moves to a line of its own.

@@ -82,7 +82,12 @@
 
     /* ---------- Diet filters ----------
        Every pressed chip must match (AND). Each dish lists its tokens in data-f:
-       pick, veg (vegetarian or vegan), vegan, gf, and spicy or mild. */
+       pick, veg (vegetarian or vegan), vegan, gf, and spicy or mild.
+       Spicy and Not spicy exclude each other, so pressing one releases the other. */
+    var opposite = { spicy: "mild", mild: "spicy" };
+    function release(key) {
+      chips.forEach(function (o) { if (o.getAttribute("data-filter") === opposite[key]) o.setAttribute("aria-pressed", "false"); });
+    }
     function active() {
       return chips.filter(function (c) { return c.getAttribute("aria-pressed") === "true"; })
         .map(function (c) { return c.getAttribute("data-filter"); });
@@ -110,7 +115,9 @@
     }
     chips.forEach(function (c) {
       c.addEventListener("click", function () {
-        c.setAttribute("aria-pressed", String(c.getAttribute("aria-pressed") !== "true"));
+        var on = c.getAttribute("aria-pressed") !== "true";
+        c.setAttribute("aria-pressed", String(on));
+        if (on) release(c.getAttribute("data-filter"));
         applyFilters(true);
       });
     });
@@ -123,6 +130,7 @@
       chips.forEach(function (c) {
         if (diet.indexOf(c.getAttribute("data-filter")) >= 0) c.setAttribute("aria-pressed", "true");
       });
+      if (diet.indexOf("mild") >= 0) release("mild"); // a link with both keeps Not spicy
     } catch (e) { /* old browser: start unfiltered */ }
 
     /* ---------- Sticky bar: sit under the theme's fixed header ----------

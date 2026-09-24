@@ -12,6 +12,7 @@ $chips = array(
 	'veg'   => 'vegetarian',
 	'vegan' => 'vegan',
 	'gf'    => 'gf',
+	'spicy' => 'spicy',
 	'mild'  => 'spicy',
 );
 $marks = array( 'spicy', 'vegan', 'vegetarian', 'gf' ); // Recommended sits in front of the number instead.
