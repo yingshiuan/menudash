@@ -86,7 +86,7 @@ function mdash_store_csv( $tmp_path, $original_name ) {
 		@unlink( "$dir/$old" ); // phpcs:ignore
 		unset( $names[ $old ] );
 	}
-	file_put_contents( "$dir/names.json", wp_json_encode( $names, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ), LOCK_EX ); // phpcs:ignore
+	mdash_save_csv_names( $names );
 	return $dest;
 }
 
@@ -98,10 +98,29 @@ function mdash_csv_files() {
 	return $files;
 }
 
+/**
+ * The names the owner gave the stored CSVs (stored name => original name). They live in an
+ * option, not in a file beside the CSVs: a file with a fixed name in csv/ could be fetched
+ * on servers that ignore .htaccess (nginx) and would list the random CSV names. 1.1 kept
+ * them in csv/names.json; that file is read once, moved here and deleted.
+ * Uninstall keeps this option, so a reinstall still shows the original names.
+ */
 function mdash_csv_names() {
-	$f     = mdash_dir( 'csv' ) . '/names.json';
-	$names = file_exists( $f ) ? json_decode( (string) file_get_contents( $f ), true ) : array(); // phpcs:ignore
-	return is_array( $names ) ? $names : array();
+	$names = get_option( 'menudash_csv_names' );
+	if ( ! is_array( $names ) ) {
+		$f     = mdash_dir( 'csv' ) . '/names.json';
+		$names = file_exists( $f ) ? json_decode( (string) file_get_contents( $f ), true ) : array(); // phpcs:ignore
+		$names = is_array( $names ) ? $names : array();
+		update_option( 'menudash_csv_names', $names, false );
+		if ( file_exists( $f ) ) {
+			@unlink( $f ); // phpcs:ignore
+		}
+	}
+	return $names;
+}
+
+function mdash_save_csv_names( $names ) {
+	update_option( 'menudash_csv_names', $names, false );
 }
 
 /** Put an older CSV back live. */
@@ -116,6 +135,7 @@ function mdash_restore_csv( $file ) {
 
 /** On activation, a reinstall picks up the menu that was live before. */
 function mdash_activate() {
+	mdash_restore_specials();
 	if ( mdash_get_menu() ) {
 		return;
 	}

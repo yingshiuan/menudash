@@ -13,6 +13,21 @@
 
 .mdash-admin .mdash-drop { display: block; padding: 22px; border: 2px dashed #c3c4c7; border-radius: 8px; text-align: center; cursor: pointer; background: #f6f7f7; }
 .mdash-admin .mdash-drop.over { border-color: #A31E2C; background: #fbf0f1; }
+/* A CSV drop box with its buttons beside it, in one row; they go below it on a narrow card. */
+.mdash-admin .mdash-upload-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.mdash-admin .mdash-upload-row .mdash-drop { flex: 1 1 140px; min-width: 0; margin: 0; padding: 10px; }
+/* The file input itself is hidden (it squeezes to "No fil…hosen" in a narrow box); the
+   label opens it, and the line under the button shows the chosen file. */
+.mdash-admin .mdash-drop .mdash-file { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.mdash-admin .mdash-drop:focus-within { outline: 2px solid #A31E2C; outline-offset: 2px; }
+.mdash-admin .mdash-drop .button { pointer-events: none; }
+.mdash-admin .mdash-drop-name { display: block; margin-top: 6px; overflow-wrap: anywhere; font-size: 12px; }
+.mdash-admin .mdash-drop.has-file .mdash-drop-name { color: #1d2327; font-weight: 600; }
+.mdash-admin .mdash-upload-row .mdash-drop { position: relative; }
+.mdash-admin .mdash-upload-btns { display: flex; flex-direction: column; gap: 6px; }
+.mdash-admin .mdash-upload-btns .button { width: 100%; text-align: center; }
+.mdash-admin .mdash-icon-item { border: 2px dashed #dcdcde; }
+.mdash-admin .mdash-icon-item.over { border-color: #A31E2C; background: #fbf0f1; }
 .mdash-admin .mdash-drop input { display: block; margin: 0 auto 8px; }
 .mdash-admin .mdash-drop span { color: #50575e; }
 .mdash-admin .mdash-meter { height: 8px; margin-top: 12px; background: #f0f0f1; border-radius: 4px; overflow: hidden; }
@@ -47,3 +62,40 @@
 .mdash-admin .mdash-icon-item .button-link { grid-column: 1 / -1; justify-self: start; color: #b32d2e; }
 @media (max-width: 1100px) { .mdash-admin .mdash-icon-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .mdash-admin .mdash-icon-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.mdash-admin .mdash-closed-card { margin-top: 16px; }
+.mdash-admin .mdash-closed-table { border-collapse: collapse; margin: 8px 0 12px; }
+.mdash-admin .mdash-closed-table th { padding: 4px 12px 4px 0; text-align: left; font-weight: 600; }
+.mdash-admin .mdash-closed-table td { padding: 4px 12px 4px 0; }
+.mdash-admin .mdash-closed-table input[type="text"] { width: 260px; max-width: 100%; }
+.mdash-admin .mdash-closed-state { white-space: nowrap; }
+.mdash-admin .mdash-muted { color: #787c82; }
+@media (max-width: 782px) {
+  .mdash-admin .mdash-closed-table thead { display: none; }
+  .mdash-admin .mdash-closed-table tr { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+  .mdash-admin .mdash-closed-table td { padding: 0; }
+  .mdash-admin .mdash-closed-table td:nth-child(3) { grid-column: 1 / -1; }
+}
+.mdash-admin .mdash-closed-table th small { font-weight: 400; color: #787c82; }
+.mdash-admin .mdash-closed-del { color: #b32d2e; }
+.mdash-admin .mdash-closed-actions { display: flex; gap: 8px; align-items: center; }
+.mdash-admin .mdash-check h3 small { margin-left: 8px; font-weight: 400; color: #50575e; }
+.mdash-admin .mdash-check .mdash-table + h3 { margin-top: 28px; }
+.mdash-admin .mdash-hours-card { margin-top: 16px; }
+.mdash-admin .mdash-hours-table { border-collapse: collapse; margin: 8px 0 12px; }
+.mdash-admin .mdash-hours-table th, .mdash-admin .mdash-hours-table td { padding: 4px 10px 4px 0; text-align: left; }
+.mdash-admin .mdash-hours-table tbody th { font-weight: 600; min-width: 100px; }
+.mdash-admin .mdash-hours-table tr.is-closed input[type="time"] { opacity: .35; pointer-events: none; }
+.mdash-admin .mdash-hours-layout { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px 32px; }
+.mdash-admin .mdash-hours-preview { margin-top: 8px; padding: 14px 18px; background: #f6f7f7; border-radius: 6px; }
+.mdash-admin .mdash-hours-preview h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #50575e; }
+.mdash-admin .mdash-hours-preview .menudash-hours { margin: 0; }
+.mdash-admin .mdash-hours-preview td { padding: 3px 18px 3px 0; vertical-align: top; }
+.mdash-admin .mdash-hours-preview tr.closed td { color: #787c82; }
+.mdash-admin .mdash-hours-card summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; cursor: pointer; padding: 4px 0; list-style: none; }
+.mdash-admin .mdash-hours-card summary::-webkit-details-marker { display: none; }
+.mdash-admin .mdash-hours-card summary h2 { display: inline; margin: 12px 0 8px; }
+.mdash-admin .mdash-hours-card summary h2::before { content: "▸ "; color: #787c82; }
+.mdash-admin .mdash-hours-card[open] summary h2::before { content: "▾ "; }
+.mdash-admin .mdash-hours-card[open] summary .mdash-muted { display: none; }
+.mdash-admin .mdash-default-submit { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); border: 0; padding: 0; }

@@ -26,7 +26,10 @@ A restaurant menu for a WordPress site, kept in a spreadsheet. The restaurant up
 3. **Upload the photos**, all at once. Name each one after the dish number (`22_Dumplings.png`) or the dish name (`Jasmine Rice.png`).
    - Photos are resized to 400 and 800 px, as WebP where the server can.
    - A check list shows every dish with its photo, and which photos matched nothing.
-4. **Optionally, use its own diet icons:** an SVG or a transparent PNG per mark, with **Back to default** to undo.
+4. **Today's specials:** a second, short CSV with the same columns, e.g. this week's dishes. It shows wherever `[menudash_specials]` is, in the same style and languages as the menu. The last five files are kept with **Put back**; **Remove** takes the specials off the site.
+5. **Holidays and closed days:** enter a first and last day (plus an optional "open again" day and a note). A notice in all three languages appears 60 days before, changes while the restaurant is closed ("closed until … · we look forward to welcoming you again from …") and disappears by itself afterwards.
+6. **Opening hours:** a row per weekday with a *Closed* tickbox and time pickers, with an optional second time for a break. Days with the same hours are joined ("Dienstag – Freitag"), so nothing has to be typed in a format.
+7. **Optionally, use its own diet icons:** an SVG or a transparent PNG per mark, with **Back to default** to undo.
    - SVGs are cleaned to plain shapes: scripts, event handlers, links, embedded HTML, external images and DOCTYPE/entity tricks are all removed or refused. `dev/svg-test.php` covers this.
 
 | Dashboard → MenuDash | The check after an upload |
@@ -51,6 +54,10 @@ Requirements: WordPress 6.3 or newer, PHP 7.4 or newer.
 | `[menudash]` | The menu, opening in the all-languages view. |
 | `[menudash lang="de"]` | First-time guests see only German (or `en`, `zh`); they can still switch. |
 | `[menudash offset="80"]` | Space above the sticky bar in pixels, instead of measuring the theme's header. |
+| `[menudash_specials]` | Today's specials, with their own language switch. Nothing when none are uploaded. |
+| `[menudash_specials switch="no" jump="#menu"]` | Without the switch (e.g. above `[menudash]`, whose switch then changes both), with a "To the menu" button that links to `#menu`. `title="…"` sets the heading, `title=""` leaves it out. |
+| `[menudash_closed]` | The holiday notice. `days="30"` shows it 30 days ahead instead of 60. Nothing when no closed day is coming up. |
+| `[menudash_hours]` | The opening hours as a table (`lang="en"` or `zh` for the day names). It carries the hours as `data-hours` JSON, e.g. for an "open now" badge in a theme. |
 
 ## The CSV
 
@@ -88,7 +95,7 @@ One header row. Columns are found by their **title**, so their order doesn't mat
 }
 ```
 
-**Texts on the page:** the footer's currency, the allergy note and the button labels are in three languages. Change them with the `menudash_strings` filter:
+**Texts on the page:** the footer's currency, the allergy note, the button labels and the holiday sentences are in three languages. Change them with the `menudash_strings` filter:
 
 ```php
 add_filter( 'menudash_strings', function ( $s ) {
@@ -111,13 +118,15 @@ dev/build-zip.sh    # dist/menudash.zip
 Layout:
 - `menudash/` is the plugin.
 - `menudash/includes/csv-parser.php` is plain PHP without WordPress, so the tests run it on its own.
-- `menudash/templates/menu.php` renders the page.
+- `menudash/templates/menu.php` renders the page; `section.php` is one category, shared by the menu and the specials.
+- `menudash/includes/specials.php`, `closed.php` and `hours.php` are today's specials, the holiday notice and the opening hours.
 - `menudash/assets/` holds the front end and the admin page.
 
 ## Limits
 
 - **Languages:** German, English and Chinese (Traditional) are built in, with German first. Other languages would need changes to the template.
-- **One menu per site.**
+- **One menu per site**, one set of specials and one set of opening hours.
+- **Opening hours** are one week that repeats; a single different day is entered as a holiday.
 
 ## License
 

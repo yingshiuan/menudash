@@ -1,6 +1,81 @@
 /* MenuDash admin page: upload photos one at a time, so no single request is ever
    bigger than one photo, and shrink a photo in the browser first when it is over the
    server's limit. */
+
+/* Drop areas for the single-file choosers (menu CSV, specials CSV, each diet icon): a file
+   dropped on the box goes into its file input, as if it had been chosen. */
+(function () {
+  "use strict";
+  Array.prototype.forEach.call(document.querySelectorAll("[data-drop]"), function (box) {
+    var input = box.querySelector('input[type="file"]');
+    if (!input) return;
+    // Boxes with their own file-name line (the CSV boxes) show the chosen file there.
+    var name = box.querySelector(".mdash-drop-name");
+    if (name) {
+      input.addEventListener("change", function () {
+        var f = input.files && input.files[0];
+        name.textContent = f ? f.name : name.getAttribute("data-empty");
+        box.classList.toggle("has-file", !!f);
+      });
+    }
+    ["dragenter", "dragover"].forEach(function (t) {
+      box.addEventListener(t, function (e) { e.preventDefault(); box.classList.add("over"); });
+    });
+    ["dragleave", "drop"].forEach(function (t) {
+      box.addEventListener(t, function (e) {
+        if (t === "dragleave" && box.contains(e.relatedTarget)) return;
+        box.classList.remove("over");
+      });
+    });
+    box.addEventListener("drop", function (e) {
+      e.preventDefault();
+      var files = e.dataTransfer && e.dataTransfer.files;
+      if (!files || !files.length) return;
+      try {
+        var dt = new DataTransfer();
+        dt.items.add(files[0]);
+        input.files = dt.files;
+      } catch (err) {
+        input.files = files; // Older Safari: no DataTransfer constructor.
+      }
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  });
+})();
+
+/* Opening hours: a ticked "Closed" greys out that day's times. */
+(function () {
+  "use strict";
+  Array.prototype.forEach.call(document.querySelectorAll(".mdash-hours-table input[type=checkbox]"), function (box) {
+    box.addEventListener("change", function () { box.closest("tr").classList.toggle("is-closed", box.checked); });
+  });
+})();
+
+/* Holidays: "+ Add holiday" copies the empty row from the <template>; Remove takes an
+   unsaved row off the page again. */
+(function () {
+  "use strict";
+  var add = document.getElementById("mdash-closed-add");
+  var tpl = document.getElementById("mdash-closed-new");
+  if (!add || !tpl) return;
+  var body = document.querySelector(".mdash-closed-table tbody");
+  var max = parseInt(add.getAttribute("data-max"), 10) || 8;
+  var next = body.rows.length;
+  function update() { add.hidden = body.rows.length >= max; }
+  add.addEventListener("click", function () {
+    var html = tpl.innerHTML.replace(/__i__/g, String(next++));
+    body.insertAdjacentHTML("beforeend", html);
+    body.rows[body.rows.length - 1].querySelector("input").focus();
+    update();
+  });
+  body.addEventListener("click", function (e) {
+    var rm = e.target.closest && e.target.closest(".mdash-closed-remove");
+    if (!rm) return;
+    rm.closest("tr").remove();
+    update();
+  });
+})();
+
 (function () {
   "use strict";
   var cfg = window.menudashAdmin;

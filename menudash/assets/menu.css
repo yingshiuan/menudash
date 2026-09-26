@@ -272,3 +272,33 @@ body.admin-bar .menudash { --mdash-top: 32px; }
   .menudash .mdash-langs, .menudash .mdash-bar, .menudash .mdash-dlg { display: none; }
   .menudash .mdash-dish { break-inside: avoid; }
 }
+
+/* ---- [menudash_specials]: the same rows as the menu, under a title with the language switch. */
+.menudash.menudash-specials { padding-top: 8px; }
+.menudash-specials .mdash-sp-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.menudash-specials .mdash-sp-head .mdash-langs { margin: 0 0 0 auto; }
+.menudash-specials .mdash-sp-head { width: 100%; }
+.menudash.menudash-specials .mdash-sp-title { margin: 0; font-family: var(--mdash-display); font-weight: 400; font-size: 40px; line-height: 1; letter-spacing: .01em; color: var(--mdash-accent); }
+
+/* ---- [menudash_closed]: holiday notice, one line per closed period. */
+.menudash.menudash-closed {
+  max-width: none; margin: 0; padding: 12px var(--mdash-pad);
+  background: var(--mdash-paper); border-bottom: 1.5px solid var(--mdash-accent);
+  text-align: center; font-size: 15px;
+}
+.menudash.menudash-closed.is-now { background: var(--mdash-accent); border-top: 1px solid rgba(250, 248, 241, .35); border-bottom-color: var(--mdash-accent); color: var(--mdash-cream); }
+.menudash-closed .mdash-closed-title { margin: 0 0 2px; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--mdash-accent); }
+.menudash-closed.is-now .mdash-closed-title { color: inherit; opacity: .85; }
+.menudash-closed .mdash-closed-line { margin: 0; }
+.menudash-closed .mdash-closed-line strong { font-weight: 700; }
+.menudash-closed .mdash-closed-line + .mdash-closed-line { margin-top: 4px; }
+/* All languages: each sentence on a line of its own, the translations lighter. */
+.menudash-closed[data-lang="all"] .mdash-closed-line .mdash-t[data-l~="all"] { display: block; }
+.menudash-closed[data-lang="all"] .mdash-closed-line .mdash-t[data-l~="all"] ~ .mdash-t[data-l~="all"] { font-size: 14px; }
+.menudash-closed .mdash-closed-note { display: block; font-weight: 400; font-style: italic; }
+.menudash-specials .mdash-sp-jump { margin: 28px 0 0; text-align: center; }
+.menudash-specials .mdash-sp-jump a {
+  display: inline-flex; gap: .4em; align-items: center; padding: 12px 26px; border-radius: 999px;
+  background: var(--mdash-accent); color: var(--mdash-cream); font-weight: 700; text-decoration: none;
+}
+.menudash-specials .mdash-sp-jump a:hover { filter: brightness(.9); }

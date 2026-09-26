@@ -1,4 +1,6 @@
 /* MenuDash guest menu: language switch, diet filters, sticky category tabs and the photo view.
+   The specials box and the holiday notice ([menudash_specials], [menudash_closed], data-lite)
+   have no bar, so the filter and tab code below does nothing there.
    The page already holds every language (see includes/render.php); this only flips
    attributes, so the menu still reads fine if the script never runs. */
 (function () {
@@ -36,7 +38,7 @@
     var nav = root.querySelector(".mdash-cats");
     var noMatch = root.querySelector(".mdash-nomatch");
     var dialog = root.querySelector(".mdash-dlg");
-    if (!bar) return; // No menu uploaded yet.
+    if (!bar && !root.hasAttribute("data-lite")) return; // No menu uploaded yet.
 
     /* ---------- "Name / 中文" that doesn't fit ----------
        Where the Chinese name would wrap to the next line (which then starts with "/"),
@@ -71,6 +73,10 @@
       if (remember) {
         store(LANG_KEY, view);
         setParam("lang", view === "all" ? "" : view);
+        // The other MenuDash boxes on the page (holiday notice, specials) follow along.
+        Array.prototype.forEach.call(document.querySelectorAll(".menudash"), function (other) {
+          if (other !== root && other.mdashSetLang) other.mdashSetLang(view, false);
+        });
       }
       fitNames();
       measure();
@@ -78,6 +84,7 @@
     langButtons.forEach(function (b) {
       b.addEventListener("click", function () { setLang(b.getAttribute("data-set-lang"), true); });
     });
+    root.mdashSetLang = setLang;
     setLang(root.getAttribute("data-lang"), false);
 
     /* ---------- Diet filters ----------
@@ -93,6 +100,7 @@
         .map(function (c) { return c.getAttribute("data-filter"); });
     }
     function applyFilters(remember) {
+      if (!bar) return;
       var need = active();
       var shown = 0;
       sections.forEach(function (sec) {
@@ -121,7 +129,7 @@
         applyFilters(true);
       });
     });
-    root.querySelector(".mdash-reset").addEventListener("click", function () {
+    if (bar) root.querySelector(".mdash-reset").addEventListener("click", function () {
       chips.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
       applyFilters(true);
     });
@@ -162,6 +170,7 @@
       return Math.round(bottom);
     }
     function measure() {
+      if (!bar) return;
       if (autoOffset) {
         var top = headerBottom();
         if (top !== lastTop) {
@@ -175,6 +184,7 @@
     /* ---------- Category tabs follow the reading position ---------- */
     var current = null;
     function spy() {
+      if (!bar) return;
       var line = (parseFloat(getComputedStyle(root).getPropertyValue("--mdash-top")) || 0) + bar.offsetHeight + 24;
       var pick = null;
       for (var i = 0; i < sections.length; i++) {

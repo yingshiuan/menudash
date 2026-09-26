@@ -47,6 +47,14 @@ function mdash_shortcode( $atts ) {
 	return "<!-- menudash:start -->\n" . trim( ob_get_clean() ) . "\n<!-- menudash:end -->";
 }
 
+/**
+ * First thing inside a menu or specials box: applies the guest's saved language before the
+ * box is drawn, so it doesn't flash the default first. One line, so wpautop leaves it alone.
+ */
+function mdash_lang_script() {
+	return '<script>(function (r) { try { var q = new URLSearchParams(location.search).get("lang"), s = null, n = (navigator.language || "").slice(0, 2); try { s = localStorage.getItem("menudash-lang"); } catch (e) {} var l = /^(all|en|de|zh)$/.test(q) ? q : /^(all|en|de|zh)$/.test(s) ? s : r.getAttribute("data-lang"); r.setAttribute("data-lang", l); r.setAttribute("data-ui", l !== "all" ? l : n === "zh" ? "zh" : n === "de" || n === "fr" || n === "it" ? "de" : "en"); } catch (e) {} })(document.currentScript.parentNode);</script>';
+}
+
 /** First non-empty value among $langs, as array( text, lang ). */
 function mdash_first( $texts, $langs ) {
 	foreach ( $langs as $l ) {

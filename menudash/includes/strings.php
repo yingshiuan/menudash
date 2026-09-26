@@ -38,6 +38,15 @@ function mdash_strings() {
 		'photo'      => array( 'de' => 'Foto', 'en' => 'Photo', 'zh' => '照片' ),
 		'prices'     => array( 'de' => 'Alle Preise in CHF inkl. MwSt.', 'en' => 'All prices in CHF incl. VAT.', 'zh' => '所有價格以瑞士法郎計，已含增值稅。' ),
 		'allergy'    => array( 'de' => 'Fragen Sie unser Team nach Allergenen.', 'en' => 'Please ask our team about allergens.', 'zh' => '如有食物過敏，請告知我們的員工。' ),
+		'specials_title' => array( 'de' => 'Heute empfohlen', 'en' => 'Today’s specials', 'zh' => '今日推薦' ),
+		'to_menu'      => array( 'de' => 'Zur Speisekarte', 'en' => 'To the menu', 'zh' => '查看菜單' ),
+		'closed_title' => array( 'de' => 'Betriebsferien', 'en' => 'Holidays', 'zh' => '休假通知' ),
+		// %1$s and %2$s are dates, written out in the language of the sentence.
+		'closed_range' => array( 'de' => 'Wir sind vom %1$s bis %2$s geschlossen.', 'en' => 'We are closed from %1$s to %2$s.', 'zh' => '%1$s至%2$s休假，暫停營業。' ),
+		'closed_until' => array( 'de' => 'Wir sind bis und mit %2$s geschlossen.', 'en' => 'We are closed until %2$s, inclusive.', 'zh' => '休假至%2$s（含），暫停營業。' ),
+		'closed_day'   => array( 'de' => 'Am %1$s bleibt das Restaurant geschlossen.', 'en' => 'We are closed on %1$s.', 'zh' => '%1$s休息，暫停營業。' ),
+		'closed_today' => array( 'de' => 'Heute, %1$s, bleibt das Restaurant geschlossen.', 'en' => 'We are closed today, %1$s.', 'zh' => '今日（%1$s）休息，暫停營業。' ),
+		'closed_back'  => array( 'de' => 'Wir freuen uns, Sie ab %s wieder zu begrüssen.', 'en' => 'We look forward to welcoming you again from %s.', 'zh' => '%s起恭候您再次光臨。' ),
 		'empty'      => array( 'de' => 'Die Speisekarte wird gerade aktualisiert.', 'en' => 'The menu is being updated.', 'zh' => '菜單更新中。' ),
 	) );
 	return $strings;
