@@ -36,6 +36,10 @@ A restaurant menu for a WordPress site, kept in a spreadsheet. The restaurant up
 |---|---|
 | ![The MenuDash upload page after a menu upload](docs/dashboard/02-menu-uploaded.png) | ![Every dish with its photo, marks and price](docs/dashboard/06-check.png) |
 
+| Today's specials | Holiday notice and opening hours |
+|---|---|
+| ![Today's specials above the menu, with a button to the menu](docs/dashboard/13-specials-page.png) | ![The holiday notice while closed](docs/dashboard/15-holiday-notice-closed.png) ![Opening hours with time pickers](docs/dashboard/12-opening-hours.png) |
+
 A step-by-step guide for restaurant staff is in [docs/GUIDE.md](docs/GUIDE.md). It has a screenshot for every step.
 
 ## Install

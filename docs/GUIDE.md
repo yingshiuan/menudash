@@ -77,6 +77,44 @@ Below the uploads is a list of every dish with its photo, or **"no photo"**, plu
 
 ---
 
+## Today's specials
+
+Put `[menudash_specials]` on a page (e.g. above `[menudash]`, with `switch="no" jump="#menu"`). Then make a small spreadsheet with **the same columns as the menu**; a row with only a name is a heading. Upload it in **Today's specials (CSV)** with **Choose CSV** (or drop it on the box) and **Upload specials**.
+
+<img src="dashboard/10-specials.png" alt="The Today's specials box after an upload" width="460"> <img src="dashboard/13-specials-page.png" alt="The specials on the page" width="560">
+
+- **Earlier files** keeps the last five specials files, each with **Put back**.
+- **Remove** takes the specials off the site; the files stay.
+- Dish photos are matched the same way as on the menu.
+
+---
+
+## Holidays and closed days
+
+Put `[menudash_closed]` where the notice should appear (a theme can place it under its header). In **Holidays & closed days**, enter the first and last closed day and **Save holidays**; **+ Add holiday** adds more, **Delete** removes one.
+
+<img src="dashboard/11-holidays.png" alt="The Holidays box with one period" width="820">
+
+- **Open again** (optional): the "we look forward to welcoming you again from …" day, if not the day after the last closed day.
+- **Note** (optional): a line under the notice.
+
+The notice appears 60 days before (`days="30"` changes that), turns red while the restaurant is closed, and disappears by itself after the last day:
+
+<img src="dashboard/14-holiday-notice.png" alt="The notice before the holidays" width="820">
+<img src="dashboard/15-holiday-notice-closed.png" alt="The notice while closed" width="820">
+
+---
+
+## Opening hours
+
+Put `[menudash_hours]` where the hours should appear (e.g. the footer). Open **Opening hours**, tick **Closed** for a day off, pick the times, and use the second pair only for a break. Days with the same hours are joined in the table.
+
+<img src="dashboard/12-opening-hours.png" alt="Opening hours with time pickers and a preview" width="820">
+
+The table carries the hours as `data-hours` JSON (JavaScript day numbers, 0 = Sunday), so a theme can show an "open now" badge from them.
+
+---
+
 ## Diet icons
 
 The five marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free) come with icons. To use your own, go to **MenuDash → 3. Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
