@@ -1,0 +1,45 @@
+<?php
+/**
+ * Plugin Name:       MenuDash
+ * Description:       A restaurant menu for your website, kept in a spreadsheet: upload the menu as CSV and the dish photos under MenuDash, then put [menudash] on a page. Guests read it in German, English and Chinese, all at once or one at a time, and filter by diet. Background and highlight colours and the diet icons are chosen on the MenuDash page. Add-ons: MenuDash Restaurant (details, opening hours, holidays, "open now"), MenuDash Specials (today's specials) and MenuDash Gift Cards (gift card orders).
+ * Version:           2.0.0
+ * Requires at least: 6.3
+ * Requires PHP:      7.4
+ * Author:            insdash
+ * License:           GPL-2.0-or-later
+ * Text Domain:       menudash
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+define( 'MENUDASH_VERSION', '2.0.0' );
+define( 'MENUDASH_NAME', 'MenuDash' );
+define( 'MENUDASH_FILE', __FILE__ );
+define( 'MENUDASH_DIR', plugin_dir_path( __FILE__ ) );
+define( 'MENUDASH_URL', plugin_dir_url( __FILE__ ) );
+
+require MENUDASH_DIR . 'includes/csv-parser.php';
+require MENUDASH_DIR . 'includes/strings.php';
+require MENUDASH_DIR . 'includes/menu-store.php';
+require MENUDASH_DIR . 'includes/photo-store.php';
+require MENUDASH_DIR . 'includes/svg-clean.php';
+require MENUDASH_DIR . 'includes/icons.php';
+require MENUDASH_DIR . 'includes/render.php';
+require MENUDASH_DIR . 'includes/colors.php';
+
+if ( is_admin() ) {
+	require MENUDASH_DIR . 'includes/admin.php';
+}
+
+register_activation_hook( __FILE__, 'mdash_activate' );
+add_shortcode( 'menudash', 'mdash_shortcode' );
+add_action( 'wp_enqueue_scripts', 'mdash_enqueue' );
+
+/*
+ * Add-ons (MenuDash Restaurant, Specials, Gift Cards) load on menudash_loaded. It runs once
+ * every plugin file has been read, so it doesn't matter in which order WordPress loads them.
+ */
+add_action( 'plugins_loaded', 'mdash_loaded', 5 );
+function mdash_loaded() {
+	do_action( 'menudash_loaded' );
+}

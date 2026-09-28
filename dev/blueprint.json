@@ -1,0 +1,11 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/?pagename=menu",
+	"preferredVersions": { "php": "8.3", "wp": "latest" },
+	"login": true,
+	"steps": [
+		{ "step": "setSiteOptions", "options": { "blogname": "MenuDash demo", "permalink_structure": "" } },
+		{ "step": "activatePlugin", "pluginPath": "menudash/menudash.php" },
+		{ "step": "runPHP", "code": "<?php require '/menudash-dev/setup-demo.php';" }
+	]
+}
