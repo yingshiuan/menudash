@@ -4,12 +4,13 @@ The menu page builds itself from two things you upload: **the menu spreadsheet a
 
 <img src="dashboard/01-menudash-page.png" alt="The MenuDash page in the WordPress dashboard" width="820"> <img src="dashboard/09-phone.png" alt="The same page on a phone" width="200">
 
-The page has two tabs, each also listed in the left bar under MenuDash:
+The page has three tabs, each also listed in the left bar under MenuDash:
 
 | Tab | What's there |
 |---|---|
 | **Menu** | 1. menu file, 2. dish photos, 3. the check of every dish and photo |
-| **Design** | colours, diet icons |
+| **QR code** | QR code, table cards, A4 poster |
+| **Colours & icons** | colours, diet icons |
 
 Add-ons (MenuDash Restaurant, Specials, Gift Cards) add their own tabs and boxes; their guide comes with them.
 
@@ -18,13 +19,14 @@ Add-ons (MenuDash Restaurant, Specials, Gift Cards) add their own tabs and boxes
 ## Changing the menu (prices, dishes, texts)
 
 1. Make the change in your menu spreadsheet (Numbers, Excel, Google Sheets…).
-2. Export it as CSV:
-   - **Numbers:** *File → Export To → CSV…*, with *Text Encoding* on **Unicode (UTF-8)**.
-   - **Excel:** *Save As → CSV UTF-8*.
-   - **Google Sheets:** *File → Download → Comma-separated values*.
+2. Export it as **Excel (.xlsx)** or **CSV**:
+   - **Numbers:** *File → Export To → Excel…* (all sheets in one file), or *File → Export To → CSV…* with *Text Encoding* on **Unicode (UTF-8)**.
+   - **Excel:** save as a normal workbook (.xlsx), or *Save As → CSV UTF-8*.
+   - **Google Sheets:** *File → Download → Microsoft Excel (.xlsx)* or *Comma-separated values*.
 
-   UTF-8 keeps the Chinese.
-3. In WordPress: **MenuDash → Menu → 1. Menu file → Choose file → Upload menu**.
+   For CSV, UTF-8 keeps the Chinese. A Numbers file itself (.numbers) can't be read by a website: export it.
+   In an Excel file, the sheet named **menu** is the menu (a workbook with only one sheet: that sheet); with MenuDash Specials, sheets named **specials** and **lunch** update today's specials and the lunch menu in the same upload. Other sheets are listed as not used. A title row above the header (Numbers adds the table's name) is skipped.
+3. In WordPress: **MenuDash → Menu → 1. Menu → Choose file → Upload menu**.
 
 The menu page changes right away, and a message says how many categories and dishes were read:
 
@@ -86,9 +88,24 @@ Below the uploads is a list of every dish with its photo, or **"no photo"**, plu
 
 ---
 
+## Meat and fish origin
+
+Under **MenuDash → Menu → Meat and fish origin**, list where your meat and fish come from: choose a product (or **Other** and type its name in each language), type the countries in German or English ("Schweiz, Deutschland"), or tick **Ask our staff**. MenuDash translates products and the usual countries into the three menu languages; a country it doesn't know stays as typed. The list shows under the menu (can be switched off) and on any page with `[menudash_origin]` — `lang="de"` for one language, `title="no"` without the heading.
+
+## QR code and table cards
+
+Under **MenuDash → QR code** is a QR code that opens your menu on the guest's phone, with a preview that changes while you type (scan the screen with your phone to test it).
+
+- **Link:** empty means your menu page. Printed cards keep working as long as that address does.
+- **Heading and tip are built in**, in the languages ticked under **Languages on the card**: "Scan for our menu" above the code and "Choose your language and filter by vegetarian, vegan, gluten-free or spicy." under the web address, one line per language. **Own heading** replaces the heading, the **Tip** can be switched off, and **Own message** adds up to 4 short lines. A full card shrinks its text a little by itself.
+- **Wi-Fi name and password:** only on the printed card, with a small Wi-Fi code that phones join by scanning; without a name there is no Wi-Fi part.
+- **Print size:** four A6 table cards on an A4 sheet (cut along the grey lines) or one A4 poster.
+- The logo is WordPress's Site Logo (with MenuDash Restaurant: **Restaurant → Logo and icon**), or the site name when there is none.
+- **Save and print table cards** opens the sheet in a new tab; print at 100 % ("Actual size"). **SVG** and **PNG** download the code alone.
+
 ## Colours
 
-Under **MenuDash → Design → Colours**, choose the **background** of the menu (and of the add-ons' boxes), and the **highlight** colour of buttons, filters, headings and the Recommended icon. The preview changes while you pick. Text on the highlight turns dark by itself when the colour is light, and a warning appears if a choice would be hard to read. **Back to default** returns to cream and dark red.
+Under **MenuDash → Colours & icons → Colours**, choose the **background** of the menu (and of the add-ons' boxes), and the **highlight** colour of buttons, filters, headings and the Recommended icon. The preview changes while you pick. Text on the highlight turns dark by itself when the colour is light, and a warning appears if a choice would be hard to read. **Back to default** returns to cream and dark red.
 
 <img src="dashboard/17-colours.png" alt="The Colours box with a preview" width="720">
 
@@ -98,7 +115,7 @@ Under **MenuDash → Design → Colours**, choose the **background** of the menu
 
 ## Diet icons
 
-The five marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free) come with icons. To use your own, go to **MenuDash → Design → Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
+The five marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free) come with icons. To use your own, go to **MenuDash → Colours & icons → Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
 
 <img src="dashboard/05-diet-icons.png" alt="The Diet icons box: one slot per mark" width="720">
 

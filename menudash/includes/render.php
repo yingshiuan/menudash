@@ -203,7 +203,7 @@ function mdash_tel( $phone ) {
  */
 add_action( 'init', 'mdash_quiet_shortcodes', 99 );
 function mdash_quiet_shortcodes() {
-	foreach ( array( 'menudash_specials', 'menudash_giftcard', 'menudash_closed', 'menudash_open', 'menudash_hours', 'menudash_contact', 'menudash_link' ) as $tag ) {
+	foreach ( array( 'menudash_specials', 'menudash_lunch', 'menudash_giftcard', 'menudash_closed', 'menudash_open', 'menudash_hours', 'menudash_contact', 'menudash_link' ) as $tag ) {
 		if ( ! shortcode_exists( $tag ) ) {
 			add_shortcode( $tag, '__return_empty_string' );
 		}

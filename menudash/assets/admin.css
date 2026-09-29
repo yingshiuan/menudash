@@ -1,5 +1,19 @@
 .mdash-admin .mdash-lead { font-size: 14px; }
-.mdash-admin .mdash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.mdash-admin .mdash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 16px 0; }
+/* Menu tab: the upload cards in one row. Each card is heading · instructions · upload ·
+   status, and with subgrid each part lines up across the row: the instructions all take the
+   height of the longest, so the drop areas start at the same height. */
+.mdash-admin .mdash-cards .mdash-card { display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 12px; align-content: start; }
+.mdash-admin .mdash-cards .mdash-card > h2 { margin-bottom: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mdash-admin .mdash-card-howto p { margin: 0; color: #50575e; font-size: 12px; line-height: 1.5; }
+.mdash-admin .mdash-card-howto code { font-size: 11px; }
+.mdash-admin .mdash-card-status > :first-child { margin-top: 0; }
+.mdash-admin .mdash-card-status:empty { display: none; }
+@supports not (grid-template-rows: subgrid) {
+  .mdash-admin .mdash-cards .mdash-card { display: block; }
+  .mdash-admin .mdash-card-howto, .mdash-admin .mdash-card-upload { margin-bottom: 12px; }
+}
+.mdash-admin .mdash-drop.mdash-drop-photos { position: relative; padding: 10px; }
 .mdash-admin .mdash-card { padding: 4px 20px 16px; background: #fff; border: 1px solid #dcdcde; border-radius: 6px; }
 .mdash-admin .mdash-card h2 { margin: 16px 0 8px; }
 .mdash-admin .mdash-check, .mdash-admin .mdash-diag { margin-top: 16px; }
@@ -90,3 +104,43 @@
 .mdash-admin .mdash-tabs { margin: 12px 0 16px; }
 .mdash-admin .mdash-tabs + .notice { margin-top: 0; }
 .mdash-warn { padding: 8px 12px; border-left: 4px solid #dba617; background: #fcf9e8; }
+/* QR code tab: the form, with the card beside it on wide screens. */
+.mdash-admin .mdash-qr-layout { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px 40px; }
+.mdash-admin .mdash-qr-form { flex: 1 1 520px; min-width: 0; }
+.mdash-admin .mdash-qr-form .form-table th { width: 150px; }
+.mdash-admin .mdash-qr-preview { flex: 0 0 auto; }
+.mdash-admin .mdash-qr-preview h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #50575e; }
+.mdash-admin .mdash-qr-preview .mdash-qr-card { box-shadow: 0 1px 4px rgba(0,0,0,.18); border-radius: 2px; }
+.mdash-admin .mdash-qr-preview .mdash-qr-card p { margin-left: 0; margin-right: 0; }
+.mdash-admin .mdash-qr-test { max-width: 105mm; margin-top: 10px; }
+.mdash-admin .mdash-qr-files .button-link { vertical-align: baseline; }
+.mdash-admin .mdash-qr-lang { margin-right: 14px; }
+/* Menu tab: meat and fish origin, with a German preview beside it on wide screens. */
+.mdash-admin .mdash-origin-card { margin-top: 16px; }
+.mdash-admin .mdash-origin-layout { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px 40px; }
+.mdash-admin .mdash-origin-admin { border-collapse: collapse; margin: 8px 0 4px; }
+.mdash-admin .mdash-origin-admin th { padding: 4px 12px 4px 0; text-align: left; font-weight: 600; }
+.mdash-admin .mdash-origin-admin td { padding: 4px 12px 4px 0; vertical-align: top; }
+.mdash-admin .mdash-origin-admin td label { white-space: nowrap; line-height: 30px; }
+.mdash-admin .mdash-origin-own { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.mdash-admin .mdash-origin-own[hidden] { display: none; }
+.mdash-admin .mdash-origin-own input { width: 190px; }
+.mdash-admin .mdash-origin-preview { margin-top: 8px; padding: 14px 18px; background: #f6f7f7; border-radius: 6px; }
+.mdash-admin .mdash-origin-preview h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #50575e; }
+.mdash-admin .mdash-origin-preview th, .mdash-admin .mdash-origin-preview td { padding: 3px 18px 3px 0; text-align: left; vertical-align: top; }
+@media (max-width: 782px) {
+  .mdash-admin .mdash-origin-admin thead { display: none; }
+  .mdash-admin .mdash-origin-admin tr { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-bottom: 14px; }
+  .mdash-admin .mdash-origin-admin td { padding: 0; }
+  .mdash-admin .mdash-origin-admin td:nth-child(2) { grid-column: 1 / -1; }
+  .mdash-admin .mdash-origin-admin td:nth-child(2) input { width: 100%; }
+}
+/* MenuDash Specials' lunch card: the "Served" line fits the card. */
+.mdash-admin .mdash-lu-served-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 12px 0 0; }
+.mdash-admin .mdash-lu-served-form label { font-weight: 600; }
+.mdash-admin .mdash-lu-served-form input { flex: 1 1 140px; min-width: 0; width: auto; }
+.mdash-admin .mdash-also { margin: 4px 0 8px 18px; list-style: disc; }
+.mdash-admin .mdash-drop-types { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; color: #1d2327; }
+.mdash-admin .mdash-drop .mdash-drop-types + .mdash-drop-name { margin-top: 2px; }
+.mdash-admin .mdash-by { margin: 24px 0 8px; color: #787c82; font-size: 12px; }
+.mdash-admin .mdash-by a { color: inherit; }

@@ -18,8 +18,9 @@ $chips = array(
 $marks = array( 'spicy', 'vegan', 'vegetarian', 'gf' ); // Recommended sits in front of the number instead.
 $ui    = 'all' === $view ? 'de' : $view;
 ?>
-<div class="menudash" data-lang="<?php echo esc_attr( $view ); ?>" data-ui="<?php echo esc_attr( $ui ); ?>" data-offset="<?php echo esc_attr( $offset ); ?>"<?php echo 'auto' !== $offset ? ' style="--mdash-top:' . esc_attr( $offset ) . 'px"' : ''; ?>>
+<div class="menudash" id="menudash-menu" data-jump="menu" data-lang="<?php echo esc_attr( $view ); ?>" data-ui="<?php echo esc_attr( $ui ); ?>" data-offset="<?php echo esc_attr( $offset ); ?>"<?php echo 'auto' !== $offset ? ' style="--mdash-top:' . esc_attr( $offset ) . 'px"' : ''; ?>>
 <?php echo mdash_lang_script(); // phpcs:ignore -- fixed markup ?>
+<span class="mdash-jump-label" hidden data-nav="<?php echo esc_attr( mdash_ui_plain( 'on_page' ) ); ?>" data-top="<?php echo esc_attr( mdash_ui_plain( 'to_top' ) ); ?>"><?php echo mdash_ui( 'menu_title' ); // phpcs:ignore -- fixed strings ?></span>
 <?php
 // The diet icons, once per page, drawn below with <use>.
 echo mdash_sprite(); // phpcs:ignore -- built from our own sprite and cleaned SVG
@@ -85,9 +86,22 @@ foreach ( $menu['sections'] as $sec ) {
 
 <footer class="mdash-foot">
 	<?php
-	$s = mdash_strings();
+	$s     = mdash_strings();
+	$phone = function_exists( 'mdash_detail' ) ? trim( (string) mdash_detail( 'phone' ) ) : ''; // Restaurant tab, if the add-on is on.
+	$call  = '' !== $phone && '' !== mdash_tel( $phone ) ? '<a href="tel:' . esc_attr( mdash_tel( $phone ) ) . '">' . esc_html( $phone ) . '</a>' : '';
+	$origin = mdash_origin()['menu']; // Meat and fish origin under the allergy note, when switched on.
 	foreach ( array( 'de', 'en', 'zh' ) as $l ) {
-		printf( '<p class="mdash-t" data-l="all %1$s" lang="%2$s">%3$s %4$s</p>', esc_attr( $l ), esc_attr( mdash_html_lang( $l ) ), esc_html( $s['prices'][ $l ] ), esc_html( $s['allergy'][ $l ] ) );
+		$note  = $call ? str_replace( '%s', $call, esc_html( $s['allergy_phone'][ $l ] ) ) : esc_html( $s['allergy'][ $l ] );
+		$table = $origin ? mdash_origin_table( $l ) : '';
+		printf(
+			'<div class="mdash-t" data-l="all %1$s" lang="%2$s"><p>%3$s</p><p class="mdash-allergy"><strong>%4$s</strong><br>%5$s</p>%6$s</div>',
+			esc_attr( $l ),
+			esc_attr( mdash_html_lang( $l ) ),
+			esc_html( $s['prices'][ $l ] ),
+			esc_html( $s['allergy_title'][ $l ] ),
+			$note, // phpcs:ignore -- escaped above
+			'' !== $table ? '<div class="mdash-origin"><p class="mdash-origin-title"><strong>' . esc_html( $s['origin_title'][ $l ] ) . '</strong></p>' . $table . '</div>' : '' // phpcs:ignore -- escaped in mdash_origin_table()
+		);
 	}
 	?>
 </footer>

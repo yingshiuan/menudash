@@ -4,7 +4,7 @@ A restaurant menu for a WordPress site, kept in a spreadsheet. The restaurant up
 
 The **colours** and **diet icons** are chosen on the same dashboard page, so the menu matches the restaurant.
 
-**Add-ons** (sold separately, see [below](#add-ons)) keep the rest of what guests check on a restaurant's site up to date from the same page: restaurant details and opening hours with an "open now" badge, a holiday notice, today's specials, and gift card orders by e-mail.
+**Add-ons** (sold separately, see [below](#add-ons)) keep the rest of what guests check on a restaurant's site up to date from the same page: restaurant details and opening hours with an "open now" badge, a holiday notice, today's specials and the lunch menu of the week, and gift card orders by e-mail.
 
 | Phone | Desktop |
 |---|---|
@@ -34,7 +34,11 @@ The **colours** and **diet icons** are chosen on the same dashboard page, so the
 5. **Optionally, use its own diet icons:** an SVG or a transparent PNG per mark, with **Back to default** to undo.
    - SVGs are cleaned to plain shapes: scripts, event handlers, links, embedded HTML, external images and DOCTYPE/entity tricks are all removed or refused. `dev/svg-test.php` covers this.
 
-The dashboard page **MenuDash** has two tabs, each also in the sidebar: **Menu** (menu CSV, photos, check) and **Design** (colours, diet icons). Add-ons add their own tabs.
+6. **Meat and fish origin:** a short list (product + countries, or "please ask our staff"), as Swiss restaurants must give in writing. Products and about 50 countries are translated into the three menu languages; it shows under the menu and anywhere with `[menudash_origin]` (`lang="de|en|zh"`, `title="no"`).
+7. **Several boxes on one page:** with the Specials add-on's lunch menu and specials above the menu, MenuDash adds a row of jump buttons (with one language switch) above the first box, and a back-to-top button while the guest reads the long menu (above a theme's fixed bottom bar, if there is one).
+8. **QR code and table cards:** a QR code to the menu page, printed as four A6 table cards on an A4 sheet or as one A4 poster, with the logo, a heading and a tip in the chosen menu languages (built in, or the owner's own), the web address, an optional message and, when filled in, the Wi-Fi name and password with a Wi-Fi code phones join by scanning (the card's own words in the chosen menu languages). The code alone downloads as SVG or PNG. The codes are drawn in the browser (bundled [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator), MIT), so no outside service is involved.
+
+The dashboard page **MenuDash** has three tabs, each also in the sidebar: **Menu** (menu CSV, photos, check), **QR code** (QR code, table cards) and **Colours & icons** (colours, diet icons). Add-ons add their own tabs.
 
 | Dashboard → MenuDash | The check after an upload |
 |---|---|
@@ -63,7 +67,9 @@ Requirements: WordPress 6.3 or newer, PHP 7.4 or newer.
 | `[menudash lang="de"]` | First-time guests see only German (or `en`, `zh`); they can still switch. |
 | `[menudash offset="80"]` | Space above the sticky bar in pixels, instead of measuring the theme's header. |
 
-## The CSV
+## The CSV (or Excel file)
+
+The menu is a CSV file, or an Excel workbook (.xlsx) whose sheet named **menu** holds the same columns (sheets **specials** and **lunch** feed the Specials add-on in the same upload). Numbers files must be exported first (*File → Export To → Excel*). Excel files are read defensively: only the sheet parts, each size-capped; no XML entities; no paths outside the workbook; at most 3,000 rows × 60 columns; formulas are not run (their saved values are used); macro workbooks are refused; the workbook itself isn't stored, only CSV made from its sheets. See `menudash/includes/xlsx.php` and `dev/xlsx-test.php`.
 
 One header row. Columns are found by their **title**, so their order doesn't matter, and extra columns are ignored.
 
@@ -112,7 +118,7 @@ Rows 2 and 5 are category headings, and the others are dishes. The whole file is
 }
 ```
 
-**Texts on the page:** the footer's currency, the allergy note and the button labels are in three languages (the add-ons' texts too). Change them with the `menudash_strings` filter:
+**Texts on the page:** the footer's currency, the allergy note and the button labels are in three languages (the add-ons' texts too). The QR card's own words are `qr_title`, `qr_tip`, `wifi` and `password`. The allergy note is `allergy_title` plus `allergy`, or `allergy_phone` (with `%s` for the phone number, a tap-to-call link) when MenuDash Restaurant has a phone number. Change them with the `menudash_strings` filter:
 
 ```php
 add_filter( 'menudash_strings', function ( $s ) {
@@ -150,10 +156,10 @@ Three add-on plugins build on MenuDash. Each adds its own tab to the MenuDash pa
 | Add-on | What it adds |
 |---|---|
 | **MenuDash Restaurant** | Restaurant details entered once (address, phone, e-mail, getting here, delivery and reservation links, social links); opening hours with time pickers; a holiday notice that appears and disappears by itself; an "open now" badge; blocks for block themes (Open now, Opening hours, Contact, Reserve / Order / Call / Directions buttons); the data Google shows about the restaurant. |
-| **MenuDash Specials** | Today's specials from a second, short CSV, in the same style and languages as the menu, e.g. on the home page. |
+| **MenuDash Specials** | Today's specials and the lunch menu of the week (today's lunch, or the whole week), each from its own short CSV, in the same style and languages as the menu. |
 | **MenuDash Gift Cards** | A gift card order form: guests choose amounts, pickup or post, and the order arrives by e-mail. Pause switch, test e-mail, spam protection (optionally with Cloudflare Turnstile). |
 
-The add-ons are not in this repository. They are set up for restaurants by **insdash**, together with MenuDash and, if wanted, the free [MenuDash Theme](https://github.com/yingshiuan/menudash-theme). Contact: [github.com/yingshiuan](https://github.com/yingshiuan).
+The add-ons are not in this repository. They are set up for restaurants by **insdash**, together with MenuDash and, if wanted, the free [MenuDash Theme](https://github.com/yingshiuan/menudash-theme). Contact: [insdash.ch](https://insdash.ch).
 
 Without an add-on, its shortcodes (e.g. `[menudash_specials]` in a theme) show nothing, so a theme made for all of them still works with MenuDash alone.
 
@@ -163,4 +169,5 @@ GPL-2.0-or-later. See [LICENSE](LICENSE).
 
 **Credits:**
 - **DM Sans** and **Abril Fatface** fonts, under the SIL Open Font License. Licence files are in `menudash/assets/fonts/`.
+- **QR codes:** `menudash/assets/vendor/qrcode.js` is qrcode-generator 1.4.4 by Kazuhiko Arase, under the MIT license (in the file's header).
 - **Default diet icons:** four are adapted from Google Material Symbols (recommended, spicy, vegetarian, vegan), under the Apache License 2.0. See `menudash/assets/ICONS-LICENSE.txt`. The gluten-free icon was drawn by insdash. Any icon can be replaced under *MenuDash → Diet icons*.

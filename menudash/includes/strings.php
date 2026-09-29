@@ -37,7 +37,23 @@ function mdash_strings() {
 		'close'      => array( 'de' => 'Schliessen', 'en' => 'Close', 'zh' => '關閉' ),
 		'photo'      => array( 'de' => 'Foto', 'en' => 'Photo', 'zh' => '照片' ),
 		'prices'     => array( 'de' => 'Alle Preise in CHF inkl. MwSt.', 'en' => 'All prices in CHF incl. VAT.', 'zh' => '所有價格以瑞士法郎計，已含增值稅。' ),
-		'allergy'    => array( 'de' => 'Fragen Sie unser Team nach Allergenen.', 'en' => 'Please ask our team about allergens.', 'zh' => '如有食物過敏，請告知我們的員工。' ),
+		// The allergy note under the menu; %s is the phone number (Restaurant tab), and without
+		// one the note ends with the staff.
+		'allergy_title' => array( 'de' => 'Allergiehinweis', 'en' => 'Allergy information', 'zh' => '過敏原資訊' ),
+		'allergy'    => array( 'de' => 'Für Informationen zu Allergenen in den einzelnen Gerichten wenden Sie sich bitte an unsere Mitarbeitenden vor Ort.', 'en' => 'For information about allergens in our dishes, please ask our staff.', 'zh' => '如需了解各菜式的過敏原資訊，請向現場員工查詢。' ),
+		'allergy_phone' => array( 'de' => 'Für Informationen zu Allergenen in den einzelnen Gerichten wenden Sie sich bitte an unsere Mitarbeitenden vor Ort oder unter %s.', 'en' => 'For information about allergens in our dishes, please ask our staff or call %s.', 'zh' => '如需了解各菜式的過敏原資訊，請向現場員工查詢，或致電 %s。' ),
+		// Where meat and fish come from (MenuDash → Menu → Meat and fish origin).
+		// The jump buttons above several MenuDash boxes on one page, and the back-to-top button.
+		'menu_title'   => array( 'de' => 'Speisekarte', 'en' => 'Menu', 'zh' => '菜單' ),
+		'on_page'      => array( 'de' => 'Auf dieser Seite', 'en' => 'On this page', 'zh' => '本頁內容' ),
+		'to_top'       => array( 'de' => 'Nach oben', 'en' => 'Back to top', 'zh' => '回到頂部' ),
+		'origin_title' => array( 'de' => 'Herkunft von Fleisch und Fisch', 'en' => 'Origin of meat and fish', 'zh' => '肉類及海鮮產地' ),
+		'origin_ask'   => array( 'de' => 'Fragen Sie bitte unser Personal', 'en' => 'Please ask our staff', 'zh' => '請向我們的員工查詢' ),
+		// The printed QR table card (MenuDash → QR code).
+		'wifi'       => array( 'de' => 'WLAN', 'en' => 'Wi-Fi', 'zh' => '無線網路' ),
+		'password'   => array( 'de' => 'Passwort', 'en' => 'Password', 'zh' => '密碼' ),
+		'qr_title'   => array( 'de' => 'Speisekarte scannen', 'en' => 'Scan for our menu', 'zh' => '掃描查看菜單' ),
+		'qr_tip'     => array( 'de' => 'Sprache wählen und nach Vegetarisch, Vegan, Glutenfrei oder Scharf filtern.', 'en' => 'Choose your language and filter by vegetarian, vegan, gluten-free or spicy.', 'zh' => '可選擇語言，並按素食、純素、無麩質或辣度篩選。' ),
 		'empty'      => array( 'de' => 'Die Speisekarte wird gerade aktualisiert.', 'en' => 'The menu is being updated.', 'zh' => '菜單更新中。' ),
 	) );
 	return $strings;

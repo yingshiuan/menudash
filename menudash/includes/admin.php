@@ -30,10 +30,10 @@ function mdash_admin_menu() {
 
 /** Page slug => tab name. The first is the page the sidebar's MenuDash opens. */
 function mdash_admin_tabs() {
-	// Add-ons add their tabs here (MenuDash Restaurant, Gift Cards); Design stays last.
+	// Add-ons add their tabs here (MenuDash Restaurant, Gift Cards); Colours & icons stays last.
 	$tabs = (array) apply_filters( 'menudash_admin_tabs', array( 'menudash' => 'Menu' ) );
 	unset( $tabs['menudash-design'] );
-	$tabs['menudash-design'] = 'Design';
+	$tabs['menudash-design'] = 'Colours & icons'; // Not "Design": that is WordPress's own Appearance menu in German.
 	return $tabs;
 }
 
@@ -89,6 +89,7 @@ function mdash_back( $result ) {
 		'restored' => ! empty( $result['restored'] ),
 		'message'  => isset( $result['message'] ) ? $result['message'] : null, // Set for icon and add-on uploads.
 		'kind'     => isset( $result['kind'] ) ? $result['kind'] : '',
+		'also'     => isset( $result['also'] ) ? array_map( 'strval', (array) $result['also'] ) : array(), // Other sheets of an Excel upload.
 		'sections' => empty( $result['menu'] ) ? 0 : count( $result['menu']['sections'] ),
 		'dishes'   => empty( $result['menu'] ) ? 0 : $result['menu']['dishes'],
 	);
@@ -107,18 +108,101 @@ function mdash_handle_csv() {
 		$code = $f ? (int) $f['error'] : UPLOAD_ERR_NO_FILE;
 		mdash_back( array( 'ok' => false, 'error' => UPLOAD_ERR_NO_FILE === $code ? 'Choose the CSV file first.' : "The upload failed (code $code)." ) );
 	}
+	$name = sanitize_text_field( wp_unslash( $f['name'] ) );
+	$ext  = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+	if ( 'numbers' === $ext ) {
+		mdash_back( array( 'ok' => false, 'error' => 'A Numbers file can\'t be read by a website. In Numbers, choose File → Export To → Excel (keeps the sheets menu, specials, lunch) or CSV, and upload that.' ) );
+	}
+	if ( in_array( $ext, array( 'xls', 'xlsm', 'xlsb', 'ods' ), true ) ) {
+		mdash_back( array( 'ok' => false, 'error' => 'Save the spreadsheet as an Excel workbook (.xlsx) or as CSV, and upload that.' ) );
+	}
+	if ( 'xlsx' === $ext ) {
+		mdash_handle_xlsx( $f['tmp_name'], $name, (int) $f['size'] );
+	}
 	if ( $f['size'] > 2 * MB_IN_BYTES ) {
 		mdash_back( array( 'ok' => false, 'error' => 'That file is over 2 MB; a menu CSV is about 20 KB. Is it the right file?' ) );
 	}
-	$name   = sanitize_text_field( wp_unslash( $f['name'] ) );
-	$result = mdash_load_csv( $f['tmp_name'], $name );
+	mdash_back( mdash_apply_menu_csv( $f['tmp_name'], $name ) + array( 'name' => $name ) );
+}
+
+/** Parse a menu CSV, and when it is fine make it the live menu and keep it for "Put back". */
+function mdash_apply_menu_csv( $path, $name ) {
+	$result = mdash_load_csv( $path, $name );
 	if ( $result['ok'] ) {
-		mdash_store_csv( $f['tmp_name'], $name );
+		mdash_store_csv( $path, $name );
 		$menu                   = mdash_get_menu();
 		$menu['source']['file'] = mdash_csv_files()[0];
 		update_option( MDASH_OPTION, $menu, false );
 	}
-	mdash_back( $result + array( 'name' => $name ) );
+	return $result;
+}
+
+/**
+ * An Excel workbook: the sheet named menu becomes the menu; sheets named specials and lunch
+ * go to MenuDash Specials (filter menudash_xlsx_sheets); other sheets are listed as not used.
+ * Each sheet is turned into CSV text and read by the same parser as an uploaded CSV, and that
+ * CSV (never the workbook) is what is kept for "Put back". See includes/xlsx.php.
+ */
+function mdash_handle_xlsx( $tmp, $name, $size ) {
+	if ( $size > 10 * MB_IN_BYTES ) {
+		mdash_back( array( 'ok' => false, 'error' => 'That file is over 10 MB; a menu workbook is well under 1 MB. Is it the right file? (Pictures inside the workbook make it big; they are not needed.)' ) );
+	}
+	$x = mdash_xlsx_read( $tmp );
+	if ( ! $x['ok'] ) {
+		mdash_back( array( 'ok' => false, 'error' => $x['error'] ) );
+	}
+	$found  = array(); // kind => array( 'sheet' => …, 'rows' => … ).
+	$unused = array();
+	foreach ( $x['sheets'] as $sheet => $rows ) {
+		if ( ! $rows || preg_match( '/^export summary$/i', $sheet ) ) {
+			continue; // Empty, or the summary page Numbers adds to every export.
+		}
+		$kind = mdash_sheet_kind( $sheet );
+		if ( '' !== $kind && ! isset( $found[ $kind ] ) ) {
+			$found[ $kind ] = array( 'sheet' => $sheet, 'rows' => $rows );
+		} else {
+			$unused[] = $sheet;
+		}
+	}
+	// A workbook with a single sheet, whatever its name, is the menu.
+	if ( ! $found && 1 === count( $unused ) ) {
+		$found['menu'] = array( 'sheet' => $unused[0], 'rows' => $x['sheets'][ $unused[0] ] );
+		$unused        = array();
+	}
+	if ( ! $found ) {
+		mdash_back( array( 'ok' => false, 'error' => 'No sheet called menu, specials or lunch in this workbook (found: ' . implode( ', ', array_keys( $x['sheets'] ) ) . '). Rename the sheets in Numbers or Excel, then export again.' ) );
+	}
+	// Each sheet as a CSV file of its own, for the parser and for "Put back".
+	$files = array();
+	foreach ( $found as $kind => $s ) {
+		$path = wp_tempnam( 'menudash-' . $kind );
+		file_put_contents( $path, mdash_rows_to_csv( mdash_xlsx_from_header( $s['rows'] ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$files[ $kind ] = array( 'path' => $path, 'sheet' => $s['sheet'], 'label' => $name . ' › ' . $s['sheet'] );
+	}
+	$also = array();
+	$rest = array_diff_key( $files, array( 'menu' => true ) );
+	if ( $rest ) {
+		/**
+		 * The workbook's other sheets, for add-ons: kind => array( path, sheet, label ). Return
+		 * kind => one line for the report ("Specials (sheet specials): 8 dishes are on the site").
+		 */
+		$done = (array) apply_filters( 'menudash_xlsx_sheets', array(), $rest );
+		foreach ( $rest as $kind => $s ) {
+			$also[] = isset( $done[ $kind ] ) ? (string) $done[ $kind ] : sprintf( 'Sheet "%s" not used: it needs the MenuDash Specials add-on.', $s['sheet'] );
+		}
+	}
+	foreach ( $unused as $sheet ) {
+		$also[] = sprintf( 'Sheet "%s" not used (MenuDash reads the sheets menu, specials and lunch).', $sheet );
+	}
+	if ( isset( $files['menu'] ) ) {
+		$result = mdash_apply_menu_csv( $files['menu']['path'], $files['menu']['label'] ) + array( 'name' => $files['menu']['label'] );
+	} else {
+		$result = array( 'ok' => true, 'kind' => 'Excel file', 'message' => 'No sheet called menu, so the menu was not changed.' );
+	}
+	foreach ( $files as $s ) {
+		@unlink( $s['path'] ); // phpcs:ignore
+	}
+	mdash_back( $result + array( 'also' => $also ) );
 }
 
 function mdash_handle_colors() {
@@ -328,6 +412,9 @@ function mdash_admin_page() {
 			<?php if ( isset( $report['message'] ) ) : ?>
 				<div class="notice <?php echo $report['ok'] ? 'notice-success' : ( $report['message'] ? 'notice-warning' : 'notice-error' ); ?>">
 					<p><strong><?php echo esc_html( $report['kind'] ? $report['kind'] : 'Diet icons' ); ?>:</strong> <?php echo esc_html( trim( $report['message'] . ' ' . $report['error'] ) ); ?></p>
+					<?php if ( ! empty( $report['also'] ) ) : ?>
+						<ul class="mdash-also"><?php foreach ( $report['also'] as $w ) : ?><li><?php echo esc_html( $w ); ?></li><?php endforeach; ?></ul>
+					<?php endif; ?>
 				</div>
 			<?php else : ?>
 			<div class="notice <?php echo $report['ok'] ? ( empty( $report['warnings'] ) ? 'notice-success' : 'notice-warning' ) : 'notice-error'; ?>">
@@ -340,6 +427,10 @@ function mdash_admin_page() {
 				<?php if ( ! empty( $report['warnings'] ) ) : ?>
 					<p>Please check:</p>
 					<ul class="mdash-warn"><?php foreach ( $report['warnings'] as $w ) : ?><li><?php echo esc_html( $w ); ?></li><?php endforeach; ?></ul>
+				<?php endif; ?>
+				<?php if ( ! empty( $report['also'] ) ) : ?>
+					<p>From the same file:</p>
+					<ul class="mdash-also"><?php foreach ( $report['also'] as $w ) : ?><li><?php echo esc_html( $w ); ?></li><?php endforeach; ?></ul>
 				<?php endif; ?>
 			</div>
 			<?php endif; ?>
@@ -359,18 +450,24 @@ function mdash_admin_page() {
 
 		<div class="mdash-cards">
 			<section class="mdash-card">
-				<h2>1. Menu file (CSV)</h2>
-				<p>Export your menu spreadsheet as CSV (UTF-8, to keep the Chinese), then upload it here. It replaces the whole menu.</p>
+				<h2>1. Menu</h2>
+				<div class="mdash-card-howto">
+				<p>Your menu spreadsheet, exported as <strong>Excel</strong> (.xlsx; from Numbers: File → Export To → Excel) or as <strong>CSV</strong> (UTF-8, to keep the Chinese). It replaces the whole menu. In an Excel file, the sheet named <em>menu</em> is the menu<?php echo has_filter( 'menudash_xlsx_sheets' ) ? ', and sheets named <em>specials</em> and <em>lunch</em> update cards 3 and 4 in the same upload' : ''; ?>.</p>
+				</div>
+				<div class="mdash-card-upload">
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data" class="mdash-upload-row">
 					<input type="hidden" name="action" value="menudash_csv">
 					<?php wp_nonce_field( 'menudash_csv' ); ?>
 					<label class="mdash-drop" data-drop>
-						<input type="file" name="csv" class="mdash-file" accept=".csv,text/csv,text/plain" required>
-						<span class="button button-small">Choose CSV</span>
+						<input type="file" name="csv" class="mdash-file" accept=".csv,text/csv,text/plain,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+						<span class="button button-small">Choose file</span>
+						<span class="mdash-drop-types">CSV or Excel (.xlsx)</span>
 						<span class="mdash-drop-name" data-empty="or drop it here">or drop it here</span>
 					</label>
 					<div class="mdash-upload-btns"><?php submit_button( 'Upload menu', 'primary', 'submit', false ); ?></div>
 				</form>
+				</div>
+				<div class="mdash-card-status">
 				<?php if ( $menu ) : ?>
 					<p class="mdash-now">Live now: <strong><?php echo esc_html( $menu['source']['name'] ); ?></strong>, uploaded <?php echo esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $menu['source']['time'] ) ); ?> — <?php echo (int) count( $menu['sections'] ); ?> categories, <?php echo (int) $menu['dishes']; ?> dishes.</p>
 				<?php else : ?>
@@ -394,21 +491,29 @@ function mdash_admin_page() {
 						<?php endforeach; ?>
 					</details>
 				<?php endif; ?>
+				</div>
 			</section>
 
 			<section class="mdash-card">
 				<h2>2. Dish photos</h2>
-				<p>Select all the photos at once (⌘A in the folder). Name each one after the dish number, e.g. <code>22_Dumplings.png</code>, or exactly like the dish when it has no number, e.g. <code>Jasmine Rice.png</code>. A photo with the same name as an earlier one replaces it.</p>
-				<label class="mdash-drop">
-					<input type="file" id="mdash-photos" accept="image/png,image/jpeg,image/webp" multiple>
-					<span>Choose photos or drop them here</span>
+				<div class="mdash-card-howto">
+				<p>Select all the photos at once (⌘A in the folder); they upload straight away. Name each one after the dish number, e.g. <code>22_Dumplings.png</code>, or exactly like the dish when it has no number, e.g. <code>Jasmine Rice.png</code>. A photo with the same name as an earlier one replaces it. PNG with a transparent background looks best; big files are shrunk in the browser first (this server accepts up to <?php echo esc_html( mdash_bytes( wp_max_upload_size() ) ); ?> per file).</p>
+				</div>
+				<div class="mdash-card-upload">
+				<label class="mdash-drop mdash-drop-photos">
+					<input type="file" id="mdash-photos" class="mdash-file" accept="image/png,image/jpeg,image/webp" multiple>
+					<span class="button button-small">Choose photos</span>
+					<span class="mdash-drop-types">PNG, JPG or WebP</span>
+					<span class="mdash-drop-name">or drop them here</span>
 				</label>
+				</div>
+				<div class="mdash-card-status">
 				<div id="mdash-progress" hidden>
 					<div class="mdash-meter"><span></span></div>
 					<p class="mdash-status"></p>
 					<ol class="mdash-log"></ol>
 				</div>
-				<p class="description">PNG with a transparent background looks best. Big files are shrunk in the browser before upload (this server accepts up to <?php echo esc_html( mdash_bytes( wp_max_upload_size() ) ); ?> per file).</p>
+				</div>
 			</section>
 
 			<?php
@@ -423,7 +528,12 @@ function mdash_admin_page() {
 		?>
 		<?php if ( $menu || apply_filters( 'menudash_admin_show_check', false ) ) : ?>
 			<section class="mdash-card mdash-check">
-				<h2><?php echo has_action( 'menudash_admin_menu_cards' ) ? '4' : '3'; ?>. Check</h2>
+				<?php
+				// Numbered after the add-ons' cards (Specials: two); an add-on that doesn't say counts one.
+				$extra = (int) apply_filters( 'menudash_admin_menu_card_count', 0 );
+				$extra = ! $extra && has_action( 'menudash_admin_menu_cards' ) ? 1 : $extra;
+				?>
+				<h2><?php echo (int) ( 3 + $extra ); ?>. Check</h2>
 				<p><?php echo (int) count( $photos ); ?> photos uploaded.</p>
 
 				<?php if ( $menu && ( $unused || $match['spare'] ) ) : ?>
@@ -450,6 +560,7 @@ function mdash_admin_page() {
 				<?php endif; ?>
 			</section>
 		<?php endif; ?>
+		<?php mdash_origin_admin_card(); ?>
 		<details class="mdash-card mdash-diag">
 			<summary>Server details</summary>
 			<?php
@@ -527,6 +638,7 @@ function mdash_admin_page() {
 			</form>
 		</section>
 		<?php endif; ?>
+		<p class="mdash-by">MenuDash by <a href="https://insdash.ch" target="_blank" rel="noopener">insdash</a> · add-ons, set-up and help</p>
 		<?php echo mdash_sprite(); // phpcs:ignore -- built from our own sprite and cleaned SVG ?>
 	</div>
 	<?php

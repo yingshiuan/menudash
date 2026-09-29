@@ -244,6 +244,18 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 }
 .menudash .mdash-reset:hover { background: var(--mdash-accent); color: var(--mdash-on-accent); }
 .menudash .mdash-foot { margin-top: 28px; color: var(--mdash-muted); font-size: 13px; line-height: 1.5; }
+.menudash .mdash-foot p { margin: 0 0 6px; }
+.menudash .mdash-foot > div + div { margin-top: 14px; }
+.menudash .mdash-allergy strong { color: var(--mdash-ink); }
+.menudash .mdash-allergy a { color: inherit; text-decoration: underline; white-space: nowrap; }
+.menudash .mdash-origin { margin-top: 10px; }
+.menudash .mdash-origin-title strong { color: var(--mdash-ink); }
+/* Meat and fish origin: also used by [menudash_origin] on any page. */
+.mdash-origin-table { border-collapse: collapse; margin: 4px 0 0; font-size: inherit; }
+.mdash-origin-table th, .mdash-origin-table td { padding: 2px 16px 2px 0; border: 0; text-align: left; vertical-align: top; }
+.mdash-origin-table th { font-weight: 600; white-space: nowrap; }
+.menudash-origin .mdash-origin + .mdash-origin { margin-top: 1.2em; }
+.menudash-origin .mdash-origin-title { margin: 0 0 .3em; }
 .menudash .mdash-empty-menu { padding: 40px 0; text-align: center; color: var(--mdash-muted); }
 
 /* ---------- Photo, large ---------- */
@@ -273,3 +285,20 @@ body.admin-bar .menudash { --mdash-top: 32px; }
   .menudash .mdash-langs, .menudash .mdash-bar, .menudash .mdash-dlg { display: none; }
   .menudash .mdash-dish { break-inside: avoid; }
 }
+
+/* ---------- Jump buttons above several MenuDash boxes, and back to top ---------- */
+.menudash.mdash-jumpnav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: 0 0 20px; padding: 0; background: transparent; }
+.mdash-jumpnav .mdash-jump-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.mdash-jumpnav .mdash-jump-link {
+  display: inline-flex; align-items: center; gap: .35em; padding: 8px 16px; border: 1.5px solid var(--mdash-accent);
+  border-radius: 999px; color: var(--mdash-accent); font-size: 14px; font-weight: 700; text-decoration: none; background: var(--mdash-paper, transparent);
+}
+.mdash-jumpnav .mdash-jump-link:hover, .mdash-jumpnav .mdash-jump-link:focus-visible { background: var(--mdash-accent); color: var(--mdash-on-accent); }
+.mdash-jumpnav .mdash-langs { margin: 0 0 0 auto; }
+.mdash-totop {
+  position: fixed; right: 16px; bottom: 16px; z-index: 60; width: 46px; height: 46px; border: 0; border-radius: 50%;
+  background: var(--mdash-accent, #A31E2C); color: var(--mdash-on-accent, #fff); font-size: 22px; line-height: 1; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(43, 29, 26, .25);
+}
+.mdash-totop[hidden] { display: none; }
+@media print { .mdash-jumpnav, .mdash-totop { display: none !important; } }

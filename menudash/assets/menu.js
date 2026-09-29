@@ -87,6 +87,17 @@
     root.mdashSetLang = setLang;
     setLang(root.getAttribute("data-lang"), false);
 
+    /* ---------- Lunch menu: "See the whole week" opens the folded days in place ---------- */
+    var more = root.querySelector(".mdash-lu-more");
+    if (more) {
+      more.hidden = false;
+      more.addEventListener("click", function () {
+        var open = !root.classList.toggle("mdash-lu-folded");
+        more.setAttribute("aria-expanded", String(open));
+        if (!open && root.getBoundingClientRect().top < 0) scrollToEl(root); // Back to today, not left mid-week.
+      });
+    }
+
     /* ---------- Diet filters ----------
        Every pressed chip must match (AND). Each dish lists its tokens in data-f:
        pick, veg (vegetarian or vegan), vegan, gf, and spicy or mild.
@@ -281,11 +292,105 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitNames(); measure(); spy(); });
   }
 
+  /* ---------- Fixed page parts (theme header, admin bar, phone action bar) ----------
+     How far fixed or sticky elements outside MenuDash cover the top and the bottom edge,
+     so jumps land below a sticky header and the back-to-top button sits above a bottom bar. */
+  function coveredAt(y, fromTop) {
+    var edge = fromTop ? 0 : innerHeight;
+    var els = document.elementsFromPoint(innerWidth / 2, y);
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].closest(".menudash, .mdash-totop")) continue;
+      for (var e = els[i]; e && e !== document.body && e !== document.documentElement; e = e.parentElement) {
+        var pos = getComputedStyle(e).position;
+        if (pos === "fixed" || pos === "sticky") {
+          var r = e.getBoundingClientRect();
+          if (r.height < innerHeight / 3) edge = fromTop ? Math.max(edge, r.bottom) : Math.min(edge, r.top);
+          break;
+        }
+      }
+    }
+    return fromTop ? edge : innerHeight - edge;
+  }
+  function scrollToEl(el) {
+    var smooth = !(matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+    var y = el.getBoundingClientRect().top + scrollY - coveredAt(1, true) - 12;
+    scrollTo({ top: Math.max(0, y), behavior: smooth ? "smooth" : "auto" });
+  }
+
+  /* ---------- Jump buttons: [Mittagsmenü] [Heute empfohlen] [Speisekarte] ----------
+     With two or more MenuDash boxes on the page (lunch, specials, menu), a row of buttons
+     above the first one leads to each, with the language switch beside them. Each box brings
+     its own label (.mdash-jump-label, in the three languages); the row is itself a MenuDash
+     box, so it follows the language like the others. */
+  function jumpNav() {
+    var boxes = Array.prototype.filter.call(document.querySelectorAll(".menudash[data-jump]"), function (b) {
+      return b.querySelector(".mdash-jump-label");
+    });
+    if (boxes.length < 2) return null;
+    var first = boxes[0];
+    var nav = document.createElement("nav");
+    nav.className = "menudash mdash-jumpnav";
+    nav.setAttribute("data-lite", "");
+    nav.setAttribute("data-lang", first.getAttribute("data-lang") || "all");
+    nav.setAttribute("data-ui", first.getAttribute("data-ui") || "de");
+    var menuLabel = document.querySelector(".menudash[data-jump='menu'] .mdash-jump-label");
+    if (menuLabel && menuLabel.getAttribute("data-nav")) nav.setAttribute("aria-label", menuLabel.getAttribute("data-nav"));
+    var links = document.createElement("div");
+    links.className = "mdash-jump-links";
+    boxes.forEach(function (box) {
+      var a = document.createElement("a");
+      a.className = "mdash-jump-link";
+      a.href = "#" + box.id;
+      a.innerHTML = box.querySelector(".mdash-jump-label").innerHTML + ' <span aria-hidden="true">↓</span>';
+      a.addEventListener("click", function (ev) { ev.preventDefault(); scrollToEl(box); });
+      links.appendChild(a);
+    });
+    nav.appendChild(links);
+    // The language switch of the menu (or of any box), copied: one switch for the whole page.
+    var langs = document.querySelector(".menudash[data-jump='menu'] .mdash-langs") || document.querySelector(".menudash[data-jump] .mdash-langs");
+    if (langs) nav.appendChild(langs.cloneNode(true));
+    first.parentNode.insertBefore(nav, first);
+    init(nav);
+    return nav;
+  }
+
+  /* ---------- Back to top: a small button while reading the long menu ---------- */
+  function backToTop(target) {
+    var menu = document.querySelector(".menudash[data-jump='menu']");
+    var label = menu && menu.querySelector(".mdash-jump-label");
+    if (!menu || !label) return;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "mdash-totop";
+    btn.hidden = true;
+    btn.setAttribute("aria-label", label.getAttribute("data-top") || "↑");
+    btn.innerHTML = '<span aria-hidden="true">↑</span>';
+    // Outside the MenuDash boxes, so it takes the owner's colours from the menu.
+    var cs = getComputedStyle(menu);
+    btn.style.setProperty("--mdash-accent", cs.getPropertyValue("--mdash-accent"));
+    btn.style.setProperty("--mdash-on-accent", cs.getPropertyValue("--mdash-on-accent"));
+    btn.addEventListener("click", function () { scrollToEl(target || menu); });
+    document.body.appendChild(btn);
+    var busy = false;
+    function update() {
+      busy = false;
+      // From one screen into the menu on, until its end.
+      var r = menu.getBoundingClientRect();
+      var show = r.top < -innerHeight * 0.6 && r.bottom > innerHeight * 0.5;
+      if (show) btn.style.bottom = coveredAt(innerHeight - 2, false) + 16 + "px";
+      btn.hidden = !show;
+    }
+    addEventListener("scroll", function () { if (!busy) { busy = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener("resize", update);
+  }
+
   function start() {
     // A box with data-own-js (the gift card form of MenuDash Gift Cards) runs its own script.
     Array.prototype.forEach.call(document.querySelectorAll(".menudash"), function (root) {
       if (!root.hasAttribute("data-own-js")) init(root);
     });
+    var nav = jumpNav();
+    backToTop(nav);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();

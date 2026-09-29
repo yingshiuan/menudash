@@ -201,3 +201,33 @@
     });
   });
 })();
+
+/* Meat and fish origin: "+ Add product" copies the empty row from the <template>, Remove
+   takes a row off (saved when the form is saved), "Other" shows the three name fields. */
+(function () {
+  "use strict";
+  var add = document.getElementById("mdash-origin-add");
+  var tpl = document.getElementById("mdash-origin-new");
+  if (!add || !tpl) return;
+  var body = document.querySelector(".mdash-origin-admin tbody");
+  var max = parseInt(add.getAttribute("data-max"), 10) || 15;
+  var next = body.rows.length;
+  function update() { add.hidden = body.rows.length >= max; }
+  add.addEventListener("click", function () {
+    body.insertAdjacentHTML("beforeend", tpl.innerHTML.replace(/__i__/g, String(next++)));
+    body.rows[body.rows.length - 1].querySelector("select").focus();
+    update();
+  });
+  body.addEventListener("click", function (e) {
+    var rm = e.target.closest && e.target.closest(".mdash-origin-remove");
+    if (!rm) return;
+    rm.closest("tr").remove();
+    update();
+  });
+  body.addEventListener("change", function (e) {
+    if (!e.target.classList.contains("mdash-origin-product")) return;
+    var own = e.target.closest("td").querySelector(".mdash-origin-own");
+    own.hidden = e.target.value !== "own";
+    if (!own.hidden) own.querySelector("input").focus();
+  });
+})();
