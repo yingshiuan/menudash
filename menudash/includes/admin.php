@@ -638,7 +638,7 @@ function mdash_admin_page() {
 			</form>
 		</section>
 		<?php endif; ?>
-		<p class="mdash-by">MenuDash by <a href="https://insdash.ch" target="_blank" rel="noopener">insdash</a> · add-ons, set-up and help</p>
+		<p class="mdash-by">MenuDash by <a href="https://insdash.ch/projects/menudash/" target="_blank" rel="noopener">insdash</a> · add-ons, set-up and help</p>
 		<?php echo mdash_sprite(); // phpcs:ignore -- built from our own sprite and cleaned SVG ?>
 	</div>
 	<?php

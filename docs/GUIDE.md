@@ -94,7 +94,7 @@ Below the uploads is a list of every dish with its photo, or **"no photo"**, plu
 
 ## Meat and fish origin
 
-Under **MenuDash → Menu → Meat and fish origin**, list where your meat and fish come from: choose a product (or **Other** and type its name in each language), type the countries in German or English ("Schweiz, Deutschland"), or tick **Ask our staff**. MenuDash translates products and the usual countries into the three menu languages; a country it doesn't know stays as typed. The list shows under the menu (can be switched off) and on any page with `[menudash_origin]` — `lang="de"` for one language, `title="no"` without the heading.
+Under **MenuDash → Menu → Meat and fish origin**, list where your meat and fish come from: choose a product (or **Other** and type its name in each language), type the countries in German or English ("Schweiz, Deutschland"), or tick **Ask our staff**. MenuDash translates products and the usual countries into the three menu languages; a country it doesn't know stays as typed. The list shows under the menu (can be switched off) and on any page with `[menudash_origin]` — `lang="de"` for one language, `title="no"` without the heading, `allergy="yes"` with the allergy note under the list.
 
 ## QR code and table cards
 

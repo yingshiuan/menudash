@@ -87,11 +87,9 @@ foreach ( $menu['sections'] as $sec ) {
 <footer class="mdash-foot">
 	<?php
 	$s     = mdash_strings();
-	$phone = function_exists( 'mdash_detail' ) ? trim( (string) mdash_detail( 'phone' ) ) : ''; // Restaurant tab, if the add-on is on.
-	$call  = '' !== $phone && '' !== mdash_tel( $phone ) ? '<a href="tel:' . esc_attr( mdash_tel( $phone ) ) . '">' . esc_html( $phone ) . '</a>' : '';
 	$origin = mdash_origin()['menu']; // Meat and fish origin under the allergy note, when switched on.
 	foreach ( array( 'de', 'en', 'zh' ) as $l ) {
-		$note  = $call ? str_replace( '%s', $call, esc_html( $s['allergy_phone'][ $l ] ) ) : esc_html( $s['allergy'][ $l ] );
+		$note  = mdash_allergy_note( $l );
 		$table = $origin ? mdash_origin_table( $l ) : '';
 		printf(
 			'<div class="mdash-t" data-l="all %1$s" lang="%2$s"><p>%3$s</p><p class="mdash-allergy"><strong>%4$s</strong><br>%5$s</p>%6$s</div>',

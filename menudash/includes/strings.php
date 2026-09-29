@@ -39,9 +39,9 @@ function mdash_strings() {
 		'prices'     => array( 'de' => 'Alle Preise in CHF inkl. MwSt.', 'en' => 'All prices in CHF incl. VAT.', 'zh' => '所有價格以瑞士法郎計，已含增值稅。' ),
 		// The allergy note under the menu; %s is the phone number (Restaurant tab), and without
 		// one the note ends with the staff.
-		'allergy_title' => array( 'de' => 'Allergiehinweis', 'en' => 'Allergy information', 'zh' => '過敏原資訊' ),
-		'allergy'    => array( 'de' => 'Für Informationen zu Allergenen in den einzelnen Gerichten wenden Sie sich bitte an unsere Mitarbeitenden vor Ort.', 'en' => 'For information about allergens in our dishes, please ask our staff.', 'zh' => '如需了解各菜式的過敏原資訊，請向現場員工查詢。' ),
-		'allergy_phone' => array( 'de' => 'Für Informationen zu Allergenen in den einzelnen Gerichten wenden Sie sich bitte an unsere Mitarbeitenden vor Ort oder unter %s.', 'en' => 'For information about allergens in our dishes, please ask our staff or call %s.', 'zh' => '如需了解各菜式的過敏原資訊，請向現場員工查詢，或致電 %s。' ),
+		'allergy_title' => array( 'de' => 'Allergiehinweis', 'en' => 'Allergy information', 'zh' => '過敏原說明' ),
+		'allergy'    => array( 'de' => 'Über Allergene und Intoleranzen in unseren Gerichten informieren Sie unsere Mitarbeitenden gerne.', 'en' => 'Our staff will be happy to tell you about allergens and intolerances in our dishes.', 'zh' => '如需了解各道菜餚所含的過敏原及不耐受成分，歡迎洽詢我們的服務人員。' ),
+		'allergy_phone' => array( 'de' => 'Über Allergene und Intoleranzen in unseren Gerichten informieren Sie unsere Mitarbeitenden gerne, vor Ort oder unter %s.', 'en' => 'Our staff will be happy to tell you about allergens and intolerances in our dishes, in person or on %s.', 'zh' => '如需了解各道菜餚所含的過敏原及不耐受成分，歡迎洽詢我們的服務人員，或致電 %s。' ),
 		// Where meat and fish come from (MenuDash → Menu → Meat and fish origin).
 		// The jump buttons above several MenuDash boxes on one page, and the back-to-top button.
 		'menu_title'   => array( 'de' => 'Speisekarte', 'en' => 'Menu', 'zh' => '菜單' ),

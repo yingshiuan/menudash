@@ -15,8 +15,22 @@ function esc_html( $s ) { return htmlspecialchars( $s, ENT_QUOTES, 'UTF-8' ); }
 function esc_attr( $s ) { return esc_html( $s ); }
 $GLOBALS['mdash_test_option'] = false;
 function get_option() { return $GLOBALS['mdash_test_option']; }
+function shortcode_atts( $defaults, $atts ) { return array_merge( $defaults, array_intersect_key( (array) $atts, $defaults ) ); }
+function wp_enqueue_style() {}
+define( 'MENUDASH_URL', '/' );
+define( 'MENUDASH_VERSION', 'test' );
+function mdash_html_lang( $l ) { return 'zh' === $l ? 'zh-Hant' : $l; }
+function mdash_tel( $p ) { return preg_replace( '/[^0-9+]/', '', $p ); }
+$GLOBALS['mdash_test_phone'] = '';
+function mdash_detail() { return $GLOBALS['mdash_test_phone']; }
 function mdash_strings() {
-	return array( 'origin_ask' => array( 'de' => 'Fragen Sie bitte unser Personal', 'en' => 'Please ask our staff', 'zh' => '請向我們的員工查詢' ) );
+	return array(
+		'origin_ask'    => array( 'de' => 'Fragen Sie bitte unser Personal', 'en' => 'Please ask our staff', 'zh' => '請向我們的員工查詢' ),
+		'origin_title'  => array( 'de' => 'Herkunft', 'en' => 'Origin', 'zh' => '產地' ),
+		'allergy_title' => array( 'de' => 'Allergiehinweis', 'en' => 'Allergy information', 'zh' => '過敏原說明' ),
+		'allergy'       => array( 'de' => 'Fragen Sie unsere Mitarbeitenden.', 'en' => 'Ask our staff.', 'zh' => '請向員工查詢。' ),
+		'allergy_phone' => array( 'de' => 'Fragen Sie unsere Mitarbeitenden oder unter %s.', 'en' => 'Ask our staff or call %s.', 'zh' => '請向員工查詢，或致電 %s。' ),
+	);
 }
 require '/repo/menudash/includes/origin.php';
 
@@ -67,6 +81,16 @@ check( 'Wachtel' === $x['rows'][0]['own']['de'] && false === $x['menu'], 'tags r
 $GLOBALS['mdash_test_option'] = array( 'rows' => array( array( 'product' => 'own', 'own' => array( 'de' => 'A&B', 'en' => '', 'zh' => '' ), 'countries' => array( 'raw:<i>' ), 'ask' => false ) ) );
 $t = mdash_origin_table( 'de' );
 check( false !== strpos( $t, 'A&amp;B' ) && false !== strpos( $t, '&lt;i&gt;' ), 'table output is escaped', $t );
+
+$GLOBALS['mdash_test_option'] = array( 'rows' => array( array( 'product' => 'beef', 'own' => array(), 'countries' => array( 'CH' ), 'ask' => false ) ) );
+$h = mdash_origin_shortcode( array( 'lang' => 'de', 'title' => 'no' ) );
+check( false !== strpos( $h, 'Rindfleisch' ) && false === strpos( $h, 'Allergiehinweis' ) && false === strpos( $h, '<h3' ), 'shortcode: no heading, no allergy note unless asked', $h );
+$h = mdash_origin_shortcode( array( 'lang' => 'de', 'title' => 'no', 'allergy' => 'yes' ) );
+check( strpos( $h, '</table>' ) < strpos( $h, 'Allergiehinweis' ) && false !== strpos( $h, 'Fragen Sie unsere Mitarbeitenden.' ) && false === strpos( $h, 'Allergy' ), 'shortcode allergy="yes": German note under the list', $h );
+$GLOBALS['mdash_test_phone'] = '044 123 45 67';
+$h = mdash_origin_shortcode( array( 'allergy' => 'yes' ) );
+check( 3 === substr_count( $h, 'mdash-allergy' ) && false !== strpos( $h, '<a href="tel:0441234567">044 123 45 67</a>' ), 'all three languages, with the phone number', $h );
+$GLOBALS['mdash_test_phone'] = '';
 $GLOBALS['mdash_test_option'] = false;
 check( '' === mdash_origin_table( 'de' ), 'nothing saved: no table' );
 

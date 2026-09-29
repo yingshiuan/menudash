@@ -217,11 +217,26 @@ function mdash_origin_table( $lang ) {
 }
 
 /**
+ * The allergy note in one language, escaped: "ask our staff", or "… or call <phone>" when the
+ * Restaurant add-on has a phone number. Used under the menu and by [menudash_origin allergy="yes"].
+ */
+function mdash_allergy_note( $l ) {
+	$s     = mdash_strings();
+	$phone = function_exists( 'mdash_detail' ) ? trim( (string) mdash_detail( 'phone' ) ) : '';
+	$tel   = '' !== $phone ? mdash_tel( $phone ) : '';
+	if ( '' === $tel ) {
+		return esc_html( $s['allergy'][ $l ] );
+	}
+	return str_replace( '%s', '<a href="tel:' . esc_attr( $tel ) . '">' . esc_html( $phone ) . '</a>', esc_html( $s['allergy_phone'][ $l ] ) );
+}
+
+/**
  * [menudash_origin]: the list on any page. lang="de|en|zh" for one language (default: all
- * three, each with its heading); title="no" leaves the heading out.
+ * three, each with its heading); title="no" leaves the heading out; allergy="yes" adds the
+ * allergy note under the list.
  */
 function mdash_origin_shortcode( $atts ) {
-	$a     = shortcode_atts( array( 'lang' => '', 'title' => 'yes' ), $atts, 'menudash_origin' );
+	$a     = shortcode_atts( array( 'lang' => '', 'title' => 'yes', 'allergy' => 'no' ), $atts, 'menudash_origin' );
 	$langs = in_array( $a['lang'], array( 'de', 'en', 'zh' ), true ) ? array( $a['lang'] ) : array( 'de', 'en', 'zh' );
 	$s     = mdash_strings();
 	$out   = '';
@@ -230,8 +245,9 @@ function mdash_origin_shortcode( $atts ) {
 		if ( '' === $table ) {
 			return '';
 		}
-		$head = 'no' !== $a['title'] ? '<h3 class="mdash-origin-title">' . esc_html( $s['origin_title'][ $l ] ) . '</h3>' : '';
-		$out .= '<div class="mdash-origin" lang="' . esc_attr( mdash_html_lang( $l ) ) . '">' . $head . $table . '</div>';
+		$head  = 'no' !== $a['title'] ? '<h3 class="mdash-origin-title">' . esc_html( $s['origin_title'][ $l ] ) . '</h3>' : '';
+		$note  = 'yes' === $a['allergy'] ? '<p class="mdash-allergy"><strong>' . esc_html( $s['allergy_title'][ $l ] ) . '</strong><br>' . mdash_allergy_note( $l ) . '</p>' : '';
+		$out  .= '<div class="mdash-origin" lang="' . esc_attr( mdash_html_lang( $l ) ) . '">' . $head . $table . $note . '</div>';
 	}
 	wp_enqueue_style( 'menudash', MENUDASH_URL . 'assets/menu.css', array(), MENUDASH_VERSION );
 	return '<div class="menudash-origin">' . $out . '</div>';
@@ -283,7 +299,7 @@ function mdash_origin_admin_card() {
 	?>
 	<section class="mdash-card mdash-origin-card">
 		<h2>Meat and fish origin (Herkunft)</h2>
-		<p>In Switzerland, restaurants must say in writing where their meat comes from. Choose each product and type its countries in German or English ("Schweiz, Deutschland"); MenuDash writes them in all three menu languages. Countries it doesn't know stay as you typed them. The list shows under the menu, and on any page with <code>[menudash_origin]</code> (<code>lang="de"</code> for German only, <code>title="no"</code> without the heading).</p>
+		<p>In Switzerland, restaurants must say in writing where their meat comes from. Choose each product and type its countries in German or English ("Schweiz, Deutschland"); MenuDash writes them in all three menu languages. Countries it doesn't know stay as you typed them. The list shows under the menu, and on any page with <code>[menudash_origin]</code> (<code>lang="de"</code> for German only, <code>title="no"</code> without the heading, <code>allergy="yes"</code> with the allergy note under it).</p>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="menudash_origin">
 			<?php wp_nonce_field( 'menudash_origin' ); ?>

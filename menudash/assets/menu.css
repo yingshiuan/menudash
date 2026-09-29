@@ -302,3 +302,5 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 }
 .mdash-totop[hidden] { display: none; }
 @media print { .mdash-jumpnav, .mdash-totop { display: none !important; } }
+.menudash-origin .mdash-allergy { margin: .8em 0 0; }
+.menudash-origin .mdash-allergy a { color: inherit; text-decoration: underline; white-space: nowrap; }
