@@ -12,3 +12,4 @@ delete_option( 'menudash_data' );
 delete_option( 'menudash_colors' );
 delete_option( 'menudash_qr' );
 delete_option( 'menudash_origin' );
+delete_site_transient( 'menudash_release' );

@@ -61,7 +61,7 @@ A step-by-step guide for restaurant staff is in [docs/GUIDE.md](docs/GUIDE.md). 
 ## Install
 
 1. **Download [menudash.zip](https://github.com/yingshiuan/menudash/releases/latest/download/menudash.zip)** from the latest release (also listed under [Releases](https://github.com/yingshiuan/menudash/releases)). Don't use GitHub's green **Code → Download ZIP** button: that is the whole repository (docs, sample, dev scripts), not an installable plugin. Developers can also build the zip themselves with `dev/build-zip.sh`.
-2. In WordPress: **Plugins → Add New Plugin → Upload Plugin**, choose `menudash.zip`, then **Activate**. To update later, upload the newer zip the same way and choose **Replace current with uploaded**; the menu, photos and settings stay.
+2. In WordPress: **Plugins → Add New Plugin → Upload Plugin**, choose `menudash.zip`, then **Activate**. From 2.2.0 on, new releases show up under **Dashboard → Updates** like any other plugin: one click to update, or turn on auto-updates. (WordPress asks this repo's latest GitHub Release twice a day; switch it off with `add_filter( 'menudash_github_updates', '__return_false' );`.) Coming from 2.1.x or older, upload the new zip once and choose **Replace current with uploaded**. The menu, photos and settings always stay.
 3. Put a **Shortcode** block with `[menudash]` on a page.
 4. Upload a menu under **Dashboard → MenuDash**. `sample/menu-sample.csv` is a good start.
 

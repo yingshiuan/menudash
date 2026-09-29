@@ -149,7 +149,7 @@ Your icons are kept when the plugin is updated or reinstalled.
 
 **Try it privately first:** put the shortcode on a new **draft** page and open it with *Preview*.
 
-**Updating the plugin:** upload a newer `menudash.zip` the same way; WordPress asks whether to replace the current version. The menu and the photos are kept, even if the plugin is deleted and installed again.
+**Updating the plugin:** from version 2.2.0 on, WordPress shows new MenuDash versions under **Dashboard → Updates** and on the Plugins page, like any other plugin: click **Update now**, or **Enable auto-updates** to have it done by itself. Older versions: upload a newer `menudash.zip` the same way; WordPress asks whether to replace the current version. The menu and the photos are kept, even if the plugin is deleted and installed again.
 
 **Server details** at the bottom of the MenuDash page show whether the host supports everything:
 - PHP 7.4 or newer.
