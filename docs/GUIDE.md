@@ -36,6 +36,10 @@ The menu page changes right away, and a message says how many categories and dis
 
 <img src="dashboard/02b-report-message.png" alt="The message after uploading the CSV" width="720">
 
+With an Excel file, the message lists each sheet:
+
+<img src="dashboard/24-excel-upload.png" alt="After an Excel upload: the menu sheet, and the sheets not used" width="720">
+
 **Undo:** open *Earlier files* under the upload button and click **Put back** next to an older upload. The last five uploads are kept.
 
 <img src="dashboard/03-earlier-files.png" alt="Earlier files, each with a Put back button" width="460">
@@ -93,6 +97,14 @@ Below the uploads is a list of every dish with its photo, or **"no photo"**, plu
 Under **MenuDash → Menu → Meat and fish origin**, list where your meat and fish come from: choose a product (or **Other** and type its name in each language), type the countries in German or English ("Schweiz, Deutschland"), or tick **Ask our staff**. MenuDash translates products and the usual countries into the three menu languages; a country it doesn't know stays as typed. The list shows under the menu (can be switched off) and on any page with `[menudash_origin]` — `lang="de"` for one language, `title="no"` without the heading.
 
 ## QR code and table cards
+
+<img src="dashboard/22-meat-origin.png" alt="Meat and fish origin: products, countries, a German preview" width="720">
+
+<img src="dashboard/23-origin-menu.png" alt="The list under the menu, with the allergy note" width="720">
+
+<img src="dashboard/20-qr-code.png" alt="The QR code tab with a live preview of the card" width="820">
+
+<img src="dashboard/21-qr-sheet.png" alt="The print sheet: four A6 table cards on A4" width="460">
 
 Under **MenuDash → QR code** is a QR code that opens your menu on the guest's phone, with a preview that changes while you type (scan the screen with your phone to test it).
 

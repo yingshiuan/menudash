@@ -44,6 +44,14 @@ The dashboard page **MenuDash** has three tabs, each also in the sidebar: **Menu
 |---|---|
 | ![The MenuDash upload page after a menu upload](docs/dashboard/02-menu-uploaded.png) | ![Every dish with its photo, marks and price](docs/dashboard/06-check.png) |
 
+| QR code and table cards | Meat and fish origin |
+|---|---|
+| ![The QR code tab with a live preview of the table card](docs/dashboard/20-qr-code.png) | ![Products and countries, translated into three languages](docs/dashboard/22-meat-origin.png) |
+
+| Excel upload | Under the menu |
+|---|---|
+| ![After an Excel upload: each sheet listed](docs/dashboard/24-excel-upload.png) | ![Allergy note and meat origin under the menu](docs/dashboard/23-origin-menu.png) |
+
 | Colours | |
 |---|---|
 | ![Background and highlight colours with a preview](docs/dashboard/17-colours.png) | ![The sample menu with a green highlight](docs/dashboard/19-colours-example.png) |
