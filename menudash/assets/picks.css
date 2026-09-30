@@ -1,0 +1,76 @@
+/* Recommended dishes (block menudash/picks, [menudash_picks]): photo, number, name, second
+   name. Fonts and text colour come from the theme; the highlight colour from MenuDash →
+   Design (a theme can set --mdash-accent on .menudash-picks). */
+.menudash-picks {
+  --mdash-accent: #243F66;
+  --mdash-on-accent: #FAF8F1;
+  --mdash-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+  --mdash-pick-w: 170px;
+  --mdash-pick-gap: clamp(16px, 3vw, 32px);
+  box-sizing: border-box;
+}
+.menudash-picks *, .menudash-picks *::before, .menudash-picks *::after { box-sizing: inherit; }
+
+.mdash-picks-list { list-style: none; margin: 0 auto; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--mdash-pick-gap); }
+.mdash-pick { width: var(--mdash-pick-w); margin: 0; padding: 0; }
+.mdash-pick::before { content: none; }
+.mdash-pick a { display: flex; flex-direction: column; align-items: center; gap: .2rem; text-align: center; line-height: 1.25; color: inherit; text-decoration: none; }
+.mdash-pick-photo { display: block; width: 100%; aspect-ratio: 1; margin: 0 0 .6rem; transition: transform .25s ease; }
+.mdash-pick a:hover .mdash-pick-photo, .mdash-pick a:focus-visible .mdash-pick-photo { transform: translateY(-4px) rotate(-2deg); }
+.mdash-pick-photo img { display: block; width: 100%; height: 100%; object-fit: contain; margin: 0; border: 0; box-shadow: none; }
+/* A square photo (not a cut-out) is cropped to a round plate. */
+.mdash-pick-photo.is-round img { border-radius: 50%; object-fit: cover; transform: scale(.94); }
+/* No photo yet: an empty plate with a bowl, so the row stays even. */
+.mdash-pick-photo.is-none { border-radius: 50%; background: rgba(255, 255, 255, .7); box-shadow: inset 0 0 0 2px rgba(43, 29, 26, .08); position: relative; }
+.mdash-pick-photo.is-none::after { content: ""; position: absolute; inset: 27%; background: var(--mdash-accent); opacity: .3;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 11h20a10 10 0 0 1-6 9.2V22H8v-1.8A10 10 0 0 1 2 11zm6-8c1 1 1 2 0 3s-1 2 0 3M12 2c1 1 1 2 0 3s-1 2 0 3M16 3c1 1 1 2 0 3s-1 2 0 3' fill='%23000' stroke='%23000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 11h20a10 10 0 0 1-6 9.2V22H8v-1.8A10 10 0 0 1 2 11zm6-8c1 1 1 2 0 3s-1 2 0 3M12 2c1 1 1 2 0 3s-1 2 0 3M16 3c1 1 1 2 0 3s-1 2 0 3' fill='%23000' stroke='%23000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+.mdash-pick-no { color: var(--mdash-accent); font-weight: 700; letter-spacing: .12em; font-size: .75rem; text-transform: uppercase; }
+.mdash-pick-name { font-weight: 700; }
+.mdash-pick-second { color: var(--mdash-accent); font-size: .9375rem; }
+.mdash-pick-second:lang(zh) { font-family: var(--mdash-zh); font-weight: 500; word-break: keep-all; }
+
+/* One row that slides sideways, a few dishes in view at a time. */
+.menudash-picks.is-row .mdash-picks-list { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; padding: 6px 2px 12px; }
+.menudash-picks.is-row .mdash-pick { flex: 0 0 var(--mdash-pick-w); scroll-snap-align: start; }
+
+/* Groups: a heading over each list, or tabs with one group at a time. The tabs need
+   assets/picks.js (it adds .js-tabs; in the editor .mdash-picks-editor does the same);
+   without it every group shows under its heading. */
+.mdash-picks-group + .mdash-picks-group { margin-top: clamp(28px, 5vw, 48px); }
+.mdash-picks-title { text-align: center; margin: 0 0 clamp(16px, 3vw, 24px); font-size: 1.35rem; }
+/* The tabs are one switch: an outlined pill with the chosen tab filled. */
+.mdash-picks-tabs { display: flex; width: fit-content; max-width: 100%; margin: 0 auto clamp(20px, 3vw, 32px); padding: 4px; border: 1.5px solid var(--mdash-accent); border-radius: 999px; background: #fff; }
+.mdash-picks-tab { font: inherit; font-weight: 700; font-size: .95rem; line-height: 1.2; padding: .6em 1.3em; border: 0; border-radius: 999px; background: none; color: var(--mdash-accent); cursor: pointer; white-space: nowrap; }
+.mdash-picks-tab[aria-selected="true"] { background: var(--mdash-accent); color: var(--mdash-on-accent, #fff); }
+.mdash-picks-tab:focus-visible { outline: 2px solid var(--mdash-accent); outline-offset: 2px; }
+.menudash-picks.has-tabs:not(.js-tabs) .mdash-picks-tabs { display: none; }
+.menudash-picks.has-tabs.js-tabs .mdash-picks-title,
+.mdash-picks-editor .menudash-picks.has-tabs .mdash-picks-title,
+.menudash-picks.has-tabs.js-tabs:not(.has-slide) .mdash-picks-group:not(.is-active),
+.mdash-picks-editor .menudash-picks.has-tabs:not(.has-slide) .mdash-picks-group:not(.is-active) { display: none; }
+.menudash-picks.has-tabs.js-tabs .mdash-picks-group,
+.mdash-picks-editor .menudash-picks.has-tabs .mdash-picks-group { margin-top: 0; }
+.mdash-picks-editor .menudash-picks.has-tabs .mdash-picks-tabs { display: flex; }
+
+/* Tabs that slide: every group in one strip that slides sideways, six dishes to a screen on a
+   computer, two and a bit on a phone. A tab slides it to its group; swiping moves the tab. */
+.has-slide .mdash-picks-strip { container-type: inline-size; display: flex; gap: var(--mdash-pick-gap); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 8px; }
+.has-slide .mdash-picks-strip::-webkit-scrollbar { display: none; }
+.has-slide .mdash-picks-group { flex: none; margin: 0; }
+.menudash-picks.has-slide .mdash-picks-list { flex-wrap: nowrap; overflow: visible; padding: 6px 0 0; }
+.menudash-picks.has-slide .mdash-pick { flex: 0 0 calc((100cqw - 5 * var(--mdash-pick-gap)) / 6); width: calc((100cqw - 5 * var(--mdash-pick-gap)) / 6); min-width: 0; }
+
+.mdash-picks-more { display: flex; justify-content: center; margin: clamp(24px, 4vw, 40px) 0 0; }
+.mdash-picks-note { opacity: .75; }
+
+@media (max-width: 600px) {
+  .menudash-picks { --mdash-pick-gap: 16px; }
+  .menudash-picks.is-grid .mdash-pick { width: calc(50% - 8px); }
+  .menudash-picks.is-row .mdash-pick { flex-basis: 44%; }
+  .menudash-picks.has-slide .mdash-pick { flex-basis: 44cqw; width: 44cqw; }
+  .mdash-picks-tab { font-size: .875rem; padding: .55em 1em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mdash-pick-photo { transition: none; }
+}

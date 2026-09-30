@@ -7,8 +7,8 @@
 @font-face { font-family: "MenuDash Display"; src: url("fonts/AbrilFatface-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 
 .menudash {
-  --mdash-accent: #A31E2C;
-  --mdash-cream: #FAF8F1;
+  --mdash-accent: #243F66;
+  --mdash-cream: #F5EFE6;
   --mdash-paper: #FFFFFF;
   --mdash-ink: #2B1D1A;
   --mdash-ink-2: #4A3833;
@@ -94,7 +94,7 @@ body.admin-bar .menudash { --mdash-top: 32px; }
   font-size: 14px; font-weight: 700; letter-spacing: .04em; line-height: 1.2;
 }
 .menudash .mdash-langs button[aria-pressed="true"] { background: var(--mdash-accent); color: var(--mdash-on-accent); }
-.menudash .mdash-langs button:not([aria-pressed="true"]):hover { background: rgba(163, 30, 44, .08); background: color-mix(in srgb, var(--mdash-accent) 8%, transparent); }
+.menudash .mdash-langs button:not([aria-pressed="true"]):hover { background: rgba(36, 63, 102, .08); background: color-mix(in srgb, var(--mdash-accent) 8%, transparent); }
 
 /* ---------- Sticky bar: filters + category tabs ---------- */
 .menudash .mdash-bar {
@@ -297,7 +297,7 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 .mdash-jumpnav .mdash-langs { margin: 0 0 0 auto; }
 .mdash-totop {
   position: fixed; right: 16px; bottom: 16px; z-index: 60; width: 46px; height: 46px; border: 0; border-radius: 50%;
-  background: var(--mdash-accent, #A31E2C); color: var(--mdash-on-accent, #fff); font-size: 22px; line-height: 1; cursor: pointer;
+  background: var(--mdash-accent, #243F66); color: var(--mdash-on-accent, #fff); font-size: 22px; line-height: 1; cursor: pointer;
   box-shadow: 0 4px 14px rgba(43, 29, 26, .25);
 }
 .mdash-totop[hidden] { display: none; }

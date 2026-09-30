@@ -85,6 +85,11 @@
 .mdash-admin .mdash-default-submit { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); border: 0; padding: 0; }
 
 .mdash-admin .mdash-colors-card { margin-top: 16px; }
+.mdash-admin .mdash-colors-mode { display: grid; gap: 10px; margin: 12px 0 4px; }
+.mdash-admin .mdash-colors-mode label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; cursor: pointer; }
+.mdash-admin .mdash-colors-mode .mdash-muted { flex-basis: 100%; padding-left: 24px; }
+.mdash-admin .mdash-swatch { display: inline-block; width: 18px; height: 18px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2); }
+.mdash-admin .mdash-colors-pick[data-off] { opacity: .45; }
 .mdash-admin .mdash-colors-layout { display: flex; flex-wrap: wrap; align-items: stretch; gap: 16px 32px; margin: 12px 0; }
 .mdash-admin .mdash-colors-pick { display: grid; gap: 12px; align-content: start; }
 .mdash-admin .mdash-color { display: flex; align-items: center; gap: 12px; cursor: pointer; }

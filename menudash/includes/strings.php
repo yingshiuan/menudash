@@ -54,6 +54,11 @@ function mdash_strings() {
 		'password'   => array( 'de' => 'Passwort', 'en' => 'Password', 'zh' => '密碼' ),
 		'qr_title'   => array( 'de' => 'Speisekarte scannen', 'en' => 'Scan for our menu', 'zh' => '掃描查看菜單' ),
 		'qr_tip'     => array( 'de' => 'Sprache wählen und nach Vegetarisch, Vegan, Glutenfrei oder Scharf filtern.', 'en' => 'Choose your language and filter by vegetarian, vegan, gluten-free or spicy.', 'zh' => '可選擇語言，並按素食、純素、無麩質或辣度篩選。' ),
+		// Recommended dishes (block menudash/picks, [menudash_picks]).
+		'dish_no'    => array( 'de' => 'Nr. %s', 'en' => 'No. %s', 'zh' => '%s 號' ),
+		'group_meat' => array( 'de' => 'Fleisch & Fisch', 'en' => 'Meat & fish', 'zh' => '肉類及海鮮' ),
+		'group_veg'  => array( 'de' => 'Vegan & Vegetarisch', 'en' => 'Vegan & vegetarian', 'zh' => '純素及素食' ),
+		'whole_menu' => array( 'de' => 'Ganze Speisekarte', 'en' => 'See the whole menu', 'zh' => '查看完整菜單' ),
 		'empty'      => array( 'de' => 'Die Speisekarte wird gerade aktualisiert.', 'en' => 'The menu is being updated.', 'zh' => '菜單更新中。' ),
 	) );
 	return $strings;

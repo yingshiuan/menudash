@@ -35,3 +35,9 @@ if ( ! mdash_photo_index() ) {
 		}
 	}
 }
+
+// The demo shows MenuDash's own default colours (MenuDash → Design → "My own colours"), the
+// same whatever theme the demo runs; switch to "The theme's colours" there to compare.
+if ( false === get_option( 'menudash_colors' ) ) {
+	update_option( 'menudash_colors', array( 'mode' => 'own', 'bg' => '', 'accent' => '' ), false );
+}

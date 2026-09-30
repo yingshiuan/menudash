@@ -189,8 +189,36 @@
     }).reduce(function (s, c, i) { return s + c * [0.2126, 0.7152, 0.0722][i]; }, 0);
   }
   function contrast(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  /* The theme's colours or my own: the preview shows the chosen ones, and the pickers are
+     dimmed while the theme's are in use (a change in them switches to "own"). */
+  var themeRadio = document.querySelector('input[name="colors_mode"][value="theme"]');
+  var ownRadio = document.querySelector('input[name="colors_mode"][value="own"]');
+  var pick = document.querySelector(".mdash-colors-pick");
+  function paint(bg, accent) {
+    preview.style.setProperty("--p-bg", bg);
+    preview.style.setProperty("--p-accent", accent);
+    preview.style.setProperty("--p-on", contrast(accent, "#FAF8F1") >= contrast(accent, "#2B1D1A") ? "#FAF8F1" : "#2B1D1A");
+  }
+  function own() {
+    var v = {};
+    Array.prototype.forEach.call(document.querySelectorAll("[data-color]"), function (i) { v[i.getAttribute("data-color")] = i.value.toUpperCase(); });
+    return v;
+  }
+  function mode() {
+    if (!themeRadio) return;
+    var theme = themeRadio.checked;
+    if (pick) pick.toggleAttribute("data-off", theme);
+    if (theme) paint(themeRadio.getAttribute("data-theme-bg"), themeRadio.getAttribute("data-theme-accent"));
+    else { var v = own(); paint(v.bg, v.accent); }
+  }
+  if (themeRadio) {
+    themeRadio.addEventListener("change", mode);
+    ownRadio.addEventListener("change", mode);
+    mode();
+  }
   Array.prototype.forEach.call(document.querySelectorAll("[data-color]"), function (input) {
     input.addEventListener("input", function () {
+      if (ownRadio && !ownRadio.checked) { ownRadio.checked = true; mode(); }
       var v = input.value.toUpperCase(), key = input.getAttribute("data-color");
       var label = input.closest(".mdash-color");
       label.querySelector(".mdash-color-hex").textContent = v;

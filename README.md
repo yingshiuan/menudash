@@ -30,13 +30,14 @@ The **colours** and **diet icons** are chosen on the same dashboard page, so the
 3. **Upload the photos**, all at once. Name each one after the dish number (`22_Dumplings.png`) or the dish name (`Jasmine Rice.png`).
    - Photos are resized to 400 and 800 px, as WebP where the server can.
    - A check list shows every dish with its photo, and which photos matched nothing.
-4. **Colours:** a background and a highlight colour, chosen with colour pickers and a live preview. Text on the highlight turns dark by itself when the colour is light.
+4. **Colours:** the theme's own colours by default, so the menu matches the site (only readable ones: a highlight that stands out from the background), or the owner's own background and highlight colour, chosen with colour pickers and a live preview (dark blue on beige to start with). The own colours stay saved when switching back to the theme's. Text on the highlight turns dark by itself when the colour is light.
 5. **Optionally, use its own diet icons:** an SVG or a transparent PNG per mark, with **Back to default** to undo.
    - SVGs are cleaned to plain shapes: scripts, event handlers, links, embedded HTML, external images and DOCTYPE/entity tricks are all removed or refused. `dev/svg-test.php` covers this.
 
 6. **Meat and fish origin:** a short list (product + countries, or "please ask our staff"), as Swiss restaurants must give in writing. Products and about 50 countries are translated into the three menu languages; it shows under the menu and anywhere with `[menudash_origin]` (`lang="de|en|zh"`, `title="no"`, `allergy="yes"`).
 7. **Several boxes on one page:** with the Specials add-on's lunch menu and specials above the menu, MenuDash adds a row of jump buttons (with one language switch) above the first box, and a back-to-top button while the guest reads the long menu (above a theme's fixed bottom bar, if there is one).
 8. **QR code and table cards:** a QR code to the menu page, printed as four A6 table cards on an A4 sheet or as one A4 poster, with the logo, a heading and a tip in the chosen menu languages (built in, or the owner's own), the web address, an optional message and, when filled in, the Wi-Fi name and password with a Wi-Fi code phones join by scanning (the card's own words in the chosen menu languages). The code alone downloads as SVG or PNG. The codes are drawn in the browser (bundled [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator), MIT), so no outside service is involved.
+9. **Recommended dishes** anywhere on the site, e.g. the home page: the block **Recommended dishes** (inserter category *MenuDash*), or `[menudash_picks]` in a classic theme. Each dish shows its photo, number and name and links to it on the menu. In the block's sidebar the owner picks the dishes marked *Recommended* in the spreadsheet, or chooses dishes by number or name (with up/down to order them). **Split into groups** shows them as tabs (one group at a time), as tabs that slide (all groups in one sliding row: a tab slides to its group, swiping moves the tab) or under headings: the Recommended ones split by diet (*Meat & fish* / *Vegan & vegetarian*), or the owner's own groups, each with its own title and dishes. A grid or one sliding row, the language, number, a Vegan/Vegetarian mark, second name and a button to the whole menu are options too. The pictures are always the dishes' photos, so a new photo shows everywhere at once, and a chosen dish is found again after a new menu upload even when its number changed.
 
 The dashboard page **MenuDash** has three tabs, each also in the sidebar: **Menu** (menu CSV, photos, check), **QR code** (QR code, table cards) and **Colours & icons** (colours, diet icons). Add-ons add their own tabs.
 
@@ -51,6 +52,10 @@ The dashboard page **MenuDash** has three tabs, each also in the sidebar: **Menu
 | Excel upload | Under the menu |
 |---|---|
 | ![After an Excel upload: each sheet listed](docs/dashboard/24-excel-upload.png) | ![Allergy note and meat origin under the menu](docs/dashboard/23-origin-menu.png) |
+
+| Recommended dishes block | |
+|---|---|
+| ![The Recommended dishes block with its sidebar: dishes chosen in two groups, shown as tabs that slide](docs/dashboard/30-recommended-dishes.png) | |
 
 | Colours | |
 |---|---|
@@ -74,6 +79,7 @@ Requirements: WordPress 6.3 or newer, PHP 7.4 or newer.
 | `[menudash]` | The menu, opening in the all-languages view. |
 | `[menudash lang="de"]` | First-time guests see only German (or `en`, `zh`); they can still switch. |
 | `[menudash offset="80"]` | Space above the sticky bar in pixels, instead of measuring the theme's header. |
+| `[menudash_picks]` | The dishes marked Recommended, with photos. Options: `dishes="22, 45, Sambal Udang"` (numbers or names, in this order), `max="12"`, `layout="row"`, `lang="de"`, `number="no"`, `second="no"`, `diet="yes"`, `button="no"`, `button_text="…"`. Groups are only in the block. |
 
 ## The CSV (or Excel file)
 

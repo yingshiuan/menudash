@@ -217,15 +217,17 @@ function mdash_handle_colors() {
 		mdash_back( array( 'ok' => true, 'kind' => 'Colours', 'message' => 'Back to the default colours.' ) );
 	}
 	$in    = isset( $_POST['colors'] ) && is_array( $_POST['colors'] ) ? wp_unslash( $_POST['colors'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- checked by mdash_color_hex()
-	$saved = array();
+	$mode  = isset( $_POST['colors_mode'] ) && 'theme' === $_POST['colors_mode'] && mdash_theme_colors() ? 'theme' : 'own';
+	$saved = array( 'mode' => $mode );
 	foreach ( mdash_color_keys() as $k => $c ) {
 		$v           = isset( $in[ $k ] ) ? mdash_color_hex( $in[ $k ] ) : '';
 		$saved[ $k ] = $v === $c[1] ? '' : $v; // The default is stored as "not chosen".
 	}
+	// The own colours are kept while the theme's are in use, so switching back brings them.
 	update_option( MDASH_COLORS_OPTION, $saved, false );
 	mdash_purge_caches();
 	$problems = mdash_color_problems( mdash_colors() );
-	mdash_back( array( 'ok' => ! $problems, 'kind' => 'Colours', 'message' => 'Saved.', 'error' => implode( ' ', $problems ) ) );
+	mdash_back( array( 'ok' => ! $problems, 'kind' => 'Colours', 'message' => 'theme' === $mode ? 'Saved: the menu uses the theme\'s colours.' : 'Saved: the menu uses your own colours.', 'error' => implode( ' ', $problems ) ) );
 }
 
 function mdash_handle_icons() {
@@ -582,20 +584,34 @@ function mdash_admin_page() {
 		<?php elseif ( 'menudash-design' === $page ) : ?>
 		<?php
 		$colors = mdash_colors();
+		$own    = mdash_colors_own();
+		$themec = mdash_theme_colors();
+		$mode   = mdash_colors_mode();
 		$keys   = mdash_color_keys();
 		?>
 		<section class="mdash-card mdash-colors-card">
 			<h2>Colours</h2>
-			<p>The background of the menu, the specials and the gift card form, and the highlight colour of buttons, filters, headings and the holiday notice. Text on the highlight colour turns dark by itself when the colour is light.</p>
+			<p>The background of the menu, the specials and the gift card form, and the highlight colour of buttons, filters, headings, the Recommended icon and the holiday notice. Text on the highlight colour turns dark by itself when the colour is light.</p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="menudash_colors">
 				<?php wp_nonce_field( 'menudash_colors' ); ?>
+				<?php if ( $themec ) : ?>
+					<fieldset class="mdash-colors-mode">
+						<legend class="screen-reader-text">Which colours</legend>
+						<label><input type="radio" name="colors_mode" value="theme" <?php checked( 'theme', $mode ); ?> data-theme-bg="<?php echo esc_attr( $themec['bg'] ); ?>" data-theme-accent="<?php echo esc_attr( $themec['accent'] ); ?>">
+							<strong>The theme's colours</strong>
+							<span class="mdash-swatch" style="background:<?php echo esc_attr( $themec['bg'] ); ?>"></span><span class="mdash-swatch" style="background:<?php echo esc_attr( $themec['accent'] ); ?>"></span>
+							<span class="mdash-muted">from <?php echo esc_html( wp_get_theme()->get( 'Name' ) ); ?>. They follow the theme: change them under Appearance → Editor → Styles.</span></label>
+						<label><input type="radio" name="colors_mode" value="own" <?php checked( 'own', $mode ); ?>>
+							<strong>My own colours</strong> <span class="mdash-muted">chosen below and saved here; they stay saved when you switch to the theme's.</span></label>
+					</fieldset>
+				<?php endif; ?>
 				<div class="mdash-colors-layout">
-					<div class="mdash-colors-pick">
+					<div class="mdash-colors-pick"<?php echo $themec && 'theme' === $mode ? ' data-off' : ''; ?>>
 						<?php foreach ( $keys as $k => $c ) : ?>
 							<label class="mdash-color">
-								<input type="color" name="colors[<?php echo esc_attr( $k ); ?>]" value="<?php echo esc_attr( strtolower( $colors[ $k ] ) ); ?>" data-color="<?php echo esc_attr( $k ); ?>">
-								<span><strong><?php echo esc_html( $c[0] ); ?></strong><br><code class="mdash-color-hex"><?php echo esc_html( $colors[ $k ] ); ?></code><?php echo $colors[ $k ] === $c[1] ? ' <small class="mdash-muted">default</small>' : ''; ?></span>
+								<input type="color" name="colors[<?php echo esc_attr( $k ); ?>]" value="<?php echo esc_attr( strtolower( $own[ $k ] ) ); ?>" data-color="<?php echo esc_attr( $k ); ?>">
+								<span><strong><?php echo esc_html( $c[0] ); ?></strong><br><code class="mdash-color-hex"><?php echo esc_html( $own[ $k ] ); ?></code><?php echo $own[ $k ] === $c[1] ? ' <small class="mdash-muted">default</small>' : ''; ?></span>
 							</label>
 						<?php endforeach; ?>
 					</div>
@@ -608,7 +624,7 @@ function mdash_admin_page() {
 				</div>
 				<p class="mdash-closed-actions">
 					<?php submit_button( 'Save colours', 'primary', 'save_colors', false ); ?>
-					<?php if ( mdash_colors_custom() ) : ?>
+					<?php if ( ! $themec && mdash_colors_custom() ) : ?>
 						<button class="button" name="reset" value="1">Back to default</button>
 					<?php endif; ?>
 				</p>

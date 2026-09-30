@@ -115,13 +115,30 @@ Under **MenuDash → QR code** is a QR code that opens your menu on the guest's 
 - The logo is WordPress's Site Logo (with MenuDash Restaurant: **Restaurant → Logo and icon**), or the site name when there is none.
 - **Save and print table cards** opens the sheet in a new tab; print at 100 % ("Actual size"). **SVG** and **PNG** download the code alone.
 
+## Recommended dishes (home page)
+
+With a block theme, add the block **Recommended dishes** (in the "+" list under *MenuDash*) where you want a row of dishes, e.g. on the home page. Each dish shows its photo, number and name and links to it on the menu. Click the block, and the sidebar offers:
+
+- **Show:** the dishes marked *Recommended* in your spreadsheet (change them there), or **the dishes I choose**: type a number or a name, click *Add*, and order them with the arrows.
+- **Split into groups:** *Meat & fish* and *Vegan & vegetarian* by the spreadsheet's diet marks, or your own groups with their own titles. Shown as **tabs**, as **tabs that slide** (one row: a tab slides to its dishes, swiping moves the tab) or under **headings**.
+- **Look:** grid or one sliding row, the language, number, a Vegan/Vegetarian mark, the Chinese name, and a button to the whole menu.
+
+The pictures are always the dishes' photos (see [Photos](#photos)): to change one, upload a new photo for that dish. A dish taken off the menu disappears from the row by itself; the editor tells you which. In a classic theme, use `[menudash_picks]` (e.g. `[menudash_picks dishes="22, 45"]`).
+
+<img src="dashboard/30-recommended-dishes.png" alt="The Recommended dishes block with its sidebar" width="820">
+
 ## Colours
 
-Under **MenuDash → Colours & icons → Colours**, choose the **background** of the menu (and of the add-ons' boxes), and the **highlight** colour of buttons, filters, headings and the Recommended icon. The preview changes while you pick. Text on the highlight turns dark by itself when the colour is light, and a warning appears if a choice would be hard to read. **Back to default** returns to cream and dark red.
+Under **MenuDash → Colours & icons → Colours**, choose which colours the menu (and the add-ons' boxes) use:
+
+- **The theme's colours** (the default when the theme has suitable ones): the menu matches the site and follows the theme when you change its colours under *Appearance → Editor → Styles*. Only readable colours are taken: a highlight that stands out from the background.
+- **My own colours**: pick the **background** and the **highlight** colour of buttons, filters, headings and the Recommended icon. They start as dark blue on beige, and stay saved when you switch to the theme's colours and back.
+
+The preview changes while you pick. Text on the highlight turns dark by itself when the colour is light, and a warning appears if a choice would be hard to read. With a theme that has no suitable colours, **Back to default** returns to dark blue on beige.
 
 <img src="dashboard/17-colours.png" alt="The Colours box with a preview" width="720">
 
-<img src="dashboard/19-colours-example.png" alt="The sample menu with a green highlight on white" width="820">
+<img src="dashboard/19-colours-example.png" alt="The sample menu with a green highlight on white (own colours)" width="820">
 
 ---
 
