@@ -9,8 +9,13 @@ require '/wordpress/wp-load.php';
 // Show the front end as guests see it, without the admin bar.
 update_user_meta( 1, 'show_admin_bar_front', 'false' );
 
-// The menu sits in a wide group, so desktops get two dishes per row.
-if ( ! get_page_by_path( 'menu' ) ) {
+// The menu sits in a wide group, so desktops get two dishes per row. Only when no page has
+// the menu yet: a theme may have made one already (MenuDash Theme: /speisekarte/ in German).
+$has_menu = false;
+foreach ( get_posts( array( 'post_type' => 'page', 'post_status' => 'any', 'numberposts' => -1 ) ) as $page ) {
+	$has_menu = $has_menu || has_shortcode( $page->post_content, 'menudash' );
+}
+if ( ! $has_menu && ! get_page_by_path( 'menu' ) ) {
 	wp_insert_post(
 		array(
 			'post_type'    => 'page',
