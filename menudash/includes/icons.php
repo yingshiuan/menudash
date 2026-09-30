@@ -21,6 +21,17 @@ function mdash_icon_keys() {
 	);
 }
 
+/** The same marks with their label in the owner's language, for the dashboard. */
+function mdash_icon_labels() {
+	return array(
+		'pick'       => __( 'Recommended', 'menudash' ),
+		'spicy'      => __( 'Spicy', 'menudash' ),
+		'vegan'      => __( 'Vegan', 'menudash' ),
+		'vegetarian' => __( 'Vegetarian', 'menudash' ),
+		'gf'         => __( 'Gluten-free', 'menudash' ),
+	);
+}
+
 function mdash_icon_index( $fresh = false ) {
 	static $idx = null;
 	if ( null === $idx || $fresh ) {
@@ -54,7 +65,7 @@ function mdash_icon_unlink( $icon ) {
 function mdash_icon_set( $key, $tmp, $name ) {
 	$keys = mdash_icon_keys();
 	if ( ! isset( $keys[ $key ] ) ) {
-		return array( 'ok' => false, 'error' => 'Unknown icon.' );
+		return array( 'ok' => false, 'error' => __( 'Unknown icon.', 'menudash' ) );
 	}
 	$name = sanitize_text_field( wp_basename( $name ) );
 	$head = (string) file_get_contents( $tmp, false, null, 0, 512 ); // phpcs:ignore
@@ -63,27 +74,32 @@ function mdash_icon_set( $key, $tmp, $name ) {
 	if ( preg_match( '/\.svgz?$/i', $name ) || preg_match( '/<svg[\s>]/i', $head ) ) {
 		$clean = mdash_clean_svg( (string) file_get_contents( $tmp ) ); // phpcs:ignore
 		if ( ! $clean['ok'] ) {
-			return array( 'ok' => false, 'error' => "$name: " . $clean['error'] );
+			/* translators: 1: file name, 2: what is wrong with it. */
+			return array( 'ok' => false, 'error' => sprintf( __( '%1$s: %2$s', 'menudash' ), $name, $clean['error'] ) );
 		}
 		$new = array( 'type' => 'svg', 'viewBox' => $clean['viewBox'], 'body' => $clean['body'] );
 	} else {
 		$info = function_exists( 'wp_getimagesize' ) ? wp_getimagesize( $tmp ) : @getimagesize( $tmp ); // phpcs:ignore
 		if ( ! $info || ! in_array( $info['mime'], array( 'image/png', 'image/jpeg', 'image/webp' ), true ) ) {
-			return array( 'ok' => false, 'error' => "$name is not an SVG, PNG, JPEG or WebP image." );
+			/* translators: %s: file name. */
+			return array( 'ok' => false, 'error' => sprintf( __( '%s is not an SVG, PNG, JPEG or WebP image.', 'menudash' ), $name ) );
 		}
 		if ( $info[0] * $info[1] > MDASH_MAX_PIXELS ) {
-			return array( 'ok' => false, 'error' => "$name is too large ({$info[0]} × {$info[1]} px); an icon needs about 96 px." );
+			/* translators: 1: file name, 2: width in pixels, 3: height in pixels. */
+			return array( 'ok' => false, 'error' => sprintf( __( '%1$s is too large (%2$d × %3$d px); an icon needs about 96 px.', 'menudash' ), $name, $info[0], $info[1] ) );
 		}
 		$editor = wp_get_image_editor( $tmp );
 		if ( is_wp_error( $editor ) ) {
-			return array( 'ok' => false, 'error' => "$name could not be opened: " . $editor->get_error_message() );
+			/* translators: 1: file name, 2: the server's error message. */
+			return array( 'ok' => false, 'error' => sprintf( __( '%1$s could not be opened: %2$s', 'menudash' ), $name, $editor->get_error_message() ) );
 		}
 		$editor->resize( 96, 96, false ); // Fits the icon into 96 px; smaller images stay as they are.
 		list( $ext, $mime ) = mdash_photo_format( true );
 		$file  = $key . '-' . substr( md5( md5_file( $tmp ) . microtime() ), 0, 8 ) . ".$ext";
 		$saved = $editor->save( mdash_dir( 'icons' ) . "/$file", $mime );
 		if ( is_wp_error( $saved ) ) {
-			return array( 'ok' => false, 'error' => "$name could not be saved: " . $saved->get_error_message() );
+			/* translators: 1: file name, 2: the server's error message. */
+			return array( 'ok' => false, 'error' => sprintf( __( '%1$s could not be saved: %2$s', 'menudash' ), $name, $saved->get_error_message() ) );
 		}
 		$new = array( 'type' => 'img', 'file' => $file );
 	}

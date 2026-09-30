@@ -22,9 +22,9 @@ function mdash_enqueue() {
 
 function mdash_enqueue_assets() {
 	wp_enqueue_style( 'menudash', MENUDASH_URL . 'assets/menu.css', array(), MENUDASH_VERSION );
-	// The colours chosen on the MenuDash page, once, however many boxes the page has.
+	// The colours and fonts chosen on the MenuDash page, once, however many boxes the page has.
 	static $colored = false;
-	$colors         = $colored ? '' : mdash_colors_css();
+	$colors         = $colored ? '' : mdash_colors_css() . mdash_fonts_css();
 	if ( '' !== $colors ) {
 		wp_add_inline_style( 'menudash', $colors );
 		$colored = true;
@@ -209,3 +209,19 @@ function mdash_quiet_shortcodes() {
 		}
 	}
 }
+
+/*
+ * Security: text from the menu file or the Restaurant tab (a dish called "Laksa [gallery]") must
+ * never run as a shortcode. MenuDash's blocks (menudash/…, also the add-ons') are drawn before
+ * the_content runs shortcodes, so their output gets its brackets encoded; browsers show them
+ * unchanged, and data attributes (e.g. JSON with [ ]) are decoded as usual.
+ */
+add_filter(
+	'render_block',
+	function ( $content, $block ) {
+		$name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
+		return 0 === strpos( $name, 'menudash/' ) ? str_replace( array( '[', ']' ), array( '&#91;', '&#93;' ), $content ) : $content;
+	},
+	10,
+	2
+);

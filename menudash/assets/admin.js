@@ -55,6 +55,12 @@
   var log = box.querySelector(".mdash-log");
   var drop = input.closest(".mdash-drop");
   var busy = false;
+  // The words written here, in the owner's language (includes/admin.php), English when missing.
+  var I18N = window.menudashAdminI18n || {};
+  function t(k, en) {
+    var s = I18N[k] || en, args = Array.prototype.slice.call(arguments, 2);
+    return s.replace(/%(?:(\d)\$)?s/g, function (m, n) { return String(n ? args[n - 1] : args.shift()); });
+  }
 
   function line(text, cls) {
     var li = document.createElement("li");
@@ -79,10 +85,10 @@
         URL.revokeObjectURL(url);
         c.toBlob(function (blob) {
           if (blob && blob.type === "image/webp") return resolve(blob);
-          c.toBlob(function (png) { png ? resolve(png) : reject(new Error("could not shrink")); }, "image/png");
+          c.toBlob(function (png) { png ? resolve(png) : reject(new Error(t("shrinkFail", "could not shrink"))); }, "image/png");
         }, "image/webp", 0.92);
       };
-      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("not an image")); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error(t("notImage", "not an image"))); };
       img.src = url;
     });
   }
@@ -90,7 +96,7 @@
   function send(file) {
     var ready = file.size > cfg.maxUpload * 0.95 ? shrink(file) : Promise.resolve(file);
     return ready.then(function (blob) {
-      if (blob.size > cfg.maxUpload) throw new Error("still larger than the server accepts after shrinking");
+      if (blob.size > cfg.maxUpload) throw new Error(t("stillLarge", "still larger than the server accepts after shrinking"));
       var fd = new FormData();
       fd.append("action", "menudash_photo");
       fd.append("_ajax_nonce", cfg.nonce);
@@ -98,9 +104,9 @@
       fd.append("photo", blob, file.name);
       return fetch(cfg.ajax, { method: "POST", body: fd, credentials: "same-origin" });
     }).then(function (res) {
-      return res.json().catch(function () { throw new Error("the server answered " + res.status); });
+      return res.json().catch(function () { throw new Error(t("serverSaid", "the server answered %s", res.status)); });
     }).then(function (json) {
-      if (!json.success) throw new Error((json.data && json.data.error) || "failed");
+      if (!json.success) throw new Error((json.data && json.data.error) || t("uploadFail", "failed"));
       return json.data;
     });
   }
@@ -115,13 +121,13 @@
     var chain = Promise.resolve();
     files.forEach(function (file) {
       chain = chain.then(function () {
-        status.textContent = "Uploading " + (done + 1) + " of " + files.length + ": " + file.name;
+        status.textContent = t("uploading", "Uploading %1$s of %2$s: %3$s", done + 1, files.length, file.name);
         return send(file).then(function (data) {
           if (data.dish) {
             line("✓ " + file.name + " → " + data.dish, "ok");
           } else {
             nomatch++;
-            line("• " + file.name + " — uploaded, but matches no dish", "warn");
+            line("• " + file.name + " — " + t("noMatch", "uploaded, but matches no dish"), "warn");
           }
         }, function (err) {
           failed++;
@@ -134,13 +140,13 @@
     });
     chain.then(function () {
       busy = false;
-      status.textContent = "Done: " + (done - failed) + " uploaded" +
-        (nomatch ? ", " + nomatch + " not matched to a dish" : "") +
-        (failed ? ", " + failed + " failed" : "") + ".";
+      status.textContent = t("done", "Done: %s uploaded", done - failed) +
+        (nomatch ? t("notMatched", ", %s not matched to a dish", nomatch) : "") +
+        (failed ? t("failed", ", %s failed", failed) : "") + ".";
       var again = document.createElement("button");
       again.type = "button";
       again.className = "button button-primary";
-      again.textContent = "Show the updated check";
+      again.textContent = t("showCheck", "Show the updated check");
       again.addEventListener("click", function () { location.reload(); });
       status.appendChild(document.createTextNode(" "));
       status.appendChild(again);
@@ -162,7 +168,7 @@
 
   document.addEventListener("click", function (e) {
     var btn = e.target.closest && e.target.closest(".mdash-del");
-    if (!btn || !confirm("Delete this photo?")) return;
+    if (!btn || !confirm(t("confirmDel", "Delete this photo?"))) return;
     var fd = new FormData();
     fd.append("action", "menudash_photo_delete");
     fd.append("_ajax_nonce", cfg.nonce);
@@ -172,7 +178,7 @@
       .then(function (r) { return r.json(); })
       .then(function (json) {
         if (json.success) btn.closest("li").remove();
-        else { btn.disabled = false; alert((json.data && json.data.error) || "Could not delete."); }
+        else { btn.disabled = false; alert((json.data && json.data.error) || t("deleteFail", "Could not delete.")); }
       });
   });
 })();

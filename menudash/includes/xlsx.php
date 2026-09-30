@@ -19,6 +19,13 @@
 
 defined( 'ABSPATH' ) || defined( 'MENUDASH_PURE' ) || exit;
 
+// Outside WordPress (the dev tests run this file alone), texts stay in English.
+if ( defined( 'MENUDASH_PURE' ) && ! function_exists( '__' ) ) {
+	function __( $text, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName -- stands in for WordPress's __().
+		return $text;
+	}
+}
+
 const MDASH_XLSX_MAX_PART  = 8388608;  // 8 MB per XML part (a 1'000-dish menu is about 0.5 MB).
 const MDASH_XLSX_MAX_PARTS = 400;      // Entries in the ZIP.
 const MDASH_XLSX_MAX_ROWS  = 3000;
@@ -51,17 +58,17 @@ function mdash_xlsx_part( $zip, $name, &$error ) {
 		return null;
 	}
 	if ( $stat['size'] > MDASH_XLSX_MAX_PART ) {
-		$error = 'A part of the file is too large to be a menu.';
+		$error = __( 'A part of the file is too large to be a menu.', 'menudash' );
 		return null;
 	}
 	// Read one byte more than allowed: if it comes, the size in the ZIP header was a lie.
 	$xml = $zip->getFromName( $name, MDASH_XLSX_MAX_PART + 1 );
 	if ( false === $xml || strlen( $xml ) > MDASH_XLSX_MAX_PART ) {
-		$error = 'A part of the file is too large to be a menu.';
+		$error = __( 'A part of the file is too large to be a menu.', 'menudash' );
 		return null;
 	}
 	if ( preg_match( '/<!DOCTYPE|<!ENTITY/i', $xml ) ) {
-		$error = 'The file contains XML declarations a spreadsheet does not need; it was not read.';
+		$error = __( 'The file contains XML declarations a spreadsheet does not need; it was not read.', 'menudash' );
 		return null;
 	}
 	return $xml;
@@ -73,6 +80,10 @@ function mdash_xlsx_xpath( $xml ) {
 	// No LIBXML_NOENT (entities stay unexpanded) and no network. The @ keeps broken XML from
 	// printing warnings; libxml_use_internal_errors() crashes Playground's PHP 7.4 here.
 	if ( ! @$doc->loadXML( $xml, LIBXML_NONET | LIBXML_COMPACT ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors
+		return null;
+	}
+	// A DOCTYPE the byte check missed (e.g. a part saved as UTF-16) is refused here too.
+	if ( null !== $doc->doctype ) {
 		return null;
 	}
 	$x = new DOMXPath( $doc );
@@ -114,7 +125,7 @@ function mdash_xlsx_number( $v ) {
 function mdash_xlsx_read( $path ) {
 	$fail = function ( $e ) { return array( 'ok' => false, 'error' => $e, 'sheets' => array() ); };
 	if ( ! class_exists( 'ZipArchive' ) ) {
-		return $fail( 'This server cannot read Excel files (PHP\'s zip extension is missing). Export the sheet as CSV instead, or ask the host to enable "zip".' );
+		return $fail( __( 'This server cannot read Excel files (PHP\'s zip extension is missing). Export the sheet as CSV instead, or ask the host to enable "zip".', 'menudash' ) );
 	}
 	$h     = @fopen( $path, 'rb' ); // phpcs:ignore
 	$magic = $h ? fread( $h, 4 ) : '';
@@ -122,19 +133,19 @@ function mdash_xlsx_read( $path ) {
 		fclose( $h );
 	}
 	if ( "PK\x03\x04" !== $magic ) {
-		return $fail( 'This is not an Excel file (.xlsx). From Numbers: File → Export To → Excel.' );
+		return $fail( __( 'This is not an Excel file (.xlsx). From Numbers: File → Export To → Excel.', 'menudash' ) );
 	}
 	$zip = new ZipArchive();
 	if ( true !== $zip->open( $path, defined( 'ZipArchive::RDONLY' ) ? ZipArchive::RDONLY : 0 ) ) {
-		return $fail( 'The Excel file could not be opened.' );
+		return $fail( __( 'The Excel file could not be opened.', 'menudash' ) );
 	}
 	if ( $zip->numFiles > MDASH_XLSX_MAX_PARTS ) {
 		$zip->close();
-		return $fail( 'The file has too many parts to be a menu.' );
+		return $fail( __( 'The file has too many parts to be a menu.', 'menudash' ) );
 	}
 	if ( false !== $zip->statName( 'xl/vbaProject.bin' ) ) {
 		$zip->close();
-		return $fail( 'The file contains macros (.xlsm). Save it as a normal Excel workbook (.xlsx) or export CSV.' );
+		return $fail( __( 'The file contains macros (.xlsm). Save it as a normal Excel workbook (.xlsx) or export CSV.', 'menudash' ) );
 	}
 	$error = '';
 	$wb    = mdash_xlsx_part( $zip, 'xl/workbook.xml', $error );
@@ -143,7 +154,7 @@ function mdash_xlsx_read( $path ) {
 	$relx  = $rels ? mdash_xlsx_xpath( $rels ) : null;
 	if ( ! $wbx || ! $relx ) {
 		$zip->close();
-		return $fail( '' !== $error ? $error : 'This does not look like an Excel workbook (.xlsx).' );
+		return $fail( '' !== $error ? $error : __( 'This does not look like an Excel workbook (.xlsx).', 'menudash' ) );
 	}
 	// Relationship id → part inside xl/, checked.
 	$targets = array();
@@ -174,12 +185,18 @@ function mdash_xlsx_read( $path ) {
 		}
 	}
 	$sheets = array();
+	$read   = array();
 	foreach ( $wbx->query( '/m:workbook/m:sheets/m:sheet' ) as $s ) {
 		$id   = $s->getAttributeNS( 'http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id' );
 		$name = mb_substr( trim( $s->getAttribute( 'name' ) ), 0, 100 );
-		if ( ! isset( $targets[ $id ] ) || isset( $sheets[ $name ] ) ) {
-			continue; // Not a worksheet (a chart), or a name seen already.
+		if ( ! isset( $targets[ $id ] ) || isset( $sheets[ $name ] ) || isset( $read[ $targets[ $id ] ] ) ) {
+			continue; // Not a worksheet (a chart), a name seen already, or a sheet file read already.
 		}
+		// A menu workbook has a few sheets; a file listing thousands would keep the server busy.
+		if ( count( $read ) >= 20 ) {
+			break;
+		}
+		$read[ $targets[ $id ] ] = true;
 		$xml = mdash_xlsx_part( $zip, $targets[ $id ], $error );
 		if ( '' !== $error ) {
 			$zip->close();
@@ -232,7 +249,7 @@ function mdash_xlsx_read( $path ) {
 	}
 	$zip->close();
 	if ( ! $sheets ) {
-		return $fail( 'The workbook has no sheets with cells in them.' );
+		return $fail( __( 'The workbook has no sheets with cells in them.', 'menudash' ) );
 	}
 	return array( 'ok' => true, 'error' => '', 'sheets' => $sheets );
 }

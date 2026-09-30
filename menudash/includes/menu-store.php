@@ -47,7 +47,7 @@ function mdash_get_menu() {
 function mdash_load_csv( $path, $original_name ) {
 	$bytes = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 	if ( false === $bytes ) {
-		return array( 'ok' => false, 'error' => 'The file could not be read.', 'warnings' => array() );
+		return array( 'ok' => false, 'error' => __( 'The file could not be read.', 'menudash' ), 'warnings' => array() );
 	}
 	$result = mdash_parse_csv( $bytes );
 	if ( ! $result['ok'] ) {
@@ -127,7 +127,7 @@ function mdash_save_csv_names( $names ) {
 function mdash_restore_csv( $file ) {
 	$file = basename( $file );
 	if ( ! in_array( $file, mdash_csv_files(), true ) ) {
-		return array( 'ok' => false, 'error' => 'That file no longer exists.', 'warnings' => array() );
+		return array( 'ok' => false, 'error' => __( 'That file no longer exists.', 'menudash' ), 'warnings' => array() );
 	}
 	$names = mdash_csv_names();
 	return mdash_load_csv( mdash_dir( 'csv' ) . "/$file", isset( $names[ $file ] ) ? $names[ $file ] : $file );

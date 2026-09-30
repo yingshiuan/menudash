@@ -102,7 +102,7 @@ function mdash_qr_logo_url() {
 }
 
 function mdash_qr_admin_tab_add( $tabs ) {
-	return $tabs + array( 'menudash-qr' => 'QR code' );
+	return $tabs + array( 'menudash-qr' => __( 'QR code', 'menudash' ) );
 }
 
 function mdash_qr_admin_assets( $hook ) {
@@ -111,13 +111,22 @@ function mdash_qr_admin_assets( $hook ) {
 	}
 	wp_enqueue_script( 'menudash-qrcode', MENUDASH_URL . 'assets/vendor/qrcode.js', array(), '1.4.4', true );
 	wp_enqueue_script( 'menudash-qr', MENUDASH_URL . 'assets/qr.js', array( 'menudash-qrcode' ), MENUDASH_VERSION, true );
+	wp_add_inline_script( 'menudash-qr', 'var menudashQrI18n = ' . wp_json_encode( mdash_qr_i18n(), JSON_HEX_TAG | JSON_HEX_AMP ) . ';', 'before' );
+}
+
+/** The words assets/qr.js writes (the code's label for screen readers), in the owner's language. */
+function mdash_qr_i18n() {
+	return array(
+		/* translators: %s: the web address in the QR code. */
+		'codeLabel' => __( 'QR code: %s', 'menudash' ),
+	);
 }
 
 function mdash_handle_qr() {
 	mdash_back_to( 'menudash-qr' );
 	check_admin_referer( 'menudash_qr' );
 	if ( ! mdash_can() ) {
-		wp_die( 'You are not allowed to change the menu.', 403 );
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
 	}
 	$in       = isset( $_POST['qr'] ) && is_array( $_POST['qr'] ) ? wp_unslash( $_POST['qr'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- cleaned below
 	$get      = function ( $k, $max ) use ( $in ) {
@@ -128,7 +137,7 @@ function mdash_handle_qr() {
 	if ( '' !== $url ) {
 		$url = esc_url_raw( preg_match( '#^https?://#i', $url ) ? $url : 'https://' . $url, array( 'http', 'https' ) );
 		if ( '' === $url ) {
-			$problems[] = 'The link is not a web address; the menu page is used.';
+			$problems[] = __( 'The link is not a web address; the menu page is used.', 'menudash' );
 		}
 	}
 	$s = array(
@@ -144,7 +153,7 @@ function mdash_handle_qr() {
 	);
 	if ( ! $s['langs'] ) {
 		$s['langs']  = array_keys( mdash_lang_buttons() );
-		$problems[] = 'Choose at least one language; all are used.';
+		$problems[] = __( 'Choose at least one language; all are used.', 'menudash' );
 	}
 	update_option( MDASH_QR_OPTION, $s, false );
 	if ( isset( $_POST['do'] ) && 'print' === $_POST['do'] ) { // phpcs:ignore WordPress.Security.NonceVerification -- checked above
@@ -152,7 +161,7 @@ function mdash_handle_qr() {
 		wp_safe_redirect( add_query_arg( array( 'action' => 'menudash_qr_print', '_wpnonce' => wp_create_nonce( 'menudash_qr_print' ) ), admin_url( 'admin-post.php' ) ) );
 		exit;
 	}
-	mdash_back( array( 'ok' => ! $problems, 'kind' => 'QR code', 'message' => 'Saved.', 'error' => implode( ' ', $problems ) ) );
+	mdash_back( array( 'ok' => ! $problems, 'kind' => __( 'QR code', 'menudash' ), 'message' => __( 'Saved.', 'menudash' ), 'error' => implode( ' ', $problems ) ) );
 }
 
 /** One table card. The QR code is drawn into .mdash-qr-code by assets/qr.js. */
@@ -172,13 +181,13 @@ function mdash_qr_card( $s ) {
 			<?php endif; ?>
 		</div>
 		<p class="mdash-qr-text" data-qr-show="text" data-qr-own="<?php echo esc_attr( $s['text'] ); ?>"><?php echo esc_html( '' !== $s['text'] ? $s['text'] : $word( 'qr_title' ) ); ?></p>
-		<div class="mdash-qr-code" data-url="<?php echo esc_attr( $url ); ?>" role="img" aria-label="<?php echo esc_attr( 'QR code: ' . $url ); ?>"></div>
+		<div class="mdash-qr-code" data-url="<?php echo esc_attr( $url ); ?>" role="img" aria-label="<?php echo esc_attr( sprintf( mdash_qr_i18n()['codeLabel'], $url ) ); ?>"></div>
 		<p class="mdash-qr-url" data-qr-show="url"><?php echo esc_html( mdash_qr_short_url( $url ) ); ?></p>
 		<p class="mdash-qr-tip" data-qr-word="qr_tip"<?php echo $s['tip'] ? '' : ' hidden'; ?>><?php echo esc_html( $word( 'qr_tip' ) ); ?></p>
 		<p class="mdash-qr-note" data-qr-show="note"<?php echo '' === $s['note'] ? ' hidden' : ''; ?>><?php echo esc_html( $s['note'] ); ?></p>
 		<span class="mdash-qr-gap"></span>
 		<div class="mdash-qr-wifi" data-qr-show="wifi"<?php echo '' === $s['wifi_name'] ? ' hidden' : ''; ?>>
-			<div class="mdash-qr-wcode" data-url="<?php echo esc_attr( '' !== $s['wifi_name'] ? mdash_qr_wifi_code( $s['wifi_name'], $s['wifi_pass'] ) : '' ); ?>" role="img" aria-label="<?php echo esc_attr( 'Wi-Fi QR code' ); ?>"></div>
+			<div class="mdash-qr-wcode" data-url="<?php echo esc_attr( '' !== $s['wifi_name'] ? mdash_qr_wifi_code( $s['wifi_name'], $s['wifi_pass'] ) : '' ); ?>" role="img" aria-label="<?php esc_attr_e( 'Wi-Fi QR code', 'menudash' ); ?>"></div>
 			<p>
 				<span><span data-qr-word="wifi"><?php echo esc_html( $word( 'wifi' ) ); ?></span>: <strong data-qr-show="wifi_name"><?php echo esc_html( $s['wifi_name'] ); ?></strong></span>
 				<span data-qr-show="wifi_pass_line"<?php echo '' === $s['wifi_pass'] ? ' hidden' : ''; ?>><span data-qr-word="password"><?php echo esc_html( $word( 'password' ) ); ?></span>: <strong data-qr-show="wifi_pass"><?php echo esc_html( $s['wifi_pass'] ); ?></strong></span>
@@ -193,7 +202,7 @@ function mdash_qr_card( $s ) {
 function mdash_qr_card_css() {
 	$c = mdash_colors();
 	return '
-@font-face { font-family: "MenuDash Display"; src: url("' . esc_url( MENUDASH_URL . 'assets/fonts/AbrilFatface-Regular.woff2' ) . '") format("woff2"); }
+@font-face { font-family: "MenuDash Display"; src: url("' . esc_url( MENUDASH_URL . 'assets/fonts/DarkerGrotesque-Variable.woff2' ) . '") format("woff2"); font-weight: 300 900; }
 @font-face { font-family: "MenuDash Sans"; src: url("' . esc_url( MENUDASH_URL . 'assets/fonts/DMSans-Variable.woff2' ) . '") format("woff2"); font-weight: 100 900; }
 /* All sizes in --u: 1mm for the A6 card, 2mm for the A4 poster (exactly twice as big). A full
    card (three languages, a message, Wi-Fi) shrinks its text and codes a little with --k
@@ -203,7 +212,7 @@ function mdash_qr_card_css() {
 .mdash-qr-card p { margin-left: 0; margin-right: 0; }
 .mdash-qr-top { flex: 0 0 auto; height: calc(var(--u) * 18 * var(--k)); display: flex; align-items: center; justify-content: center; }
 .mdash-qr-logo { max-width: calc(var(--u) * 60); max-height: calc(var(--u) * 18 * var(--k)); width: auto; height: auto; }
-.mdash-qr-name { font-family: "MenuDash Display", Georgia, serif; font-size: calc(var(--u) * 9 * var(--k)); line-height: 1; color: ' . esc_attr( $c['accent'] ) . '; }
+.mdash-qr-name { font-family: "MenuDash Display", "MenuDash Sans", sans-serif; font-size: calc(var(--u) * 10 * var(--k)); font-weight: 800; line-height: 1; color: ' . esc_attr( $c['accent'] ) . '; }
 .mdash-qr-text { margin: calc(var(--u) * 4 * var(--k)) 0 0; font-size: calc(var(--u) * 4.4 * var(--k)); font-weight: 700; line-height: 1.22; color: ' . esc_attr( $c['accent'] ) . '; white-space: pre-line; }
 .mdash-qr-code { flex: 0 0 auto; margin: calc(var(--u) * 4 * var(--k)) 0 0; width: calc(var(--u) * 54 * var(--k)); height: calc(var(--u) * 54 * var(--k)); }
 .mdash-qr-code svg, .mdash-qr-wcode svg { display: block; width: 100%; height: 100%; }
@@ -226,73 +235,80 @@ function mdash_qr_admin_tab( $page ) {
 	?>
 	<style><?php echo mdash_qr_card_css(); // phpcs:ignore -- built from fixed CSS and checked colours ?></style>
 	<section class="mdash-card mdash-qr-admin">
-		<h2>QR code and table cards</h2>
-		<p>A QR code that opens your menu on the guest's phone. Print it as table cards (four A6 cards on an A4 sheet, cut along the grey lines), or download it for a flyer, a sticker or the window.</p>
+		<h2><?php esc_html_e( 'QR code and table cards', 'menudash' ); ?></h2>
+		<p><?php esc_html_e( 'A QR code that opens your menu on the guest\'s phone. Print it as table cards (four A6 cards on an A4 sheet, cut along the grey lines), or download it for a flyer, a sticker or the window.', 'menudash' ); ?></p>
 		<div class="mdash-qr-layout">
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="mdash-qr-form">
 				<input type="hidden" name="action" value="menudash_qr">
 				<?php wp_nonce_field( 'menudash_qr' ); ?>
 				<table class="form-table" role="presentation">
-					<tr><th scope="row"><label for="mdash-qr-url">Link</label></th><td>
+					<tr><th scope="row"><label for="mdash-qr-url"><?php esc_html_e( 'Link', 'menudash' ); ?></label></th><td>
 						<input id="mdash-qr-url" name="qr[url]" type="text" class="large-text" maxlength="500" value="<?php echo esc_attr( $s['url'] ); ?>" placeholder="<?php echo esc_attr( mdash_qr_default_url() ); ?>" data-default="<?php echo esc_attr( mdash_qr_default_url() ); ?>">
-						<p class="description">Empty: your menu page. Printed cards keep working as long as this address does, so change it only when you have to.</p>
+						<p class="description"><?php esc_html_e( 'Empty: your menu page. Printed cards keep working as long as this address does, so change it only when you have to.', 'menudash' ); ?></p>
 					</td></tr>
-					<tr><th scope="row"><label for="mdash-qr-text">Own heading</label></th><td>
+					<tr><th scope="row"><label for="mdash-qr-text"><?php esc_html_e( 'Own heading', 'menudash' ); ?></label></th><td>
 						<input id="mdash-qr-text" name="qr[text]" type="text" class="regular-text" maxlength="80" value="<?php echo esc_attr( $s['text'] ); ?>" placeholder="<?php echo esc_attr( mdash_strings()['qr_title']['en'] ); ?>">
-						<p class="description">Optional. Empty: "Speisekarte scannen / Scan for our menu / 掃描查看菜單", in the languages ticked below.</p>
+						<?php /* translators: %s: the card's built-in heading in the three menu languages. */ ?>
+						<p class="description"><?php echo esc_html( sprintf( __( 'Optional. Empty: "%s", in the languages ticked below.', 'menudash' ), 'Speisekarte scannen / Scan for our menu / 掃描查看菜單' ) ); ?></p>
 					</td></tr>
-					<tr><th scope="row"><label for="mdash-qr-wifi-name">Wi-Fi name</label></th><td>
+					<tr><th scope="row"><label for="mdash-qr-wifi-name"><?php esc_html_e( 'Wi-Fi name', 'menudash' ); ?></label></th><td>
 						<input id="mdash-qr-wifi-name" name="qr[wifi_name]" type="text" class="regular-text" maxlength="64" value="<?php echo esc_attr( $s['wifi_name'] ); ?>" autocomplete="off">
 					</td></tr>
-					<tr><th scope="row"><label for="mdash-qr-wifi-pass">Wi-Fi password</label></th><td>
+					<tr><th scope="row"><label for="mdash-qr-wifi-pass"><?php esc_html_e( 'Wi-Fi password', 'menudash' ); ?></label></th><td>
 						<input id="mdash-qr-wifi-pass" name="qr[wifi_pass]" type="text" class="regular-text" maxlength="64" value="<?php echo esc_attr( $s['wifi_pass'] ); ?>" autocomplete="off">
-						<p class="description">Both optional: without a Wi-Fi name the card shows no Wi-Fi part. With one, the card also gets a small Wi-Fi code: guests scan it with the phone camera and join without typing (no password: an open network). Only the printed card shows them, never the website.</p>
+						<p class="description"><?php esc_html_e( 'Both optional: without a Wi-Fi name the card shows no Wi-Fi part. With one, the card also gets a small Wi-Fi code: guests scan it with the phone camera and join without typing (no password: an open network). Only the printed card shows them, never the website.', 'menudash' ); ?></p>
 					</td></tr>
-					<tr><th scope="row">Tip</th><td>
-						<input type="hidden" name="qr[tip]" value=""><label><input type="checkbox" name="qr[tip]" value="1" <?php checked( $s['tip'] ); ?>> Show the tip "Choose your language and filter by vegetarian, vegan, gluten-free or spicy."</label>
-						<p class="description">Under the web address, in the languages ticked below.</p>
+					<tr><th scope="row"><?php esc_html_e( 'Tip', 'menudash' ); ?></th><td>
+						<input type="hidden" name="qr[tip]" value=""><label><input type="checkbox" name="qr[tip]" value="1" <?php checked( $s['tip'] ); ?>> <?php esc_html_e( 'Show the tip "Choose your language and filter by vegetarian, vegan, gluten-free or spicy."', 'menudash' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Under the web address, in the languages ticked below.', 'menudash' ); ?></p>
 					</td></tr>
-					<tr><th scope="row"><label for="mdash-qr-note">Own message</label></th><td>
-						<textarea id="mdash-qr-note" name="qr[note]" rows="2" class="large-text" maxlength="400" placeholder="e.g. Free Wi-Fi for our guests"><?php echo esc_textarea( $s['note'] ); ?></textarea>
-						<p class="description">Optional, under the tip: up to 4 short lines, in any language.</p>
+					<tr><th scope="row"><label for="mdash-qr-note"><?php esc_html_e( 'Own message', 'menudash' ); ?></label></th><td>
+						<textarea id="mdash-qr-note" name="qr[note]" rows="2" class="large-text" maxlength="400" placeholder="<?php esc_attr_e( 'e.g. Free Wi-Fi for our guests', 'menudash' ); ?>"><?php echo esc_textarea( $s['note'] ); ?></textarea>
+						<p class="description"><?php esc_html_e( 'Optional, under the tip: up to 4 short lines, in any language.', 'menudash' ); ?></p>
 					</td></tr>
-					<tr><th scope="row">Languages on the card</th><td>
+					<tr><th scope="row"><?php esc_html_e( 'Languages on the card', 'menudash' ); ?></th><td>
 						<?php foreach ( mdash_lang_buttons() as $code => $label ) : ?>
 							<label class="mdash-qr-lang"><input type="checkbox" name="qr[langs][]" value="<?php echo esc_attr( $code ); ?>" <?php checked( in_array( $code, $s['langs'], true ) ); ?>> <?php echo esc_html( $label ); ?></label>
 						<?php endforeach; ?>
-						<p class="description">The heading, the tip and the Wi-Fi words are printed in each ticked language, in the menu's order. A full card makes its text a little smaller by itself.</p>
+						<p class="description"><?php esc_html_e( 'The heading, the tip and the Wi-Fi words are printed in each ticked language, in the menu\'s order. A full card makes its text a little smaller by itself.', 'menudash' ); ?></p>
 					</td></tr>
-					<tr><th scope="row">Print size</th><td>
-						<label><input type="radio" name="qr[size]" value="a6" <?php checked( 'a4' !== $s['size'] ); ?>> 4 table cards (A6) on one A4 sheet</label><br>
-						<label><input type="radio" name="qr[size]" value="a4" <?php checked( 'a4' === $s['size'] ); ?>> 1 poster on A4 (the same card, twice as big: door, window, counter)</label>
+					<tr><th scope="row"><?php esc_html_e( 'Print size', 'menudash' ); ?></th><td>
+						<label><input type="radio" name="qr[size]" value="a6" <?php checked( 'a4' !== $s['size'] ); ?>> <?php esc_html_e( '4 table cards (A6) on one A4 sheet', 'menudash' ); ?></label><br>
+						<label><input type="radio" name="qr[size]" value="a4" <?php checked( 'a4' === $s['size'] ); ?>> <?php esc_html_e( '1 poster on A4 (the same card, twice as big: door, window, counter)', 'menudash' ); ?></label>
 					</td></tr>
-					<tr><th scope="row">Logo</th><td><p class="description">
+					<tr><th scope="row"><?php esc_html_e( 'Logo', 'menudash' ); ?></th><td><p class="description">
 						<?php if ( mdash_qr_logo_url() ) : ?>
-							The site's logo is used.
+							<?php esc_html_e( 'The site\'s logo is used.', 'menudash' ); ?>
 						<?php else : ?>
-							No logo yet, so the card shows the site name.
+							<?php esc_html_e( 'No logo yet, so the card shows the site name.', 'menudash' ); ?>
 						<?php endif; ?>
 						<?php if ( has_action( 'admin_post_menudash_details' ) ) : ?>
-							Change it under <a href="<?php echo esc_url( admin_url( 'admin.php?page=menudash-restaurant' ) ); ?>">Restaurant → Logo and icon</a>.
+							<?php
+							printf(
+								/* translators: %s: link "Restaurant → Logo and icon" (a tab and a card of the dashboard). */
+								esc_html__( 'Change it under %s.', 'menudash' ),
+								'<a href="' . esc_url( admin_url( 'admin.php?page=menudash-restaurant' ) ) . '">' . esc_html__( 'Restaurant → Logo and icon', 'menudash' ) . '</a>'
+							);
+							?>
 						<?php else : ?>
-							It is WordPress's own Site Logo (Site Editor or Customizer).
+							<?php esc_html_e( 'It is WordPress\'s own Site Logo (Site Editor or Customizer).', 'menudash' ); ?>
 						<?php endif; ?>
 					</p></td></tr>
 				</table>
 				<p class="mdash-closed-actions">
-					<?php submit_button( 'Save', 'secondary', 'save_qr', false ); ?>
-					<button type="submit" class="button button-primary" name="do" value="print" formtarget="_blank">Save and print table cards</button>
+					<?php submit_button( __( 'Save', 'menudash' ), 'secondary', 'save_qr', false ); ?>
+					<button type="submit" class="button button-primary" name="do" value="print" formtarget="_blank"><?php esc_html_e( 'Save and print table cards', 'menudash' ); ?></button>
 				</p>
-				<p class="mdash-qr-files">Download the code alone:
+				<p class="mdash-qr-files"><?php esc_html_e( 'Download the code alone:', 'menudash' ); ?>
 					<button type="button" class="button-link" data-qr-download="svg">SVG</button> ·
 					<button type="button" class="button-link" data-qr-download="png">PNG</button>
-					<span class="description">(SVG for print shops, PNG for anything else)</span>
+					<span class="description"><?php esc_html_e( '(SVG for print shops, PNG for anything else)', 'menudash' ); ?></span>
 				</p>
 			</form>
 			<div class="mdash-qr-preview">
-				<h3>Preview</h3>
+				<h3><?php esc_html_e( 'Preview', 'menudash' ); ?></h3>
 				<?php echo mdash_qr_card( $s ); // phpcs:ignore -- escaped inside ?>
-				<p class="description mdash-qr-test">Test it: scan the card on the screen with your phone.</p>
+				<p class="description mdash-qr-test"><?php esc_html_e( 'Test it: scan the card on the screen with your phone.', 'menudash' ); ?></p>
 			</div>
 		</div>
 	</section>
@@ -303,7 +319,7 @@ function mdash_qr_admin_tab( $page ) {
 function mdash_qr_print() {
 	check_admin_referer( 'menudash_qr_print' );
 	if ( ! mdash_can() ) {
-		wp_die( 'You are not allowed to change the menu.', 403 );
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
 	}
 	$s    = mdash_qr_settings();
 	$card = mdash_qr_card( $s );
@@ -314,7 +330,8 @@ function mdash_qr_print() {
 <html lang="<?php echo esc_attr( substr( get_locale(), 0, 2 ) ); ?>">
 <head>
 <meta charset="utf-8">
-<title><?php echo esc_html( 'Table cards – ' . wp_specialchars_decode( (string) get_option( 'blogname' ), ENT_QUOTES ) ); ?></title>
+<?php /* translators: %s: site name. */ ?>
+<title><?php echo esc_html( sprintf( __( 'Table cards – %s', 'menudash' ), wp_specialchars_decode( (string) get_option( 'blogname' ), ENT_QUOTES ) ) ); ?></title>
 <style>
 @page { size: A4 portrait; margin: 0; }
 html, body { margin: 0; padding: 0; background: #e9e9e9; }
@@ -331,12 +348,13 @@ html, body { margin: 0; padding: 0; background: #e9e9e9; }
 </head>
 <body>
 <?php if ( $a4 ) : ?>
-<p class="mdash-qr-hint">Print on A4 at 100 % ("Actual size", not "Fit to page").</p>
+<p class="mdash-qr-hint"><?php esc_html_e( 'Print on A4 at 100 % ("Actual size", not "Fit to page").', 'menudash' ); ?></p>
 <?php else : ?>
-<p class="mdash-qr-hint">Print on A4 at 100 % ("Actual size", not "Fit to page"), then cut along the grey lines. Tip: thicker paper (160–250 g/m²) stands better.</p>
+<p class="mdash-qr-hint"><?php esc_html_e( 'Print on A4 at 100 % ("Actual size", not "Fit to page"), then cut along the grey lines. Tip: thicker paper (160–250 g/m²) stands better.', 'menudash' ); ?></p>
 <?php endif; ?>
 <div class="mdash-qr-sheet<?php echo $a4 ? ' mdash-qr-a4' : ''; ?>"><?php echo str_repeat( $card, $a4 ? 1 : 4 ); // phpcs:ignore -- escaped inside ?></div>
 <script src="<?php echo esc_url( MENUDASH_URL . 'assets/vendor/qrcode.js?ver=1.4.4' ); ?>"></script>
+<script>var menudashQrI18n = <?php echo wp_json_encode( mdash_qr_i18n(), JSON_HEX_TAG | JSON_HEX_AMP ); ?>;</script>
 <script src="<?php echo esc_url( MENUDASH_URL . 'assets/qr.js?ver=' . MENUDASH_VERSION ); ?>"></script>
 <script>window.addEventListener("load", function () { setTimeout(function () { window.print(); }, 300); });</script>
 </body>

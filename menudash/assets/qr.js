@@ -91,7 +91,7 @@
     var u = link();
     if (code.getAttribute("data-url") !== u) {
       code.setAttribute("data-url", u);
-      code.setAttribute("aria-label", "QR code: " + u);
+      code.setAttribute("aria-label", ((window.menudashQrI18n || {}).codeLabel || "QR code: %s").replace("%s", u));
       part("url").textContent = u.replace(/^https?:\/\/(www\.)?/i, "").replace(/\/$/, "");
       draw(code);
     }

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       MenuDash
  * Description:       A restaurant menu for your website, kept in a spreadsheet: upload the menu as CSV and the dish photos under MenuDash, then put [menudash] on a page. Guests read it in German, English and Chinese, all at once or one at a time, and filter by diet. Background and highlight colours and the diet icons are chosen on the MenuDash page, and a QR code to the menu prints as table cards. Add-ons: MenuDash Restaurant (details, opening hours, holidays, "open now"), MenuDash Specials (today's specials) and MenuDash Gift Cards (gift card orders).
- * Version:           2.3.0
+ * Version:           2.4.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Plugin URI:        https://insdash.ch/projects/menudash/
@@ -15,7 +15,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MENUDASH_VERSION', '2.3.0' );
+define( 'MENUDASH_VERSION', '2.4.0' );
 define( 'MENUDASH_NAME', 'MenuDash' );
 define( 'MENUDASH_FILE', __FILE__ );
 define( 'MENUDASH_DIR', plugin_dir_path( __FILE__ ) );
@@ -29,6 +29,7 @@ require MENUDASH_DIR . 'includes/svg-clean.php';
 require MENUDASH_DIR . 'includes/icons.php';
 require MENUDASH_DIR . 'includes/render.php';
 require MENUDASH_DIR . 'includes/colors.php';
+require MENUDASH_DIR . 'includes/fonts.php';
 require MENUDASH_DIR . 'includes/origin.php';
 require MENUDASH_DIR . 'includes/picks.php';
 require MENUDASH_DIR . 'includes/updater.php';
@@ -38,6 +39,16 @@ if ( is_admin() ) {
 	require MENUDASH_DIR . 'includes/admin.php';
 	require MENUDASH_DIR . 'includes/qr.php';
 }
+
+// The dashboard in the owner's language (languages/menudash-<locale>.mo). Priority 1: the
+// Recommended dishes block is registered on init at priority 5, with a translated title.
+add_action(
+	'init',
+	function () {
+		load_plugin_textdomain( 'menudash', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	},
+	1
+);
 
 register_activation_hook( __FILE__, 'mdash_activate' );
 add_shortcode( 'menudash', 'mdash_shortcode' );

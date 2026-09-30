@@ -12,6 +12,13 @@
 
 defined( 'MENUDASH_PURE' ) || defined( 'ABSPATH' ) || exit;
 
+// Outside WordPress (the dev tests run this file alone), texts stay in English.
+if ( defined( 'MENUDASH_PURE' ) && ! function_exists( '__' ) ) {
+	function __( $text, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName -- stands in for WordPress's __().
+		return $text;
+	}
+}
+
 const MDASH_SVG_SHAPES = array( 'path', 'circle', 'ellipse', 'rect', 'line', 'polyline', 'polygon' );
 const MDASH_SVG_ATTRS  = array(
 	'd', 'fill', 'fill-rule', 'clip-rule', 'fill-opacity', 'opacity',
@@ -28,13 +35,13 @@ function mdash_clean_svg( $svg ) {
 		return array( 'ok' => false, 'error' => $error, 'viewBox' => '', 'body' => '' );
 	};
 	if ( ! class_exists( 'DOMDocument' ) ) {
-		return $fail( 'This server cannot read SVG files; upload a PNG instead.' );
+		return $fail( __( 'This server cannot read SVG files; upload a PNG instead.', 'menudash' ) );
 	}
 	if ( strlen( $svg ) > 200 * 1024 ) {
-		return $fail( 'The SVG is over 200 KB; an icon is usually a few KB.' );
+		return $fail( __( 'The SVG is over 200 KB; an icon is usually a few KB.', 'menudash' ) );
 	}
 	if ( preg_match( '/<!DOCTYPE|<!ENTITY/i', $svg ) ) {
-		return $fail( 'The SVG declares a DOCTYPE or entities, which icons never need.' );
+		return $fail( __( 'The SVG declares a DOCTYPE or entities, which icons never need.', 'menudash' ) );
 	}
 
 	// @ rather than libxml_use_internal_errors(): same result, and the latter crashes some
@@ -44,11 +51,11 @@ function mdash_clean_svg( $svg ) {
 	// The text check above misses a DOCTYPE written in another encoding (UTF-16), so ask
 	// the parser too.
 	if ( $ok && null !== $doc->doctype ) {
-		return $fail( 'The SVG declares a DOCTYPE or entities, which icons never need.' );
+		return $fail( __( 'The SVG declares a DOCTYPE or entities, which icons never need.', 'menudash' ) );
 	}
 	$root = $ok ? $doc->documentElement : null;
 	if ( ! $root || 'svg' !== strtolower( $root->localName ) ) {
-		return $fail( 'This is not an SVG file.' );
+		return $fail( __( 'This is not an SVG file.', 'menudash' ) );
 	}
 
 	$box = trim( (string) $root->getAttribute( 'viewBox' ) );
@@ -56,14 +63,14 @@ function mdash_clean_svg( $svg ) {
 		$w = (float) $root->getAttribute( 'width' );
 		$h = (float) $root->getAttribute( 'height' );
 		if ( $w <= 0 || $h <= 0 ) {
-			return $fail( 'The SVG has no size (no viewBox, width or height).' );
+			return $fail( __( 'The SVG has no size (no viewBox, width or height).', 'menudash' ) );
 		}
 		$box = "0 0 $w $h";
 	}
 
 	$body = mdash_svg_children( $root );
 	if ( '' === $body ) {
-		return $fail( 'Nothing drawable was found in the SVG.' );
+		return $fail( __( 'Nothing drawable was found in the SVG.', 'menudash' ) );
 	}
 	return array( 'ok' => true, 'error' => '', 'viewBox' => preg_replace( '/[ ,]+/', ' ', $box ), 'body' => $body );
 }

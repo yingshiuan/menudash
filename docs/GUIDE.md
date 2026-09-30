@@ -10,7 +10,7 @@ The page has three tabs, each also listed in the left bar under MenuDash:
 |---|---|
 | **Menu** | 1. menu file, 2. dish photos, 3. the check of every dish and photo |
 | **QR code** | QR code, table cards, A4 poster |
-| **Colours & icons** | colours, diet icons |
+| **Colours, fonts & icons** | colours, fonts, diet icons |
 
 Add-ons (MenuDash Restaurant, Specials, Gift Cards) add their own tabs and boxes; their guide comes with them.
 
@@ -129,7 +129,7 @@ The pictures are always the dishes' photos (see [Photos](#photos)): to change on
 
 ## Colours
 
-Under **MenuDash → Colours & icons → Colours**, choose which colours the menu (and the add-ons' boxes) use:
+Under **MenuDash → Colours, fonts & icons → Colours**, choose which colours the menu (and the add-ons' boxes) use:
 
 - **The theme's colours** (the default when the theme has suitable ones): the menu matches the site and follows the theme when you change its colours under *Appearance → Editor → Styles*. Only readable colours are taken: a highlight that stands out from the background.
 - **My own colours**: pick the **background** and the **highlight** colour of buttons, filters, headings and the Recommended icon. They start as dark blue on beige, and stay saved when you switch to the theme's colours and back.
@@ -142,9 +142,18 @@ The preview changes while you pick. Text on the highlight turns dark by itself w
 
 ---
 
+## Fonts
+
+Under **MenuDash → Colours, fonts & icons → Fonts**:
+
+- **The theme's fonts** (the default): the menu, the specials, the gift card form and the recommended dishes use the theme's text and heading fonts, and follow them when you change them under *Appearance → Editor → Styles → Typography*. This needs a block theme; a classic theme has none to give, so MenuDash uses its own.
+- **MenuDash's fonts**: DM Sans for text and Darker Grotesque for headings, included with MenuDash (the same pair as MenuDash Theme; nothing is loaded from Google).
+
+Chinese always uses the device's Chinese font.
+
 ## Diet icons
 
-The five marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free) come with icons. To use your own, go to **MenuDash → Colours & icons → Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
+The five marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free) come with icons. To use your own, go to **MenuDash → Colours, fonts & icons → Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
 
 <img src="dashboard/05-diet-icons.png" alt="The Diet icons box: one slot per mark" width="720">
 

@@ -13,6 +13,7 @@ function add_action() {}
 function sanitize_text_field( $s ) { return trim( preg_replace( '/\s+/', ' ', strip_tags( $s ) ) ); }
 function esc_html( $s ) { return htmlspecialchars( $s, ENT_QUOTES, 'UTF-8' ); }
 function esc_attr( $s ) { return esc_html( $s ); }
+function __( $s ) { return $s; }
 $GLOBALS['mdash_test_option'] = false;
 function get_option() { return $GLOBALS['mdash_test_option']; }
 function shortcode_atts( $defaults, $atts ) { return array_merge( $defaults, array_intersect_key( (array) $atts, $defaults ) ); }

@@ -38,8 +38,8 @@ function mdash_picks_register() {
 		'menudash/picks',
 		array(
 			'api_version'     => 3,
-			'title'           => 'Recommended dishes',
-			'description'     => 'Dishes with their photos, each linking to the menu: the ones marked Recommended in the menu, or the ones you choose.',
+			'title'           => __( 'Recommended dishes', 'menudash' ),
+			'description'     => __( 'Dishes with their photos, each linking to the menu: the ones marked Recommended in the menu, or the ones you choose.', 'menudash' ),
 			'category'        => 'menudash',
 			'icon'            => 'star-filled',
 			'keywords'        => array( 'dishes', 'recommended', 'photos', 'empfehlungen', 'gerichte', 'menu' ),
@@ -151,10 +151,31 @@ function mdash_picks_all( $menu ) {
 	foreach ( $menu['sections'] as $sec ) {
 		foreach ( $sec['dishes'] as $d ) {
 			$d['sec']         = $sec['name'];
+			$d['_fold']       = mdash_picks_fold( $d['name'] ); // Folded once, for matching chosen dishes.
 			$all[ $d['key'] ] = $d;
 		}
 	}
 	return $all;
+}
+
+/**
+ * Folded name => key of the first dish with that name. Worked out once per page view: the
+ * names are folded once (into each dish's '_fold') however many lists look them up.
+ */
+function mdash_picks_name_map( &$all ) {
+	static $maps = array();
+	$id = md5( implode( ',', array_keys( $all ) ) );
+	if ( ! isset( $maps[ $id ] ) ) {
+		$map = array();
+		foreach ( $all as $k => $d ) {
+			$f = isset( $d['_fold'] ) ? $d['_fold'] : mdash_picks_fold( $d['name'] );
+			if ( '' !== $f && ! isset( $map[ $f ] ) ) {
+				$map[ $f ] = $k;
+			}
+		}
+		$maps[ $id ] = $map;
+	}
+	return $maps[ $id ];
 }
 
 /**
@@ -163,20 +184,18 @@ function mdash_picks_all( $menu ) {
  * Returns array( dishes, names of the chosen dishes that are gone ).
  */
 function mdash_picks_find( $refs, $all ) {
-	$by_name = array();
-	foreach ( $all as $k => $d ) {
-		$f = mdash_picks_fold( $d['name'] );
-		if ( '' !== $f && ! isset( $by_name[ $f ] ) ) {
-			$by_name[ $f ] = $k;
+	$by_name = mdash_picks_name_map( $all );
+	$found   = array();
+	$gone    = array();
+	// At most 48 per list: that is all a group can show (and keeps a crafted list cheap).
+	foreach ( array_slice( (array) $refs, 0, 48 ) as $ref ) {
+		if ( ! is_array( $ref ) ) {
+			continue;
 		}
-	}
-	$found = array();
-	$gone  = array();
-	foreach ( (array) $refs as $ref ) {
 		$key  = isset( $ref['key'] ) ? (string) $ref['key'] : '';
 		$name = isset( $ref['name'] ) ? (string) $ref['name'] : '';
 		$f    = mdash_fold( mdash_base_name( $name ) );
-		if ( isset( $all[ $key ] ) && ( '' === $f || mdash_picks_fold( $all[ $key ]['name'] ) === $f ) ) {
+		if ( isset( $all[ $key ] ) && ( '' === $f || $all[ $key ]['_fold'] === $f ) ) {
 			$k = $key;
 		} elseif ( '' !== $f && isset( $by_name[ $f ] ) ) {
 			$k = $by_name[ $f ];
@@ -201,13 +220,14 @@ function mdash_picks_block( $a ) {
  */
 function mdash_picks_render( $a, $wrap = '' ) {
 	$a      = wp_parse_args( $a, array( 'source' => 'pick', 'dishes' => array(), 'split' => false, 'groups' => array(), 'groupStyle' => 'tabs', 'max' => 12, 'layout' => 'grid', 'lang' => '', 'number' => true, 'second' => true, 'diet' => false, 'button' => true, 'buttonText' => '', 'className' => '' ) );
-	$editor = defined( 'REST_REQUEST' ) && REST_REQUEST;
+	// Notes for the editor only: a REST request from someone who can edit (not the public API).
+	$editor = defined( 'REST_REQUEST' ) && REST_REQUEST && current_user_can( 'edit_posts' );
 	$note   = function ( $text ) use ( $editor ) {
 		return $editor ? '<p class="mdash-picks-note"><em>' . esc_html( $text ) . '</em></p>' : '';
 	};
 	$menu = mdash_get_menu();
 	if ( ! $menu ) {
-		return $note( 'Recommended dishes: no menu yet. Upload one under MenuDash → Menu.' );
+		return $note( __( 'Recommended dishes: no menu yet. Upload one under MenuDash → Menu.', 'menudash' ) );
 	}
 	$all    = mdash_picks_all( $menu );
 	$photos = mdash_photo_index();
@@ -222,8 +242,12 @@ function mdash_picks_render( $a, $wrap = '' ) {
 	// The groups to show: array( title, dishes ). Without "split", one group without a title.
 	$groups = array();
 	if ( 'chosen' === $a['source'] ) {
-		$lists = $a['split'] ? (array) $a['groups'] : array( array( 'title' => '', 'dishes' => $a['dishes'] ) );
+		// At most 12 groups (a crafted block could otherwise ask for thousands).
+		$lists = $a['split'] ? array_slice( (array) $a['groups'], 0, 12 ) : array( array( 'title' => '', 'dishes' => $a['dishes'] ) );
 		foreach ( $lists as $g ) {
+			if ( ! is_array( $g ) ) {
+				continue;
+			}
 			list( $found, $lost ) = mdash_picks_find( isset( $g['dishes'] ) ? $g['dishes'] : array(), $all );
 			$gone                 = array_merge( $gone, $lost );
 			$groups[]             = array( isset( $g['title'] ) ? (string) $g['title'] : '', $found );
@@ -243,7 +267,7 @@ function mdash_picks_render( $a, $wrap = '' ) {
 		}
 		$dishes = array_merge( $with, $without );
 		if ( ! $dishes ) {
-			return $note( 'Recommended dishes: no dish is marked Recommended in the menu. Mark some in the spreadsheet, or choose the dishes in the sidebar.' );
+			return $note( __( 'Recommended dishes: no dish is marked Recommended in the menu. Mark some in the spreadsheet, or choose the dishes in the sidebar.', 'menudash' ) );
 		}
 		if ( $a['split'] ) {
 			// Split by the diet marks: meat and fish, then vegetarian and vegan.
@@ -268,7 +292,7 @@ function mdash_picks_render( $a, $wrap = '' ) {
 		return (bool) $g[1];
 	} ) );
 	if ( ! $groups && ! $gone ) {
-		return $note( 'Recommended dishes: choose the dishes in the sidebar.' );
+		return $note( __( 'Recommended dishes: choose the dishes in the sidebar.', 'menudash' ) );
 	}
 
 	$url  = mdash_picks_menu_url();
@@ -348,7 +372,8 @@ function mdash_picks_render( $a, $wrap = '' ) {
 	$class = ( 'row' === $a['layout'] || $slide ? 'is-row' : 'is-grid' ) . ( $tabs ? ' has-tabs' : '' ) . ( $slide ? ' has-slide' : '' );
 	$wrap  = '' !== $wrap ? $wrap : 'class="menudash-picks' . ( '' !== $a['className'] ? ' ' . esc_attr( $a['className'] ) : '' ) . '"';
 	$wrap  = preg_replace( '/class="/', 'class="' . $class . ' ', $wrap, 1 );
-	$gone  = $gone ? $note( sprintf( 'Not on the menu any more, so not shown: %s. Choose them again or remove them in the sidebar.', implode( ', ', $gone ) ) ) : '';
+	/* translators: %s: dish names, comma-separated. */
+	$gone  = $gone ? $note( sprintf( __( 'Not on the menu any more, so not shown: %s. Choose them again or remove them in the sidebar.', 'menudash' ), implode( ', ', $gone ) ) ) : '';
 	wp_enqueue_style( 'menudash-picks' );
 	return '<div ' . $wrap . ' data-nosnippet>' . $gone . $html . $more . '</div>';
 }
@@ -362,16 +387,20 @@ function mdash_picks_shortcode( $atts ) {
 	$refs = array();
 	$menu = '' !== trim( $atts['dishes'] ) ? mdash_get_menu() : null;
 	if ( $menu ) {
-		$all = mdash_picks_all( $menu );
-		foreach ( array_filter( array_map( 'trim', explode( ',', $atts['dishes'] ) ), 'strlen' ) as $want ) {
-			$no = mdash_dish_no( $want );
-			foreach ( $all as $d ) {
-				if ( ( '' !== $no && (string) $d['no'] === $no ) || mdash_picks_fold( $d['name'] ) === mdash_fold( $want ) ) {
-					$refs[] = array( 'key' => $d['key'], 'name' => '' );
-					continue 2;
-				}
+		$all   = mdash_picks_all( $menu );
+		$names = mdash_picks_name_map( $all );
+		$nos   = array();
+		foreach ( $all as $k => $d ) {
+			if ( '' !== (string) $d['no'] && ! isset( $nos[ (string) $d['no'] ] ) ) {
+				$nos[ (string) $d['no'] ] = $k;
 			}
-			$refs[] = array( 'key' => '', 'name' => $want );
+		}
+		// At most 48 dishes, each found by its number or its name.
+		foreach ( array_slice( array_filter( array_map( 'trim', explode( ',', $atts['dishes'] ) ), 'strlen' ), 0, 48 ) as $want ) {
+			$no = mdash_dish_no( $want );
+			$f  = mdash_fold( $want );
+			$k  = '' !== $no && isset( $nos[ $no ] ) ? $nos[ $no ] : ( isset( $names[ $f ] ) ? $names[ $f ] : '' );
+			$refs[] = '' !== $k ? array( 'key' => $k, 'name' => '' ) : array( 'key' => '', 'name' => $want );
 		}
 	}
 	return mdash_picks_render(
@@ -414,5 +443,59 @@ function mdash_picks_editor_data() {
 			);
 		}
 	}
-	wp_add_inline_script( 'menudash-picks-editor', 'var menudashPicks = ' . wp_json_encode( array( 'dishes' => $list, 'titles' => mdash_picks_diet_titles( mdash_picks_site_lang() ) ) ) . ';', 'before' );
+	wp_add_inline_script( 'menudash-picks-editor', 'var menudashPicks = ' . wp_json_encode( array( 'dishes' => $list, 'titles' => mdash_picks_diet_titles( mdash_picks_site_lang() ) ), JSON_HEX_TAG | JSON_HEX_AMP ) . ';', 'before' );
+	wp_add_inline_script( 'menudash-picks-editor', 'var menudashPicksI18n = ' . wp_json_encode( mdash_picks_editor_i18n(), JSON_HEX_TAG | JSON_HEX_AMP ) . ';', 'before' );
+}
+
+/** The words of the block's sidebar (assets/picks-editor.js), in the owner's language. */
+function mdash_picks_editor_i18n() {
+	return array(
+		'noPhoto'       => __( 'No photo yet', 'menudash' ),
+		/* translators: %s: dish name. */
+		'notOnMenu'     => __( '%s (not on the menu)', 'menudash' ),
+		'moveUp'        => __( 'Move up', 'menudash' ),
+		'moveDown'      => __( 'Move down', 'menudash' ),
+		'remove'        => __( 'Remove', 'menudash' ),
+		'noneChosen'    => __( 'No dishes chosen yet. Search the menu below and add them.', 'menudash' ),
+		'addDish'       => __( 'Add a dish', 'menudash' ),
+		'numberOrName'  => __( 'Number or name', 'menudash' ),
+		'noDishFound'   => __( 'No dish found.', 'menudash' ),
+		'add'           => __( 'Add', 'menudash' ),
+		'noMenu'        => __( 'No menu yet: upload one under MenuDash → Menu.', 'menudash' ),
+		/* translators: %s: group number, 1, 2, 3 … */
+		'groupTitle'    => __( 'Group %s: title', 'menudash' ),
+		'removeGroup'   => __( 'Remove this group', 'menudash' ),
+		'addGroup'      => __( '+ Add a group', 'menudash' ),
+		'pickHelp'      => __( 'Change them with the Recommended column in the menu spreadsheet. Dishes with a photo come first.', 'menudash' ),
+		'splitHelp'     => __( 'Split by the diet marks in the spreadsheet: dishes marked vegetarian or vegan go in the second group.', 'menudash' ),
+		'dishes'        => __( 'Dishes', 'menudash' ),
+		'show'          => __( 'Show', 'menudash' ),
+		/* translators: %s: number of dishes marked Recommended. */
+		'markedPick'    => __( 'Marked Recommended in the menu (%s)', 'menudash' ),
+		'iChoose'       => __( 'The dishes I choose', 'menudash' ),
+		'split'         => __( 'Split into groups', 'menudash' ),
+		'splitChosen'   => __( 'Groups with their own title and dishes, e.g. Meat & fish / Vegan & vegetarian.', 'menudash' ),
+		'splitPick'     => __( 'Meat & fish, and vegan & vegetarian.', 'menudash' ),
+		'groupsAs'      => __( 'Groups are shown as', 'menudash' ),
+		'tabs'          => __( 'Tabs (one group at a time)', 'menudash' ),
+		'slide'         => __( 'Tabs that slide (all groups in one row)', 'menudash' ),
+		'headings'      => __( 'Headings (all groups)', 'menudash' ),
+		'slideHelp'     => __( 'One row that slides sideways: a tab slides to its group, and swiping moves the tab. Six dishes to a screen on a computer.', 'menudash' ),
+		'maxPerGroup'   => __( 'Show at most (per group)', 'menudash' ),
+		'max'           => __( 'Show at most', 'menudash' ),
+		'photosHelp'    => __( 'The photos are the dishes\' photos under MenuDash → Dish photos. To change a picture, upload a new photo for that dish there.', 'menudash' ),
+		'look'          => __( 'Look', 'menudash' ),
+		'layout'        => __( 'Layout', 'menudash' ),
+		'grid'          => __( 'Grid', 'menudash' ),
+		'row'           => __( 'One row that slides', 'menudash' ),
+		'language'      => __( 'Language', 'menudash' ),
+		'siteLanguage'  => __( 'Site language', 'menudash' ),
+		'dishNumber'    => __( 'Dish number', 'menudash' ),
+		'dietMark'      => __( 'Vegan / vegetarian mark', 'menudash' ),
+		'dietHelp'      => __( 'After the number, e.g. No. 400 · Vegan.', 'menudash' ),
+		'secondName'    => __( 'Second name (Chinese)', 'menudash' ),
+		'button'        => __( 'Button to the whole menu', 'menudash' ),
+		'buttonText'    => __( 'Button text', 'menudash' ),
+		'buttonEmpty'   => __( 'Empty: "See the whole menu" in the language', 'menudash' ),
+	);
 }

@@ -8,6 +8,12 @@
   var MENU = (window.menudashPicks && window.menudashPicks.dishes) || [];
   var byKey = {};
   MENU.forEach(function (d) { byKey[d.key] = d; });
+  // The sidebar's words in the owner's language (includes/picks.php), English when missing.
+  var I18N = window.menudashPicksI18n || {};
+  function t(k, en, arg) {
+    var s = I18N[k] || en;
+    return arg === undefined ? s : s.replace("%s", arg);
+  }
 
   function label(d) { return (d.no ? d.no + " · " : "") + d.name; }
   function fold(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
@@ -23,14 +29,14 @@
   function Thumb(props) {
     return props.src
       ? el("img", { src: props.src, alt: "", width: 32, height: 32, style: { width: 32, height: 32, objectFit: "contain", flex: "none" } })
-      : el("span", { style: { width: 32, height: 32, flex: "none", borderRadius: "50%", background: "#eee", display: "inline-block" }, title: "No photo yet" });
+      : el("span", { style: { width: 32, height: 32, flex: "none", borderRadius: "50%", background: "#eee", display: "inline-block" }, title: t("noPhoto", "No photo yet") });
   }
 
   function Row(props) {
     return el("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", borderBottom: "1px solid #eee" } },
       el(Thumb, { src: props.dish ? props.dish.photo : "" }),
       el("span", { style: { flex: 1, minWidth: 0, fontSize: 13, color: props.dish ? "inherit" : "#b32d2e" } },
-        props.dish ? label(props.dish) : props.missing + " (not on the menu)"),
+        props.dish ? label(props.dish) : t("notOnMenu", "%s (not on the menu)", props.missing)),
       props.children);
   }
 
@@ -53,19 +59,19 @@
         list.map(function (r, i) {
           var d = find(r);
           return el(Row, { key: r.key + i, dish: d, missing: r.name || r.key },
-            el(components.Button, { icon: "arrow-up-alt2", label: "Move up", size: "small", disabled: i === 0, onClick: function () { move(i, -1); } }),
-            el(components.Button, { icon: "arrow-down-alt2", label: "Move down", size: "small", disabled: i === list.length - 1, onClick: function () { move(i, 1); } }),
-            el(components.Button, { icon: "no-alt", label: "Remove", size: "small", isDestructive: true, onClick: function () { set(list.filter(function (x, j) { return j !== i; })); } }));
-        })) : el("p", { className: "components-base-control__help" }, "No dishes chosen yet. Search the menu below and add them."),
-      el(components.SearchControl, { label: "Add a dish", value: query, placeholder: "Number or name", onChange: setQuery, __nextHasNoMarginBottom: true }),
-      f && !hits.length ? el("p", { className: "components-base-control__help" }, "No dish found.") : null,
+            el(components.Button, { icon: "arrow-up-alt2", label: t("moveUp", "Move up"), size: "small", disabled: i === 0, onClick: function () { move(i, -1); } }),
+            el(components.Button, { icon: "arrow-down-alt2", label: t("moveDown", "Move down"), size: "small", disabled: i === list.length - 1, onClick: function () { move(i, 1); } }),
+            el(components.Button, { icon: "no-alt", label: t("remove", "Remove"), size: "small", isDestructive: true, onClick: function () { set(list.filter(function (x, j) { return j !== i; })); } }));
+        })) : el("p", { className: "components-base-control__help" }, t("noneChosen", "No dishes chosen yet. Search the menu below and add them.")),
+      el(components.SearchControl, { label: t("addDish", "Add a dish"), value: query, placeholder: t("numberOrName", "Number or name"), onChange: setQuery, __nextHasNoMarginBottom: true }),
+      f && !hits.length ? el("p", { className: "components-base-control__help" }, t("noDishFound", "No dish found.")) : null,
       hits.map(function (d) {
         return el(Row, { key: d.key, dish: d },
           el(components.Button, { variant: "secondary", size: "small", onClick: function () {
             set(list.concat([{ key: d.key, name: d.name }]));
-          } }, "Add"));
+          } }, t("add", "Add")));
       }),
-      !MENU.length ? el("p", { className: "components-base-control__help" }, "No menu yet: upload one under MenuDash → Menu.") : null
+      !MENU.length ? el("p", { className: "components-base-control__help" }, t("noMenu", "No menu yet: upload one under MenuDash → Menu.")) : null
     );
   }
 
@@ -88,12 +94,12 @@
     return el("div", null,
       groups.map(function (g, i) {
         return el("div", { key: i, style: { border: "1px solid #ddd", borderRadius: 4, padding: "10px 10px 4px", marginBottom: 12 } },
-          el(components.TextControl, { label: "Group " + (i + 1) + ": title", value: g.title || "", onChange: function (v) { change(i, { title: v }); }, __nextHasNoMarginBottom: true }),
+          el(components.TextControl, { label: t("groupTitle", "Group %s: title", i + 1), value: g.title || "", onChange: function (v) { change(i, { title: v }); }, __nextHasNoMarginBottom: true }),
           el("div", { style: { height: 8 } }),
           el(Chosen, { value: g.dishes || [], onChange: function (v) { change(i, { dishes: v }); } }),
-          el(components.Button, { variant: "link", isDestructive: true, style: { margin: "8px 0" }, onClick: function () { set(groups.filter(function (x, j) { return j !== i; })); } }, "Remove this group"));
+          el(components.Button, { variant: "link", isDestructive: true, style: { margin: "8px 0" }, onClick: function () { set(groups.filter(function (x, j) { return j !== i; })); } }, t("removeGroup", "Remove this group")));
       }),
-      el(components.Button, { variant: "secondary", onClick: function () { set(groups.concat([{ title: "", dishes: [] }])); } }, "+ Add a group"));
+      el(components.Button, { variant: "secondary", onClick: function () { set(groups.concat([{ title: "", dishes: [] }])); } }, t("addGroup", "+ Add a group")));
   }
 
   /* The preview's tabs switch here too (the page does it with assets/picks.js); a click on a
@@ -129,23 +135,23 @@
       } else if (a.source === "chosen") {
         dishesPanel.push(el(Chosen, { key: "c", value: a.dishes, onChange: function (v) { set({ dishes: v }); } }));
       } else {
-        dishesPanel.push(el("p", { key: "h", className: "components-base-control__help" }, "Change them with the Recommended column in the menu spreadsheet. Dishes with a photo come first."));
+        dishesPanel.push(el("p", { key: "h", className: "components-base-control__help" }, t("pickHelp", "Change them with the Recommended column in the menu spreadsheet. Dishes with a photo come first.")));
         if (a.split) {
-          dishesPanel.push(el("p", { key: "s", className: "components-base-control__help" }, "Split by the diet marks in the spreadsheet: dishes marked vegetarian or vegan go in the second group."));
+          dishesPanel.push(el("p", { key: "s", className: "components-base-control__help" }, t("splitHelp", "Split by the diet marks in the spreadsheet: dishes marked vegetarian or vegan go in the second group.")));
           [0, 1].forEach(function (i) {
-            dishesPanel.push(el(components.TextControl, { key: "t" + i, label: "Group " + (i + 1) + ": title", value: (groups[i] && groups[i].title) || "", placeholder: TITLES[i], onChange: function (v) { title(i, v); } }));
+            dishesPanel.push(el(components.TextControl, { key: "t" + i, label: t("groupTitle", "Group %s: title", i + 1), value: (groups[i] && groups[i].title) || "", placeholder: TITLES[i], onChange: function (v) { title(i, v); } }));
           });
         }
       }
       return el(element.Fragment, null,
         el(blockEditor.InspectorControls, null,
-          el(components.PanelBody, { title: "Dishes" },
+          el(components.PanelBody, { title: t("dishes", "Dishes") },
             el(components.RadioControl, {
-              label: "Show",
+              label: t("show", "Show"),
               selected: a.source,
               options: [
-                { label: "Marked Recommended in the menu (" + picks + ")", value: "pick" },
-                { label: "The dishes I choose", value: "chosen" }
+                { label: t("markedPick", "Marked Recommended in the menu (%s)", picks), value: "pick" },
+                { label: t("iChoose", "The dishes I choose"), value: "chosen" }
               ],
               onChange: function (v) {
                 var next = { source: v };
@@ -158,8 +164,8 @@
               }
             }),
             el(components.ToggleControl, {
-              label: "Split into groups",
-              help: a.source === "chosen" ? "Groups with their own title and dishes, e.g. Meat & fish / Vegan & vegetarian." : "Meat & fish, and vegan & vegetarian.",
+              label: t("split", "Split into groups"),
+              help: a.source === "chosen" ? t("splitChosen", "Groups with their own title and dishes, e.g. Meat & fish / Vegan & vegetarian.") : t("splitPick", "Meat & fish, and vegan & vegetarian."),
               checked: !!a.split,
               onChange: function (v) {
                 var next = { split: v };
@@ -171,46 +177,46 @@
               }
             }),
             a.split && el(components.SelectControl, {
-              label: "Groups are shown as",
+              label: t("groupsAs", "Groups are shown as"),
               value: a.groupStyle,
               options: [
-                { label: "Tabs (one group at a time)", value: "tabs" },
-                { label: "Tabs that slide (all groups in one row)", value: "slide" },
-                { label: "Headings (all groups)", value: "headings" }
+                { label: t("tabs", "Tabs (one group at a time)"), value: "tabs" },
+                { label: t("slide", "Tabs that slide (all groups in one row)"), value: "slide" },
+                { label: t("headings", "Headings (all groups)"), value: "headings" }
               ],
-              help: a.groupStyle === "slide" ? "One row that slides sideways: a tab slides to its group, and swiping moves the tab. Six dishes to a screen on a computer." : undefined,
+              help: a.groupStyle === "slide" ? t("slideHelp", "One row that slides sideways: a tab slides to its group, and swiping moves the tab. Six dishes to a screen on a computer.") : undefined,
               onChange: function (v) { set({ groupStyle: v }); }
             }),
             dishesPanel,
-            el(components.RangeControl, { label: a.split ? "Show at most (per group)" : "Show at most", value: a.max, min: 1, max: 48, onChange: function (v) { set({ max: v || 12 }); } }),
-            el("p", { className: "components-base-control__help" }, "The photos are the dishes' photos under MenuDash → Dish photos. To change a picture, upload a new photo for that dish there.")
+            el(components.RangeControl, { label: a.split ? t("maxPerGroup", "Show at most (per group)") : t("max", "Show at most"), value: a.max, min: 1, max: 48, onChange: function (v) { set({ max: v || 12 }); } }),
+            el("p", { className: "components-base-control__help" }, t("photosHelp", "The photos are the dishes' photos under MenuDash → Dish photos. To change a picture, upload a new photo for that dish there."))
           ),
-          el(components.PanelBody, { title: "Look", initialOpen: true },
+          el(components.PanelBody, { title: t("look", "Look"), initialOpen: true },
             el(components.SelectControl, {
-              label: "Layout",
+              label: t("layout", "Layout"),
               value: a.layout,
-              options: [{ label: "Grid", value: "grid" }, { label: "One row that slides", value: "row" }],
+              options: [{ label: t("grid", "Grid"), value: "grid" }, { label: t("row", "One row that slides"), value: "row" }],
               onChange: function (v) { set({ layout: v }); }
             }),
             el(components.SelectControl, {
-              label: "Language",
+              label: t("language", "Language"),
               value: a.lang,
               options: [
-                { label: "Site language", value: "" },
+                { label: t("siteLanguage", "Site language"), value: "" },
                 { label: "Deutsch", value: "de" },
                 { label: "English", value: "en" },
                 { label: "中文", value: "zh" }
               ],
               onChange: function (v) { set({ lang: v }); }
             }),
-            el(components.ToggleControl, { label: "Dish number", checked: !!a.number, onChange: function (v) { set({ number: v }); } }),
-            el(components.ToggleControl, { label: "Vegan / vegetarian mark", help: "After the number, e.g. No. 400 · Vegan.", checked: !!a.diet, onChange: function (v) { set({ diet: v }); } }),
-            el(components.ToggleControl, { label: "Second name (Chinese)", checked: !!a.second, onChange: function (v) { set({ second: v }); } }),
-            el(components.ToggleControl, { label: "Button to the whole menu", checked: !!a.button, onChange: function (v) { set({ button: v }); } }),
+            el(components.ToggleControl, { label: t("dishNumber", "Dish number"), checked: !!a.number, onChange: function (v) { set({ number: v }); } }),
+            el(components.ToggleControl, { label: t("dietMark", "Vegan / vegetarian mark"), help: t("dietHelp", "After the number, e.g. No. 400 · Vegan."), checked: !!a.diet, onChange: function (v) { set({ diet: v }); } }),
+            el(components.ToggleControl, { label: t("secondName", "Second name (Chinese)"), checked: !!a.second, onChange: function (v) { set({ second: v }); } }),
+            el(components.ToggleControl, { label: t("button", "Button to the whole menu"), checked: !!a.button, onChange: function (v) { set({ button: v }); } }),
             a.button && el(components.TextControl, {
-              label: "Button text",
+              label: t("buttonText", "Button text"),
               value: a.buttonText,
-              placeholder: "Empty: \"See the whole menu\" in the language",
+              placeholder: t("buttonEmpty", "Empty: \"See the whole menu\" in the language"),
               onChange: function (v) { set({ buttonText: v }); }
             })
           )

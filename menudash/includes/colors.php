@@ -27,6 +27,14 @@ function mdash_color_keys() {
 	);
 }
 
+/** The same colours with their label in the owner's language, for the dashboard. */
+function mdash_color_labels() {
+	return array(
+		'bg'     => __( 'Background', 'menudash' ),
+		'accent' => __( 'Highlight', 'menudash' ),
+	);
+}
+
 function mdash_color_hex( $s ) {
 	$s = is_scalar( $s ) ? strtoupper( trim( (string) $s ) ) : '';
 	return preg_match( '/^#[0-9A-F]{6}$/', $s ) ? $s : '';
@@ -162,10 +170,10 @@ function mdash_on_accent( $accent ) {
 function mdash_color_problems( $c ) {
 	$p = array();
 	if ( mdash_contrast( $c['bg'], '#2B1D1A' ) < 7 ) {
-		$p[] = 'The background is dark, so the menu text (dark brown) is hard to read. A light background works best.';
+		$p[] = __( 'The background is dark, so the menu text (dark brown) is hard to read. A light background works best.', 'menudash' );
 	}
 	if ( mdash_contrast( $c['accent'], $c['bg'] ) < 3 ) {
-		$p[] = 'The highlight colour is close to the background, so buttons and headings hardly stand out.';
+		$p[] = __( 'The highlight colour is close to the background, so buttons and headings hardly stand out.', 'menudash' );
 	}
 	return $p;
 }

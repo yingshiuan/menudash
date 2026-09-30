@@ -28,8 +28,9 @@
 .mdash-admin .mdash-drop { display: block; padding: 22px; border: 2px dashed #c3c4c7; border-radius: 8px; text-align: center; cursor: pointer; background: #f6f7f7; }
 .mdash-admin .mdash-drop.over { border-color: #A31E2C; background: #fbf0f1; }
 /* A CSV drop box with its buttons beside it, in one row; they go below it on a narrow card. */
-.mdash-admin .mdash-upload-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-.mdash-admin .mdash-upload-row .mdash-drop { flex: 1 1 140px; min-width: 0; margin: 0; padding: 10px; }
+/* Upload: the drop area across the whole card, the button(s) in a row below it. */
+.mdash-admin .mdash-upload-row { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+.mdash-admin .mdash-upload-row .mdash-drop { flex: none; width: 100%; box-sizing: border-box; min-width: 0; margin: 0; padding: 16px 10px; }
 /* The file input itself is hidden (it squeezes to "No fil…hosen" in a narrow box); the
    label opens it, and the line under the button shows the chosen file. */
 .mdash-admin .mdash-drop .mdash-file { position: absolute; width: 1px; height: 1px; opacity: 0; }
@@ -38,8 +39,8 @@
 .mdash-admin .mdash-drop-name { display: block; margin-top: 6px; overflow-wrap: anywhere; font-size: 12px; }
 .mdash-admin .mdash-drop.has-file .mdash-drop-name { color: #1d2327; font-weight: 600; }
 .mdash-admin .mdash-upload-row .mdash-drop { position: relative; }
-.mdash-admin .mdash-upload-btns { display: flex; flex-direction: column; gap: 6px; }
-.mdash-admin .mdash-upload-btns .button { width: 100%; text-align: center; }
+.mdash-admin .mdash-upload-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.mdash-admin .mdash-upload-btns .button { flex: 1 1 auto; margin: 0; text-align: center; }
 .mdash-admin .mdash-icon-item { border: 2px dashed #dcdcde; }
 .mdash-admin .mdash-icon-item.over { border-color: #A31E2C; background: #fbf0f1; }
 .mdash-admin .mdash-drop input { display: block; margin: 0 auto 8px; }

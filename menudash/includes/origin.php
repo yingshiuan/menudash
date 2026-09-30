@@ -155,7 +155,8 @@ function mdash_origin_clean( $in ) {
 		$countries = array_values( array_unique( $countries ) );
 		if ( ! $countries && ! $ask ) {
 			$name       = 'own' === $product ? implode( ' / ', array_filter( $own ) ) : $products[ $product ][0];
-			$problems[] = sprintf( '%s: enter the countries, or tick "Ask our staff".', $name );
+			/* translators: %s: product name, e.g. Poulet. "Ask our staff" is the checkbox of that row. */
+			$problems[] = sprintf( __( '%s: enter the countries, or tick "Ask our staff".', 'menudash' ), $name );
 			$ask        = true;
 		}
 		$rows[] = array( 'product' => $product, 'own' => $own, 'countries' => $countries, 'ask' => $ask );
@@ -256,13 +257,13 @@ function mdash_origin_shortcode( $atts ) {
 function mdash_handle_origin() {
 	check_admin_referer( 'menudash_origin' );
 	if ( ! mdash_can() ) {
-		wp_die( 'You are not allowed to change the menu.', 403 );
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
 	}
 	$in = isset( $_POST['origin'] ) && is_array( $_POST['origin'] ) ? wp_unslash( $_POST['origin'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- cleaned in mdash_origin_clean()
 	list( $origin, $problems ) = mdash_origin_clean( $in );
 	update_option( MDASH_ORIGIN_OPTION, $origin, false );
 	mdash_purge_caches();
-	mdash_back( array( 'ok' => ! $problems, 'kind' => 'Meat and fish origin', 'message' => 'Saved.', 'error' => implode( ' ', $problems ) ) );
+	mdash_back( array( 'ok' => ! $problems, 'kind' => __( 'Meat and fish origin', 'menudash' ), 'message' => __( 'Saved.', 'menudash' ), 'error' => implode( ' ', $problems ) ) );
 }
 
 /** One row of the dashboard table; $i is the row number or "__i__" in the template. */
@@ -271,22 +272,22 @@ function mdash_origin_admin_row( $i, $row ) {
 	?>
 	<tr>
 		<td>
-			<select name="<?php echo esc_attr( $f ); ?>[product]" class="mdash-origin-product" aria-label="Product">
-				<option value="">Choose …</option>
+			<select name="<?php echo esc_attr( $f ); ?>[product]" class="mdash-origin-product" aria-label="<?php esc_attr_e( 'Product', 'menudash' ); ?>">
+				<option value=""><?php esc_html_e( 'Choose …', 'menudash' ); ?></option>
 				<?php foreach ( mdash_origin_products() as $key => $names ) : ?>
 					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $row['product'], $key ); ?>><?php echo esc_html( $names[0] . ' · ' . $names[1] ); ?></option>
 				<?php endforeach; ?>
-				<option value="own" <?php selected( $row['product'], 'own' ); ?>>Other (type the name) …</option>
+				<option value="own" <?php selected( $row['product'], 'own' ); ?>><?php esc_html_e( 'Other (type the name) …', 'menudash' ); ?></option>
 			</select>
 			<span class="mdash-origin-own"<?php echo 'own' === $row['product'] ? '' : ' hidden'; ?>>
 				<?php foreach ( array( 'de' => 'DE', 'en' => 'EN', 'zh' => '中文' ) as $l => $label ) : ?>
-					<input type="text" name="<?php echo esc_attr( $f . '[own][' . $l . ']' ); ?>" value="<?php echo esc_attr( $row['own'][ $l ] ); ?>" placeholder="<?php echo esc_attr( $label ); ?>" maxlength="60" aria-label="<?php echo esc_attr( 'Name ' . $label ); ?>">
+					<input type="text" name="<?php echo esc_attr( $f . '[own][' . $l . ']' ); ?>" value="<?php echo esc_attr( $row['own'][ $l ] ); ?>" placeholder="<?php echo esc_attr( $label ); ?>" maxlength="60" aria-label="<?php /* translators: %s: language, DE, EN or 中文. */ echo esc_attr( sprintf( __( 'Name %s', 'menudash' ), $label ) ); ?>">
 				<?php endforeach; ?>
 			</span>
 		</td>
-		<td><input type="text" name="<?php echo esc_attr( $f ); ?>[countries]" value="<?php echo esc_attr( mdash_origin_countries_text( $row ) ); ?>" class="regular-text" maxlength="200" placeholder="Schweiz, Deutschland" aria-label="Countries"></td>
-		<td><label><input type="checkbox" name="<?php echo esc_attr( $f ); ?>[ask]" value="1" <?php checked( $row['ask'] ); ?>> Ask our staff</label></td>
-		<td><button type="button" class="button-link mdash-origin-remove">Remove</button></td>
+		<td><input type="text" name="<?php echo esc_attr( $f ); ?>[countries]" value="<?php echo esc_attr( mdash_origin_countries_text( $row ) ); ?>" class="regular-text" maxlength="200" placeholder="Schweiz, Deutschland" aria-label="<?php esc_attr_e( 'Countries', 'menudash' ); ?>"></td>
+		<td><label><input type="checkbox" name="<?php echo esc_attr( $f ); ?>[ask]" value="1" <?php checked( $row['ask'] ); ?>> <?php esc_html_e( 'Ask our staff', 'menudash' ); ?></label></td>
+		<td><button type="button" class="button-link mdash-origin-remove"><?php esc_html_e( 'Remove', 'menudash' ); ?></button></td>
 	</tr>
 	<?php
 }
@@ -298,16 +299,27 @@ function mdash_origin_admin_card() {
 	$rows  = $o['rows'] ? $o['rows'] : array( $empty );
 	?>
 	<section class="mdash-card mdash-origin-card">
-		<h2>Meat and fish origin (Herkunft)</h2>
-		<p>In Switzerland, restaurants must say in writing where their meat comes from. Choose each product and type its countries in German or English ("Schweiz, Deutschland"); MenuDash writes them in all three menu languages. Countries it doesn't know stay as you typed them. The list shows under the menu, and on any page with <code>[menudash_origin]</code> (<code>lang="de"</code> for German only, <code>title="no"</code> without the heading, <code>allergy="yes"</code> with the allergy note under it).</p>
+		<h2><?php esc_html_e( 'Meat and fish origin (Herkunft)', 'menudash' ); ?></h2>
+		<p>
+		<?php
+		printf(
+			/* translators: 1: shortcode [menudash_origin], 2: lang="de", 3: title="no", 4: allergy="yes". */
+			esc_html__( 'In Switzerland, restaurants must say in writing where their meat comes from. Choose each product and type its countries in German or English ("Schweiz, Deutschland"); MenuDash writes them in all three menu languages. Countries it doesn\'t know stay as you typed them. The list shows under the menu, and on any page with %1$s (%2$s for German only, %3$s without the heading, %4$s with the allergy note under it).', 'menudash' ),
+			'<code>[menudash_origin]</code>',
+			'<code>lang="de"</code>',
+			'<code>title="no"</code>',
+			'<code>allergy="yes"</code>'
+		);
+		?>
+		</p>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="menudash_origin">
 			<?php wp_nonce_field( 'menudash_origin' ); ?>
-			<button type="submit" class="mdash-default-submit" tabindex="-1" aria-hidden="true">Save</button>
+			<button type="submit" class="mdash-default-submit" tabindex="-1" aria-hidden="true"><?php esc_html_e( 'Save', 'menudash' ); ?></button>
 			<div class="mdash-origin-layout">
 				<div>
 					<table class="mdash-origin-admin">
-						<thead><tr><th>Product</th><th>Countries</th><th></th><th><span class="screen-reader-text">Remove</span></th></tr></thead>
+						<thead><tr><th><?php esc_html_e( 'Product', 'menudash' ); ?></th><th><?php esc_html_e( 'Countries', 'menudash' ); ?></th><th></th><th><span class="screen-reader-text"><?php esc_html_e( 'Remove', 'menudash' ); ?></span></th></tr></thead>
 						<tbody>
 						<?php
 						foreach ( array_values( $rows ) as $i => $row ) {
@@ -317,13 +329,13 @@ function mdash_origin_admin_card() {
 						</tbody>
 					</table>
 					<template id="mdash-origin-new"><?php mdash_origin_admin_row( '__i__', $empty ); ?></template>
-					<p><button type="button" class="button" id="mdash-origin-add" data-max="<?php echo (int) MDASH_ORIGIN_MAX; ?>"<?php echo count( $rows ) >= MDASH_ORIGIN_MAX ? ' hidden' : ''; ?>>+ Add product</button></p>
-					<p><input type="hidden" name="origin[menu]" value=""><label><input type="checkbox" name="origin[menu]" value="1" <?php checked( $o['menu'] ); ?>> Show the list under the menu</label></p>
-					<p><?php submit_button( 'Save origin', 'primary', 'save_origin', false ); ?></p>
+					<p><button type="button" class="button" id="mdash-origin-add" data-max="<?php echo (int) MDASH_ORIGIN_MAX; ?>"<?php echo count( $rows ) >= MDASH_ORIGIN_MAX ? ' hidden' : ''; ?>><?php esc_html_e( '+ Add product', 'menudash' ); ?></button></p>
+					<p><input type="hidden" name="origin[menu]" value=""><label><input type="checkbox" name="origin[menu]" value="1" <?php checked( $o['menu'] ); ?>> <?php esc_html_e( 'Show the list under the menu', 'menudash' ); ?></label></p>
+					<p><?php submit_button( __( 'Save origin', 'menudash' ), 'primary', 'save_origin', false ); ?></p>
 				</div>
 				<?php if ( $o['rows'] ) : ?>
 					<aside class="mdash-origin-preview">
-						<h3>On the site (DE)</h3>
+						<h3><?php esc_html_e( 'On the site (DE)', 'menudash' ); ?></h3>
 						<?php echo mdash_origin_table( 'de' ); // phpcs:ignore -- escaped inside ?>
 					</aside>
 				<?php endif; ?>

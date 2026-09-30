@@ -1,0 +1,1520 @@
+# MenuDash dashboard translation: de_CH.
+# This file is distributed under the same license as the MenuDash package (GPL-2.0-or-later).
+msgid ""
+msgstr ""
+"Project-Id-Version: MenuDash\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-30 15:05+0200\n"
+"PO-Revision-Date: 2026-09-30 12:00+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_CH\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/csv-parser.php:83
+msgid ""
+"The file is not UTF-8 and this server cannot convert it. Export the CSV "
+"again as \"Unicode (UTF-8)\"."
+msgstr ""
+"Die Datei ist nicht UTF-8, und dieser Server kann sie nicht umwandeln. "
+"Exportieren Sie die CSV erneut als „Unicode (UTF-8)“."
+
+#. translators: %s: character encoding, e.g. Windows-1252.
+#: includes/csv-parser.php:87
+#, php-format
+msgid ""
+"The file was saved as %s, not UTF-8, so it cannot hold Chinese characters. "
+"Export it again as \"Unicode (UTF-8)\" to keep the Chinese names."
+msgstr ""
+"Die Datei wurde als %s gespeichert, nicht als UTF-8, und kann daher keine "
+"chinesischen Zeichen enthalten. Exportieren Sie sie erneut als „Unicode "
+"(UTF-8)“, damit die chinesischen Namen erhalten bleiben."
+
+#: includes/csv-parser.php:191
+msgid "The file is empty."
+msgstr "Die Datei ist leer."
+
+#. translators: %s: the column headings found in the file, comma-separated. The column names in quotes stay in English.
+#: includes/csv-parser.php:212
+#, php-format
+msgid ""
+"This does not look like the menu file: it needs a \"Price\" column and at "
+"least one of \"Name (EN)\", \"Name (DE)\", \"Name (ZH)\". Columns found: %s."
+msgstr ""
+"Das sieht nicht nach der Speisekarten-Datei aus: Sie braucht eine Spalte "
+"„Price“ und mindestens eine von „Name (EN)“, „Name (DE)“, „Name (ZH)“. "
+"Gefundene Spalten: %s."
+
+#: includes/csv-parser.php:212 includes/csv-parser.php:362
+#: includes/csv-parser.php:363
+msgid "none"
+msgstr "keine"
+
+#. translators: %s: column name, e.g. Name (EN).
+#: includes/csv-parser.php:217
+#, php-format
+msgid "No \"%s\" column; that language falls back to the others."
+msgstr "Keine Spalte „%s“; diese Sprache greift auf die anderen zurück."
+
+#. translators: %d: spreadsheet row number.
+#: includes/csv-parser.php:245
+#, php-format
+msgid "Row %d has a number or price but no name, so it was skipped."
+msgstr ""
+"Zeile %d hat eine Nummer oder einen Preis, aber keinen Namen, und wurde "
+"daher übersprungen."
+
+#. translators: 1: spreadsheet row number, 2: dish number and name, 3: the price as written in the file.
+#: includes/csv-parser.php:265
+#, php-format
+msgid ""
+"Row %1$d (%2$s): the price \"%3$s\" is not a number; it is shown as written."
+msgstr ""
+"Zeile %1$d (%2$s): Der Preis „%3$s“ ist keine Zahl; er wird so angezeigt, "
+"wie er geschrieben ist."
+
+#. translators: %d: spreadsheet row number.
+#: includes/csv-parser.php:290
+#, php-format
+msgid "The menu has more than 3000 dishes; it was read up to row %d."
+msgstr "Die Speisekarte hat mehr als 3000 Gerichte; sie wurde bis Zeile %d gelesen."
+
+#. translators: 1: dish number, 2: first row, 3: second row.
+#: includes/csv-parser.php:298
+#, php-format
+msgid ""
+"Nr. %1$s is used twice (rows %2$d and %3$d). Both are shown; a photo named "
+"\"%1$s_…\" goes to the first."
+msgstr ""
+"Nr. %1$s kommt zweimal vor (Zeilen %2$d und %3$d). Beide werden angezeigt; "
+"ein Foto namens „%1$s_…“ gehört zum ersten."
+
+#. translators: 1: spreadsheet row number, 2: dish number and name.
+#: includes/csv-parser.php:305
+#, php-format
+msgid "Row %1$d (%2$s) comes before the first category heading."
+msgstr "Zeile %1$d (%2$s) steht vor der ersten Kategorie-Überschrift."
+
+#: includes/csv-parser.php:317
+msgid "No dishes were found. A dish row needs a name and a price or number."
+msgstr ""
+"Es wurden keine Gerichte gefunden. Eine Zeile mit einem Gericht braucht "
+"einen Namen und einen Preis oder eine Nummer."
+
+#. translators: 1: dish name, 2: first row, 3: second row, 4: marks of the first, 5: marks of the second (e.g. spicy, vegan).
+#: includes/csv-parser.php:358
+#, php-format
+msgid ""
+"\"%1$s\" is listed twice (rows %2$d and %3$d) with different marks: %4$s vs "
+"%5$s."
+msgstr ""
+"„%1$s“ kommt zweimal vor (Zeilen %2$d und %3$d), mit verschiedenen Angaben: "
+"%4$s gegenüber %5$s."
+
+#: includes/menu-store.php:50
+msgid "The file could not be read."
+msgstr "Die Datei konnte nicht gelesen werden."
+
+#: includes/menu-store.php:130
+msgid "That file no longer exists."
+msgstr "Diese Datei gibt es nicht mehr."
+
+#: includes/colors.php:33
+msgid "Background"
+msgstr "Hintergrund"
+
+#: includes/colors.php:34
+msgid "Highlight"
+msgstr "Akzentfarbe"
+
+#: includes/colors.php:173
+msgid ""
+"The background is dark, so the menu text (dark brown) is hard to read. A "
+"light background works best."
+msgstr ""
+"Der Hintergrund ist dunkel, daher ist der Text der Speisekarte (dunkelbraun) "
+"schwer lesbar. Ein heller Hintergrund eignet sich am besten."
+
+#: includes/colors.php:176
+msgid ""
+"The highlight colour is close to the background, so buttons and headings "
+"hardly stand out."
+msgstr ""
+"Die Akzentfarbe ist dem Hintergrund zu ähnlich, daher heben sich "
+"Schaltflächen und Überschriften kaum ab."
+
+#: includes/picks.php:41
+msgid "Recommended dishes"
+msgstr "Empfohlene Gerichte"
+
+#: includes/picks.php:42
+msgid ""
+"Dishes with their photos, each linking to the menu: the ones marked "
+"Recommended in the menu, or the ones you choose."
+msgstr ""
+"Gerichte mit ihren Fotos, jedes mit Link zur Speisekarte: die in der "
+"Speisekarte als empfohlen markierten oder die von Ihnen gewählten."
+
+#: includes/picks.php:230
+msgid "Recommended dishes: no menu yet. Upload one under MenuDash → Menu."
+msgstr ""
+"Empfohlene Gerichte: noch keine Speisekarte. Laden Sie eine unter MenuDash → "
+"Speisekarte hoch."
+
+#: includes/picks.php:270
+msgid ""
+"Recommended dishes: no dish is marked Recommended in the menu. Mark some in "
+"the spreadsheet, or choose the dishes in the sidebar."
+msgstr ""
+"Empfohlene Gerichte: Kein Gericht ist in der Speisekarte als empfohlen "
+"markiert. Markieren Sie einige in der Tabelle oder wählen Sie die Gerichte "
+"in der Seitenleiste."
+
+#: includes/picks.php:295
+msgid "Recommended dishes: choose the dishes in the sidebar."
+msgstr "Empfohlene Gerichte: Wählen Sie die Gerichte in der Seitenleiste."
+
+#. translators: %s: dish names, comma-separated.
+#: includes/picks.php:376
+#, php-format
+msgid ""
+"Not on the menu any more, so not shown: %s. Choose them again or remove them "
+"in the sidebar."
+msgstr ""
+"Nicht mehr auf der Speisekarte, daher nicht angezeigt: %s. Wählen Sie sie "
+"erneut oder entfernen Sie sie in der Seitenleiste."
+
+#: includes/picks.php:453
+msgid "No photo yet"
+msgstr "Noch kein Foto"
+
+#. translators: %s: dish name.
+#: includes/picks.php:455
+#, php-format
+msgid "%s (not on the menu)"
+msgstr "%s (nicht auf der Speisekarte)"
+
+#: includes/picks.php:456
+msgid "Move up"
+msgstr "Nach oben"
+
+#: includes/picks.php:457
+msgid "Move down"
+msgstr "Nach unten"
+
+#: includes/picks.php:458 includes/origin.php:290 includes/origin.php:322
+msgid "Remove"
+msgstr "Entfernen"
+
+#: includes/picks.php:459
+msgid "No dishes chosen yet. Search the menu below and add them."
+msgstr ""
+"Noch keine Gerichte gewählt. Suchen Sie sie unten in der Speisekarte und "
+"fügen Sie sie hinzu."
+
+#: includes/picks.php:460
+msgid "Add a dish"
+msgstr "Gericht hinzufügen"
+
+#: includes/picks.php:461
+msgid "Number or name"
+msgstr "Nummer oder Name"
+
+#: includes/picks.php:462
+msgid "No dish found."
+msgstr "Kein Gericht gefunden."
+
+#: includes/picks.php:463
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: includes/picks.php:464
+msgid "No menu yet: upload one under MenuDash → Menu."
+msgstr ""
+"Noch keine Speisekarte: Laden Sie eine unter MenuDash → Speisekarte hoch."
+
+#. translators: %s: group number, 1, 2, 3 …
+#: includes/picks.php:466
+#, php-format
+msgid "Group %s: title"
+msgstr "Gruppe %s: Titel"
+
+#: includes/picks.php:467
+msgid "Remove this group"
+msgstr "Diese Gruppe entfernen"
+
+#: includes/picks.php:468
+msgid "+ Add a group"
+msgstr "+ Gruppe hinzufügen"
+
+#: includes/picks.php:469
+msgid ""
+"Change them with the Recommended column in the menu spreadsheet. Dishes with "
+"a photo come first."
+msgstr ""
+"Ändern Sie sie über die Spalte „Recommended“ in der Speisekarten-Tabelle. "
+"Gerichte mit Foto kommen zuerst."
+
+#: includes/picks.php:470
+msgid ""
+"Split by the diet marks in the spreadsheet: dishes marked vegetarian or "
+"vegan go in the second group."
+msgstr ""
+"Aufgeteilt nach den Ernährungsangaben in der Tabelle: Als vegetarisch oder "
+"vegan markierte Gerichte kommen in die zweite Gruppe."
+
+#: includes/picks.php:471
+msgid "Dishes"
+msgstr "Gerichte"
+
+#: includes/picks.php:472
+msgid "Show"
+msgstr "Anzeigen"
+
+#. translators: %s: number of dishes marked Recommended.
+#: includes/picks.php:474
+#, php-format
+msgid "Marked Recommended in the menu (%s)"
+msgstr "In der Speisekarte als empfohlen markiert (%s)"
+
+#: includes/picks.php:475
+msgid "The dishes I choose"
+msgstr "Die Gerichte, die ich wähle"
+
+#: includes/picks.php:476
+msgid "Split into groups"
+msgstr "In Gruppen aufteilen"
+
+#: includes/picks.php:477
+msgid ""
+"Groups with their own title and dishes, e.g. Meat & fish / Vegan & "
+"vegetarian."
+msgstr ""
+"Gruppen mit eigenem Titel und eigenen Gerichten, z. B. Fleisch & Fisch / "
+"Vegan & vegetarisch."
+
+#: includes/picks.php:478
+msgid "Meat & fish, and vegan & vegetarian."
+msgstr "Fleisch & Fisch sowie vegan & vegetarisch."
+
+#: includes/picks.php:479
+msgid "Groups are shown as"
+msgstr "Gruppen werden angezeigt als"
+
+#: includes/picks.php:480
+msgid "Tabs (one group at a time)"
+msgstr "Tabs (jeweils eine Gruppe)"
+
+#: includes/picks.php:481
+msgid "Tabs that slide (all groups in one row)"
+msgstr "Gleitende Tabs (alle Gruppen in einer Reihe)"
+
+#: includes/picks.php:482
+msgid "Headings (all groups)"
+msgstr "Überschriften (alle Gruppen)"
+
+#: includes/picks.php:483
+msgid ""
+"One row that slides sideways: a tab slides to its group, and swiping moves "
+"the tab. Six dishes to a screen on a computer."
+msgstr ""
+"Eine Reihe, die seitwärts gleitet: Ein Tab gleitet zu seiner Gruppe, und "
+"Wischen wechselt den Tab. Auf einem Computer sechs Gerichte pro Bildschirm."
+
+#: includes/picks.php:484
+msgid "Show at most (per group)"
+msgstr "Höchstens anzeigen (pro Gruppe)"
+
+#: includes/picks.php:485
+msgid "Show at most"
+msgstr "Höchstens anzeigen"
+
+#: includes/picks.php:486
+msgid ""
+"The photos are the dishes' photos under MenuDash → Dish photos. To change a "
+"picture, upload a new photo for that dish there."
+msgstr ""
+"Die Fotos sind die Fotos der Gerichte unter MenuDash → Fotos der Gerichte. "
+"Um ein Bild zu ändern, laden Sie dort ein neues Foto für dieses Gericht hoch."
+
+#: includes/picks.php:487
+msgid "Look"
+msgstr "Darstellung"
+
+#: includes/picks.php:488
+msgid "Layout"
+msgstr "Layout"
+
+#: includes/picks.php:489
+msgid "Grid"
+msgstr "Raster"
+
+#: includes/picks.php:490
+msgid "One row that slides"
+msgstr "Eine gleitende Reihe"
+
+#: includes/picks.php:491
+msgid "Language"
+msgstr "Sprache"
+
+#: includes/picks.php:492
+msgid "Site language"
+msgstr "Sprache der Website"
+
+#: includes/picks.php:493
+msgid "Dish number"
+msgstr "Nummer des Gerichts"
+
+#: includes/picks.php:494
+msgid "Vegan / vegetarian mark"
+msgstr "Angabe vegan / vegetarisch"
+
+#: includes/picks.php:495
+msgid "After the number, e.g. No. 400 · Vegan."
+msgstr "Nach der Nummer, z. B. Nr. 400 · Vegan."
+
+#: includes/picks.php:496
+msgid "Second name (Chinese)"
+msgstr "Zweiter Name (Chinesisch)"
+
+#: includes/picks.php:497
+msgid "Button to the whole menu"
+msgstr "Schaltfläche zur ganzen Speisekarte"
+
+#: includes/picks.php:498
+msgid "Button text"
+msgstr "Schaltflächentext"
+
+#: includes/picks.php:499
+msgid "Empty: \"See the whole menu\" in the language"
+msgstr "Leer: „Ganze Speisekarte“ in der jeweiligen Sprache"
+
+#. translators: %s: product name, e.g. Poulet. "Ask our staff" is the checkbox of that row.
+#: includes/origin.php:159
+#, php-format
+msgid "%s: enter the countries, or tick \"Ask our staff\"."
+msgstr "%s: Geben Sie die Länder ein oder kreuzen Sie „Personal fragen“ an."
+
+#: includes/origin.php:260 includes/qr.php:129 includes/qr.php:322
+#: includes/admin.php:128 includes/admin.php:243 includes/admin.php:268
+#: includes/admin.php:280 includes/admin.php:331
+msgid "You are not allowed to change the menu."
+msgstr "Sie dürfen die Speisekarte nicht ändern."
+
+#: includes/origin.php:266
+msgid "Meat and fish origin"
+msgstr "Herkunft von Fleisch und Fisch"
+
+#: includes/origin.php:266 includes/qr.php:164
+msgid "Saved."
+msgstr "Gespeichert."
+
+#: includes/origin.php:275 includes/origin.php:322
+msgid "Product"
+msgstr "Produkt"
+
+#: includes/origin.php:276
+msgid "Choose …"
+msgstr "Bitte wählen …"
+
+#: includes/origin.php:280
+msgid "Other (type the name) …"
+msgstr "Anderes (Namen eingeben) …"
+
+#. translators: %s: language, DE, EN or 中文.
+#: includes/origin.php:284
+#, php-format
+msgid "Name %s"
+msgstr "Name %s"
+
+#: includes/origin.php:288 includes/origin.php:322
+msgid "Countries"
+msgstr "Länder"
+
+#: includes/origin.php:289
+msgid "Ask our staff"
+msgstr "Personal fragen"
+
+#: includes/origin.php:302
+msgid "Meat and fish origin (Herkunft)"
+msgstr "Herkunft von Fleisch und Fisch"
+
+#. translators: 1: shortcode [menudash_origin], 2: lang="de", 3: title="no", 4: allergy="yes".
+#: includes/origin.php:307
+#, php-format
+msgid ""
+"In Switzerland, restaurants must say in writing where their meat comes from. "
+"Choose each product and type its countries in German or English (\"Schweiz, "
+"Deutschland\"); MenuDash writes them in all three menu languages. Countries "
+"it doesn't know stay as you typed them. The list shows under the menu, and "
+"on any page with %1$s (%2$s for German only, %3$s without the heading, %4$s "
+"with the allergy note under it)."
+msgstr ""
+"In der Schweiz müssen Restaurants schriftlich angeben, woher ihr Fleisch "
+"stammt. Wählen Sie jedes Produkt und geben Sie seine Länder auf Deutsch oder "
+"Englisch ein („Schweiz, Deutschland“); MenuDash schreibt sie in allen drei "
+"Sprachen der Speisekarte. Länder, die MenuDash nicht kennt, bleiben so, wie "
+"Sie sie eingegeben haben. Die Liste erscheint unter der Speisekarte und auf "
+"jeder Seite mit %1$s (%2$s nur Deutsch, %3$s ohne Überschrift, %4$s mit dem "
+"Allergiehinweis darunter)."
+
+#: includes/origin.php:318 includes/qr.php:299
+msgid "Save"
+msgstr "Speichern"
+
+#: includes/origin.php:332
+msgid "+ Add product"
+msgstr "+ Produkt hinzufügen"
+
+#: includes/origin.php:333
+msgid "Show the list under the menu"
+msgstr "Liste unter der Speisekarte anzeigen"
+
+#: includes/origin.php:334
+msgid "Save origin"
+msgstr "Herkunft speichern"
+
+#: includes/origin.php:338
+msgid "On the site (DE)"
+msgstr "Auf der Website (DE)"
+
+#: includes/icons.php:27
+msgid "Recommended"
+msgstr "Empfohlen"
+
+#: includes/icons.php:28
+msgid "Spicy"
+msgstr "Scharf"
+
+#: includes/icons.php:29
+msgid "Vegan"
+msgstr "Vegan"
+
+#: includes/icons.php:30
+msgid "Vegetarian"
+msgstr "Vegetarisch"
+
+#: includes/icons.php:31
+msgid "Gluten-free"
+msgstr "Glutenfrei"
+
+#: includes/icons.php:68
+msgid "Unknown icon."
+msgstr "Unbekanntes Symbol."
+
+#. translators: 1: file name, 2: what is wrong with it.
+#: includes/icons.php:78
+#, php-format
+msgid "%1$s: %2$s"
+msgstr "%1$s: %2$s"
+
+#. translators: %s: file name.
+#: includes/icons.php:85
+#, php-format
+msgid "%s is not an SVG, PNG, JPEG or WebP image."
+msgstr "%s ist kein SVG-, PNG-, JPEG- oder WebP-Bild."
+
+#. translators: 1: file name, 2: width in pixels, 3: height in pixels.
+#: includes/icons.php:89
+#, php-format
+msgid "%1$s is too large (%2$d × %3$d px); an icon needs about 96 px."
+msgstr "%1$s ist zu gross (%2$d × %3$d px); ein Symbol braucht etwa 96 px."
+
+#. translators: 1: file name, 2: the server's error message.
+#: includes/icons.php:94 includes/photo-store.php:92
+#, php-format
+msgid "%1$s could not be opened: %2$s"
+msgstr "%1$s konnte nicht geöffnet werden: %2$s"
+
+#. translators: 1: file name, 2: the server's error message.
+#: includes/icons.php:102 includes/photo-store.php:105
+#, php-format
+msgid "%1$s could not be saved: %2$s"
+msgstr "%1$s konnte nicht gespeichert werden: %2$s"
+
+#: includes/svg-clean.php:38
+msgid "This server cannot read SVG files; upload a PNG instead."
+msgstr ""
+"Dieser Server kann keine SVG-Dateien lesen; laden Sie stattdessen ein PNG "
+"hoch."
+
+#: includes/svg-clean.php:41
+msgid "The SVG is over 200 KB; an icon is usually a few KB."
+msgstr "Das SVG ist grösser als 200 KB; ein Symbol hat meist nur wenige KB."
+
+#: includes/svg-clean.php:44 includes/svg-clean.php:54
+msgid "The SVG declares a DOCTYPE or entities, which icons never need."
+msgstr "Das SVG enthält einen DOCTYPE oder Entities, die Symbole nie brauchen."
+
+#: includes/svg-clean.php:58
+msgid "This is not an SVG file."
+msgstr "Das ist keine SVG-Datei."
+
+#: includes/svg-clean.php:66
+msgid "The SVG has no size (no viewBox, width or height)."
+msgstr "Das SVG hat keine Grösse (keine viewBox, width oder height)."
+
+#: includes/svg-clean.php:73
+msgid "Nothing drawable was found in the SVG."
+msgstr "Im SVG wurde nichts Zeichenbares gefunden."
+
+#: includes/qr.php:105 includes/qr.php:164
+msgid "QR code"
+msgstr "QR-Code"
+
+#. translators: %s: the web address in the QR code.
+#: includes/qr.php:121
+#, php-format
+msgid "QR code: %s"
+msgstr "QR-Code: %s"
+
+#: includes/qr.php:140
+msgid "The link is not a web address; the menu page is used."
+msgstr ""
+"Der Link ist keine Webadresse; die Seite mit der Speisekarte wird verwendet."
+
+#: includes/qr.php:156
+msgid "Choose at least one language; all are used."
+msgstr "Wählen Sie mindestens eine Sprache; jetzt werden alle verwendet."
+
+#: includes/qr.php:190
+msgid "Wi-Fi QR code"
+msgstr "Wi-Fi-QR-Code"
+
+#: includes/qr.php:238
+msgid "QR code and table cards"
+msgstr "QR-Code und Tischkarten"
+
+#: includes/qr.php:239
+msgid ""
+"A QR code that opens your menu on the guest's phone. Print it as table cards "
+"(four A6 cards on an A4 sheet, cut along the grey lines), or download it for "
+"a flyer, a sticker or the window."
+msgstr ""
+"Ein QR-Code, der Ihre Speisekarte auf dem Handy des Gastes öffnet. Drucken "
+"Sie ihn als Tischkarten (vier A6-Karten auf einem A4-Blatt, entlang der "
+"grauen Linien schneiden) oder laden Sie ihn für einen Flyer, einen Aufkleber "
+"oder das Schaufenster herunter."
+
+#: includes/qr.php:245
+msgid "Link"
+msgstr "Link"
+
+#: includes/qr.php:247
+msgid ""
+"Empty: your menu page. Printed cards keep working as long as this address "
+"does, so change it only when you have to."
+msgstr ""
+"Leer: Ihre Seite mit der Speisekarte. Gedruckte Karten funktionieren, "
+"solange diese Adresse funktioniert; ändern Sie sie also nur, wenn es sein "
+"muss."
+
+#: includes/qr.php:249
+msgid "Own heading"
+msgstr "Eigene Überschrift"
+
+#. translators: %s: the card's built-in heading in the three menu languages.
+#: includes/qr.php:252
+#, php-format
+msgid "Optional. Empty: \"%s\", in the languages ticked below."
+msgstr "Optional. Leer: „%s“, in den unten angekreuzten Sprachen."
+
+#: includes/qr.php:254
+msgid "Wi-Fi name"
+msgstr "Wi-Fi-Name"
+
+#: includes/qr.php:257
+msgid "Wi-Fi password"
+msgstr "Wi-Fi-Passwort"
+
+#: includes/qr.php:259
+msgid ""
+"Both optional: without a Wi-Fi name the card shows no Wi-Fi part. With one, "
+"the card also gets a small Wi-Fi code: guests scan it with the phone camera "
+"and join without typing (no password: an open network). Only the printed "
+"card shows them, never the website."
+msgstr ""
+"Beides optional: Ohne Wi-Fi-Namen zeigt die Karte keinen Wi-Fi-Teil. Mit "
+"Namen erhält die Karte zusätzlich einen kleinen Wi-Fi-Code: Gäste scannen "
+"ihn mit der Handykamera und verbinden sich, ohne etwas einzutippen (ohne "
+"Passwort: ein offenes Netz). Nur die gedruckte Karte zeigt diese Angaben, "
+"nie die Website."
+
+#: includes/qr.php:261
+msgid "Tip"
+msgstr "Tipp"
+
+#: includes/qr.php:262
+msgid ""
+"Show the tip \"Choose your language and filter by vegetarian, vegan, gluten-"
+"free or spicy.\""
+msgstr ""
+"Tipp „Sprache wählen und nach Vegetarisch, Vegan, Glutenfrei oder Scharf "
+"filtern.“ anzeigen"
+
+#: includes/qr.php:263
+msgid "Under the web address, in the languages ticked below."
+msgstr "Unter der Webadresse, in den unten angekreuzten Sprachen."
+
+#: includes/qr.php:265
+msgid "Own message"
+msgstr "Eigene Nachricht"
+
+#: includes/qr.php:266
+msgid "e.g. Free Wi-Fi for our guests"
+msgstr "z. B. Gratis-Wi-Fi für unsere Gäste"
+
+#: includes/qr.php:267
+msgid "Optional, under the tip: up to 4 short lines, in any language."
+msgstr "Optional, unter dem Tipp: bis zu 4 kurze Zeilen, in jeder Sprache."
+
+#: includes/qr.php:269
+msgid "Languages on the card"
+msgstr "Sprachen auf der Karte"
+
+#: includes/qr.php:273
+msgid ""
+"The heading, the tip and the Wi-Fi words are printed in each ticked "
+"language, in the menu's order. A full card makes its text a little smaller "
+"by itself."
+msgstr ""
+"Überschrift, Tipp und die Wi-Fi-Wörter werden in jeder angekreuzten Sprache "
+"gedruckt, in der Reihenfolge der Speisekarte. Eine volle Karte macht ihren "
+"Text von selbst etwas kleiner."
+
+#: includes/qr.php:275
+msgid "Print size"
+msgstr "Druckgrösse"
+
+#: includes/qr.php:276
+msgid "4 table cards (A6) on one A4 sheet"
+msgstr "4 Tischkarten (A6) auf einem A4-Blatt"
+
+#: includes/qr.php:277
+msgid "1 poster on A4 (the same card, twice as big: door, window, counter)"
+msgstr ""
+"1 Plakat auf A4 (dieselbe Karte, doppelt so gross: Tür, Fenster, Theke)"
+
+#: includes/qr.php:279
+msgid "Logo"
+msgstr "Logo"
+
+#: includes/qr.php:281
+msgid "The site's logo is used."
+msgstr "Das Logo der Website wird verwendet."
+
+#: includes/qr.php:283
+msgid "No logo yet, so the card shows the site name."
+msgstr "Noch kein Logo, daher zeigt die Karte den Namen der Website."
+
+#. translators: %s: link "Restaurant → Logo and icon" (a tab and a card of the dashboard).
+#: includes/qr.php:289
+#, php-format
+msgid "Change it under %s."
+msgstr "Ändern Sie es unter %s."
+
+#: includes/qr.php:290
+msgid "Restaurant → Logo and icon"
+msgstr "Restaurant → Logo und Symbol"
+
+#: includes/qr.php:294
+msgid "It is WordPress's own Site Logo (Site Editor or Customizer)."
+msgstr ""
+"Es ist das Website-Logo von WordPress (Website-Editor oder Customizer)."
+
+#: includes/qr.php:300
+msgid "Save and print table cards"
+msgstr "Speichern und Tischkarten drucken"
+
+#: includes/qr.php:302
+msgid "Download the code alone:"
+msgstr "Nur den Code herunterladen:"
+
+#: includes/qr.php:305
+msgid "(SVG for print shops, PNG for anything else)"
+msgstr "(SVG für Druckereien, PNG für alles andere)"
+
+#: includes/qr.php:309
+msgid "Preview"
+msgstr "Vorschau"
+
+#: includes/qr.php:311
+msgid "Test it: scan the card on the screen with your phone."
+msgstr ""
+"Testen Sie es: Scannen Sie die Karte auf dem Bildschirm mit Ihrem Handy."
+
+#. translators: %s: site name.
+#: includes/qr.php:334
+#, php-format
+msgid "Table cards – %s"
+msgstr "Tischkarten – %s"
+
+#: includes/qr.php:351
+msgid "Print on A4 at 100 % (\"Actual size\", not \"Fit to page\")."
+msgstr ""
+"Auf A4 mit 100 % drucken („Tatsächliche Grösse“, nicht „An Seite anpassen“)."
+
+#: includes/qr.php:353
+msgid ""
+"Print on A4 at 100 % (\"Actual size\", not \"Fit to page\"), then cut along "
+"the grey lines. Tip: thicker paper (160–250 g/m²) stands better."
+msgstr ""
+"Auf A4 mit 100 % drucken („Tatsächliche Grösse“, nicht „An Seite anpassen“), "
+"dann entlang der grauen Linien schneiden. Tipp: Dickeres Papier (160–250 g/"
+"m²) steht besser."
+
+#: includes/admin.php:35
+msgctxt "restaurant menu (tab)"
+msgid "Menu"
+msgstr "Speisekarte"
+
+#: includes/admin.php:38
+msgid "Colours, fonts & icons"
+msgstr "Farben, Schriften & Symbole"
+
+#: includes/admin.php:43 includes/admin.php:552
+msgid "Upload menu"
+msgstr "Speisekarte hochladen"
+
+#. translators: 1: number of the photo being uploaded, 2: number of photos, 3: file name.
+#: includes/admin.php:66
+#, php-format
+msgid "Uploading %1$s of %2$s: %3$s"
+msgstr "Lade %1$s von %2$s hoch: %3$s"
+
+#: includes/admin.php:67
+msgid "uploaded, but matches no dish"
+msgstr "hochgeladen, passt aber zu keinem Gericht"
+
+#. translators: %s: number of photos uploaded.
+#: includes/admin.php:69
+#, php-format
+msgid "Done: %s uploaded"
+msgstr "Fertig: %s hochgeladen"
+
+#. translators: %s: number of photos. Added after "Done: 5 uploaded".
+#: includes/admin.php:71
+#, php-format
+msgid ", %s not matched to a dish"
+msgstr ", %s keinem Gericht zugeordnet"
+
+#. translators: %s: number of photos. Added after "Done: 5 uploaded".
+#: includes/admin.php:73
+#, php-format
+msgid ", %s failed"
+msgstr ", %s fehlgeschlagen"
+
+#: includes/admin.php:74
+msgid "Show the updated check"
+msgstr "Aktualisierte Prüfung anzeigen"
+
+#: includes/admin.php:75
+msgid "could not shrink"
+msgstr "konnte nicht verkleinert werden"
+
+#: includes/admin.php:76
+msgid "not an image"
+msgstr "kein Bild"
+
+#: includes/admin.php:77
+msgid "still larger than the server accepts after shrinking"
+msgstr "auch verkleinert noch grösser, als der Server annimmt"
+
+#. translators: %s: HTTP status code, e.g. 500.
+#: includes/admin.php:79
+#, php-format
+msgid "the server answered %s"
+msgstr "der Server antwortete mit %s"
+
+#: includes/admin.php:80
+msgid "failed"
+msgstr "fehlgeschlagen"
+
+#: includes/admin.php:81
+msgid "Delete this photo?"
+msgstr "Dieses Foto löschen?"
+
+#: includes/admin.php:82
+msgid "Could not delete."
+msgstr "Löschen nicht möglich."
+
+#: includes/admin.php:134
+msgid "Choose the CSV file first."
+msgstr "Wählen Sie zuerst die CSV-Datei."
+
+#. translators: %d: PHP upload error code.
+#: includes/admin.php:136
+#, php-format
+msgid "The upload failed (code %d)."
+msgstr "Das Hochladen ist fehlgeschlagen (Code %d)."
+
+#: includes/admin.php:142
+msgid ""
+"A Numbers file can't be read by a website. In Numbers, choose File → Export "
+"To → Excel (keeps the sheets menu, specials, lunch) or CSV, and upload that."
+msgstr ""
+"Eine Numbers-Datei kann eine Website nicht lesen. Wählen Sie in Numbers "
+"Ablage → Exportieren → Excel (behält die Tabellenblätter menu, specials, "
+"lunch) oder CSV und laden Sie diese Datei hoch."
+
+#: includes/admin.php:145
+msgid ""
+"Save the spreadsheet as an Excel workbook (.xlsx) or as CSV, and upload that."
+msgstr ""
+"Speichern Sie die Tabelle als Excel-Arbeitsmappe (.xlsx) oder als CSV und "
+"laden Sie diese hoch."
+
+#: includes/admin.php:151
+msgid ""
+"That file is over 2 MB; a menu CSV is about 20 KB. Is it the right file?"
+msgstr ""
+"Diese Datei ist grösser als 2 MB; eine Speisekarten-CSV hat etwa 20 KB. Ist "
+"es die richtige Datei?"
+
+#: includes/admin.php:176
+msgid ""
+"That file is over 10 MB; a menu workbook is well under 1 MB. Is it the right "
+"file? (Pictures inside the workbook make it big; they are not needed.)"
+msgstr ""
+"Diese Datei ist grösser als 10 MB; eine Speisekarten-Arbeitsmappe hat "
+"deutlich unter 1 MB. Ist es die richtige Datei? (Bilder in der Arbeitsmappe "
+"machen sie gross; sie werden nicht gebraucht.)"
+
+#. translators: %s: the names of the workbook's sheets, comma-separated. The sheet names menu, specials and lunch stay in English.
+#: includes/admin.php:202
+#, php-format
+msgid ""
+"No sheet called menu, specials or lunch in this workbook (found: %s). Rename "
+"the sheets in Numbers or Excel, then export again."
+msgstr ""
+"Kein Tabellenblatt namens menu, specials oder lunch in dieser Arbeitsmappe "
+"(gefunden: %s). Benennen Sie die Blätter in Numbers oder Excel um und "
+"exportieren Sie erneut."
+
+#. translators: %s: sheet name.
+#: includes/admin.php:221
+#, php-format
+msgid "Sheet \"%s\" not used: it needs the MenuDash Specials add-on."
+msgstr ""
+"Tabellenblatt „%s“ nicht verwendet: Dafür wird das Add-on MenuDash Specials "
+"benötigt."
+
+#. translators: %s: sheet name. The sheet names menu, specials and lunch stay in English.
+#: includes/admin.php:226
+#, php-format
+msgid ""
+"Sheet \"%s\" not used (MenuDash reads the sheets menu, specials and lunch)."
+msgstr ""
+"Tabellenblatt „%s“ nicht verwendet (MenuDash liest die Blätter menu, "
+"specials und lunch)."
+
+#: includes/admin.php:231
+msgid "Excel file"
+msgstr "Excel-Datei"
+
+#: includes/admin.php:231
+msgid "No sheet called menu, so the menu was not changed."
+msgstr ""
+"Kein Tabellenblatt namens menu, daher wurde die Speisekarte nicht geändert."
+
+#: includes/admin.php:248 includes/admin.php:261 includes/admin.php:714
+msgid "Colours"
+msgstr "Farben"
+
+#: includes/admin.php:248
+msgid "Back to the default colours."
+msgstr "Zurück zu den Standardfarben."
+
+#: includes/admin.php:261
+msgid "Saved: the menu uses the theme's colours."
+msgstr "Gespeichert: Die Speisekarte verwendet die Farben des Themes."
+
+#: includes/admin.php:261
+msgid "Saved: the menu uses your own colours."
+msgstr "Gespeichert: Die Speisekarte verwendet Ihre eigenen Farben."
+
+#: includes/admin.php:273 includes/admin.php:758
+msgid "Fonts"
+msgstr "Schriften"
+
+#: includes/admin.php:273
+msgid "Saved: the menu uses the theme's fonts."
+msgstr "Gespeichert: Die Speisekarte verwendet die Schriften des Themes."
+
+#: includes/admin.php:273
+msgid "Saved: the menu uses MenuDash's fonts."
+msgstr "Gespeichert: Die Speisekarte verwendet die Schriften von MenuDash."
+
+#. translators: %s: icon name, e.g. Spicy. No full stop: several of these are joined with ". ".
+#: includes/admin.php:290
+#, php-format
+msgid "%s is back to the default icon"
+msgstr "%s hat wieder das Standardsymbol"
+
+#. translators: 1: icon name, e.g. Spicy, 2: PHP upload error code.
+#: includes/admin.php:300
+#, php-format
+msgid "%1$s: the upload failed (code %2$d)."
+msgstr "%1$s: Das Hochladen ist fehlgeschlagen (Code %2$d)."
+
+#. translators: %s: icon name, e.g. Spicy.
+#: includes/admin.php:305
+#, php-format
+msgid "%s: the file is over 2 MB; an icon is usually a few KB."
+msgstr ""
+"%s: Die Datei ist grösser als 2 MB; ein Symbol hat meist nur wenige KB."
+
+#. translators: %s: icon name, e.g. Spicy. No full stop: several of these are joined with ". ".
+#: includes/admin.php:311
+#, php-format
+msgid "%s icon replaced"
+msgstr "Symbol %s ersetzt"
+
+#: includes/admin.php:317
+msgid "Choose an icon file first."
+msgstr "Wählen Sie zuerst eine Symboldatei."
+
+#: includes/admin.php:341
+msgid "You are not allowed to upload photos."
+msgstr "Sie dürfen keine Fotos hochladen."
+
+#: includes/admin.php:347
+msgid "the file is larger than this server accepts"
+msgstr "die Datei ist grösser, als dieser Server annimmt"
+
+#. translators: %d: PHP upload error code.
+#: includes/admin.php:349
+#, php-format
+msgid "upload error %d"
+msgstr "Upload-Fehler %d"
+
+#: includes/admin.php:369
+msgid "Not allowed."
+msgstr "Nicht erlaubt."
+
+#: includes/admin.php:372
+msgid "No such photo."
+msgstr "Dieses Foto gibt es nicht."
+
+#: includes/admin.php:411
+msgctxt "dish number (column heading)"
+msgid "Nr."
+msgstr "Nr."
+
+#: includes/admin.php:411
+msgid "Photo"
+msgstr "Foto"
+
+#: includes/admin.php:411
+msgid "Name"
+msgstr "Name"
+
+#: includes/admin.php:411
+msgid "Marks"
+msgstr "Angaben"
+
+#: includes/admin.php:411
+msgid "Price"
+msgstr "Preis"
+
+#: includes/admin.php:427
+msgid "no photo"
+msgstr "kein Foto"
+
+#: includes/admin.php:460
+msgid "MenuDash sections"
+msgstr "MenuDash-Bereiche"
+
+#: includes/admin.php:470 includes/admin.php:777
+msgid "Diet icons"
+msgstr "Ernährungssymbole"
+
+#. translators: %s: file name.
+#: includes/admin.php:481
+#, php-format
+msgid "Restored %s."
+msgstr "%s wiederhergestellt."
+
+#. translators: %s: file name.
+#: includes/admin.php:483
+#, php-format
+msgid "Uploaded %s."
+msgstr "%s hochgeladen."
+
+#. translators: 1: "12 categories", 2: "85 dishes".
+#: includes/admin.php:490
+#, php-format
+msgid "The menu now has %1$s and %2$s."
+msgstr "Die Speisekarte hat jetzt %1$s und %2$s."
+
+#. translators: %d: number of categories.
+#: includes/admin.php:492 includes/admin.php:565
+#, php-format
+msgid "%d category"
+msgid_plural "%d categories"
+msgstr[0] "%d Kategorie"
+msgstr[1] "%d Kategorien"
+
+#. translators: %d: number of dishes.
+#: includes/admin.php:494 includes/admin.php:567
+#, php-format
+msgid "%d dish"
+msgid_plural "%d dishes"
+msgstr[0] "%d Gericht"
+msgstr[1] "%d Gerichte"
+
+#: includes/admin.php:500
+msgid "The menu was not changed."
+msgstr "Die Speisekarte wurde nicht geändert."
+
+#: includes/admin.php:503
+msgid "Please check:"
+msgstr "Bitte prüfen:"
+
+#: includes/admin.php:507
+msgid "From the same file:"
+msgstr "Aus derselben Datei:"
+
+#: includes/admin.php:516
+msgid "The menu is on:"
+msgstr "Die Speisekarte ist auf:"
+
+#. translators: %s: the shortcode [menudash].
+#: includes/admin.php:523
+#, php-format
+msgid "To show the menu, add the shortcode %s to a page."
+msgstr ""
+"Um die Speisekarte anzuzeigen, fügen Sie den Shortcode %s auf einer Seite "
+"ein."
+
+#: includes/admin.php:526
+msgid "Changes here show there straight away."
+msgstr "Änderungen hier erscheinen dort sofort."
+
+#: includes/admin.php:531
+msgid "1. Menu"
+msgstr "1. Speisekarte"
+
+#: includes/admin.php:536
+msgid ""
+"Your menu spreadsheet, exported as <strong>Excel</strong> (.xlsx; from "
+"Numbers: File → Export To → Excel) or as <strong>CSV</strong> (UTF-8, to "
+"keep the Chinese). It replaces the whole menu. In an Excel file, the sheet "
+"named <em>menu</em> is the menu, and sheets named <em>specials</em> and "
+"<em>lunch</em> update cards 3 and 4 in the same upload."
+msgstr ""
+"Ihre Speisekarten-Tabelle, exportiert als <strong>Excel</strong> (.xlsx; aus "
+"Numbers: Ablage → Exportieren → Excel) oder als <strong>CSV</strong> (UTF-8, "
+"damit das Chinesische erhalten bleibt). Sie ersetzt die ganze Speisekarte. "
+"In einer Excel-Datei ist das Tabellenblatt namens <em>menu</em> die "
+"Speisekarte, und Blätter namens <em>specials</em> und <em>lunch</em> "
+"aktualisieren die Karten 3 und 4 mit demselben Upload."
+
+#: includes/admin.php:537
+msgid ""
+"Your menu spreadsheet, exported as <strong>Excel</strong> (.xlsx; from "
+"Numbers: File → Export To → Excel) or as <strong>CSV</strong> (UTF-8, to "
+"keep the Chinese). It replaces the whole menu. In an Excel file, the sheet "
+"named <em>menu</em> is the menu."
+msgstr ""
+"Ihre Speisekarten-Tabelle, exportiert als <strong>Excel</strong> (.xlsx; aus "
+"Numbers: Ablage → Exportieren → Excel) oder als <strong>CSV</strong> (UTF-8, "
+"damit das Chinesische erhalten bleibt). Sie ersetzt die ganze Speisekarte. "
+"In einer Excel-Datei ist das Tabellenblatt namens <em>menu</em> die "
+"Speisekarte."
+
+#: includes/admin.php:548
+msgid "Choose file"
+msgstr "Datei wählen"
+
+#: includes/admin.php:549
+msgid "CSV or Excel (.xlsx)"
+msgstr "CSV oder Excel (.xlsx)"
+
+#: includes/admin.php:550
+msgid "or drop it here"
+msgstr "oder hier ablegen"
+
+#. translators: 1: file name, 2: date and time, 3: "12 categories", 4: "85 dishes".
+#: includes/admin.php:561
+#, php-format
+msgid "Live now: %1$s, uploaded %2$s — %3$s, %4$s."
+msgstr "Jetzt online: %1$s, hochgeladen am %2$s — %3$s, %4$s."
+
+#: includes/admin.php:572
+msgid "No menu uploaded yet."
+msgstr "Noch keine Speisekarte hochgeladen."
+
+#: includes/admin.php:576
+msgid "Earlier files"
+msgstr "Frühere Dateien"
+
+#: includes/admin.php:584
+msgid "live"
+msgstr "online"
+
+#: includes/admin.php:586
+msgid "Put back"
+msgstr "Wiederherstellen"
+
+#: includes/admin.php:596
+msgid "2. Dish photos"
+msgstr "2. Fotos der Gerichte"
+
+#. translators: 1: example file name 22_Dumplings.png, 2: example file name Jasmine Rice.png, 3: upload size limit, e.g. 8 MB.
+#: includes/admin.php:602
+#, php-format
+msgid ""
+"Select all the photos at once (⌘A in the folder); they upload straight away. "
+"Name each one after the dish number, e.g. %1$s, or exactly like the dish "
+"when it has no number, e.g. %2$s. A photo with the same name as an earlier "
+"one replaces it. PNG with a transparent background looks best; big files are "
+"shrunk in the browser first (this server accepts up to %3$s per file)."
+msgstr ""
+"Wählen Sie alle Fotos auf einmal aus (⌘A im Ordner); sie werden sofort "
+"hochgeladen. Benennen Sie jedes nach der Nummer des Gerichts, z. B. %1$s, "
+"oder genau wie das Gericht, wenn es keine Nummer hat, z. B. %2$s. Ein Foto "
+"mit demselben Namen wie ein früheres ersetzt dieses. PNG mit transparentem "
+"Hintergrund sieht am besten aus; grosse Dateien werden zuerst im Browser "
+"verkleinert (dieser Server nimmt bis zu %3$s pro Datei an)."
+
+#: includes/admin.php:613
+msgid "Choose photos"
+msgstr "Fotos wählen"
+
+#: includes/admin.php:614
+msgid "PNG, JPG or WebP"
+msgstr "PNG, JPG oder WebP"
+
+#: includes/admin.php:615
+msgid "or drop them here"
+msgstr "oder hier ablegen"
+
+#. translators: %d: the card's number, e.g. 3.
+#: includes/admin.php:645
+#, php-format
+msgid "%d. Check"
+msgstr "%d. Prüfung"
+
+#. translators: %d: number of photos.
+#: includes/admin.php:647
+#, php-format
+msgid "%d photo uploaded."
+msgid_plural "%d photos uploaded."
+msgstr[0] "%d Foto hochgeladen."
+msgstr[1] "%d Fotos hochgeladen."
+
+#: includes/admin.php:650
+msgid "Photos not shown"
+msgstr "Nicht angezeigte Fotos"
+
+#: includes/admin.php:651
+msgid "Rename these to the dish number and upload again, or delete them."
+msgstr ""
+"Benennen Sie diese nach der Nummer des Gerichts um und laden Sie sie erneut "
+"hoch, oder löschen Sie sie."
+
+#. translators: %s: dish number and name.
+#: includes/admin.php:659
+#, php-format
+msgid "A newer photo is used for %s"
+msgstr "Für %s wird ein neueres Foto verwendet"
+
+#: includes/admin.php:659
+msgid "Matches no dish"
+msgstr "Passt zu keinem Gericht"
+
+#: includes/admin.php:660
+msgid "Delete"
+msgstr "Löschen"
+
+#: includes/admin.php:669
+msgctxt "restaurant menu (heading)"
+msgid "Menu"
+msgstr "Speisekarte"
+
+#. translators: 1: dishes with a photo, 2: all dishes.
+#: includes/admin.php:672
+#, php-format
+msgid "%1$d of %2$d dish with a photo"
+msgid_plural "%1$d of %2$d dishes with a photo"
+msgstr[0] "%1$d von %2$d Gericht mit Foto"
+msgstr[1] "%1$d von %2$d Gerichten mit Foto"
+
+#: includes/admin.php:681
+msgid "Server details"
+msgstr "Serverdetails"
+
+#: includes/admin.php:686
+msgid "Image editor"
+msgstr "Bildbearbeitung"
+
+#: includes/admin.php:686
+msgid "none — photos cannot be resized"
+msgstr "keine — Fotos können nicht verkleinert werden"
+
+#: includes/admin.php:687
+msgid "WebP output"
+msgstr "WebP-Ausgabe"
+
+#: includes/admin.php:687
+msgid "yes"
+msgstr "ja"
+
+#: includes/admin.php:687
+msgid "no (PNG/JPEG used instead)"
+msgstr "nein (stattdessen PNG/JPEG)"
+
+#: includes/admin.php:688
+msgid "Upload limit per file"
+msgstr "Upload-Grenze pro Datei"
+
+#: includes/admin.php:690
+msgid "Menu folder"
+msgstr "Speisekarten-Ordner"
+
+#. translators: %s: folder path on the server.
+#: includes/admin.php:693
+#, php-format
+msgid "%s (writable)"
+msgstr "%s (beschreibbar)"
+
+#. translators: %s: folder path on the server.
+#: includes/admin.php:695
+#, php-format
+msgid "%s (NOT writable)"
+msgstr "%s (NICHT beschreibbar)"
+
+#: includes/admin.php:698
+msgid "Plugin version"
+msgstr "Plugin-Version"
+
+#: includes/admin.php:715
+msgid ""
+"The background of the menu, the specials and the gift card form, and the "
+"highlight colour of buttons, filters, headings, the Recommended icon and the "
+"holiday notice. Text on the highlight colour turns dark by itself when the "
+"colour is light."
+msgstr ""
+"Der Hintergrund der Speisekarte, der Tagesempfehlungen und des "
+"Gutscheinformulars sowie die Akzentfarbe von Schaltflächen, Filtern, "
+"Überschriften, dem Symbol „Empfohlen“ und dem Ferienhinweis. Text auf der "
+"Akzentfarbe wird von selbst dunkel, wenn die Farbe hell ist."
+
+#: includes/admin.php:721
+msgid "Which colours"
+msgstr "Welche Farben"
+
+#: includes/admin.php:723
+msgid "The theme's colours"
+msgstr "Die Farben des Themes"
+
+#. translators: %s: theme name.
+#: includes/admin.php:726
+#, php-format
+msgid ""
+"from %s. They follow the theme: change them under Appearance → Editor → "
+"Styles."
+msgstr ""
+"aus %s. Sie folgen dem Theme: Ändern Sie sie unter Design → Editor → Stile."
+
+#: includes/admin.php:728
+msgid "My own colours"
+msgstr "Meine eigenen Farben"
+
+#: includes/admin.php:728
+msgid ""
+"chosen below and saved here; they stay saved when you switch to the theme's."
+msgstr ""
+"unten gewählt und hier gespeichert; sie bleiben gespeichert, wenn Sie zu den "
+"Farben des Themes wechseln."
+
+#: includes/admin.php:737
+msgid "default"
+msgstr "Standard"
+
+#: includes/admin.php:749
+msgid "Save colours"
+msgstr "Farben speichern"
+
+#: includes/admin.php:751 includes/admin.php:793
+msgid "Back to default"
+msgstr "Zurück zum Standard"
+
+#: includes/admin.php:759
+msgid ""
+"The fonts of the menu, the specials, the gift card form and the recommended "
+"dishes. Chinese always uses the device's Chinese font."
+msgstr ""
+"Die Schriften der Speisekarte, der Tagesempfehlungen, des Gutscheinformulars "
+"und der empfohlenen Gerichte. Chinesisch verwendet immer die chinesische "
+"Schrift des Geräts."
+
+#: includes/admin.php:764
+msgid "Which fonts"
+msgstr "Welche Schriften"
+
+#: includes/admin.php:766
+msgid "The theme's fonts"
+msgstr "Die Schriften des Themes"
+
+#. translators: %s: theme name.
+#: includes/admin.php:768
+#, php-format
+msgid ""
+"from %s. They follow the theme: change them under Appearance → Editor → "
+"Styles → Typography."
+msgstr ""
+"aus %s. Sie folgen dem Theme: Ändern Sie sie unter Design → Editor → Stile → "
+"Typografie."
+
+#: includes/admin.php:768
+#, php-format
+msgid ""
+"%s has no fonts to give (only block themes do), so MenuDash uses its own."
+msgstr ""
+"%s bietet keine Schriften an (das tun nur Block-Themes), daher verwendet "
+"MenuDash seine eigenen."
+
+#: includes/admin.php:770
+msgid "MenuDash's fonts"
+msgstr "Die Schriften von MenuDash"
+
+#: includes/admin.php:771
+msgid ""
+"DM Sans for the text, Darker Grotesque for headings (the same as MenuDash "
+"Theme), included with MenuDash."
+msgstr ""
+"DM Sans für den Text, Darker Grotesque für Überschriften (wie im MenuDash "
+"Theme), mit MenuDash mitgeliefert."
+
+#: includes/admin.php:773
+msgid "Save fonts"
+msgstr "Schriften speichern"
+
+#: includes/admin.php:778
+msgid ""
+"Use your own icons for the diet marks: an SVG, or a square PNG with a "
+"transparent background. \"Not spicy\" is the Spicy icon, crossed out."
+msgstr ""
+"Verwenden Sie eigene Symbole für die Ernährungsangaben: ein SVG oder ein "
+"quadratisches PNG mit transparentem Hintergrund. „Nicht scharf“ ist das "
+"Symbol „Scharf“, durchgestrichen."
+
+#: includes/admin.php:785
+msgid "Drop an icon file here"
+msgstr "Symboldatei hier ablegen"
+
+#. translators: %s: file name of the uploaded icon.
+#: includes/admin.php:789
+#, php-format
+msgid "Your icon: %s"
+msgstr "Ihr Symbol: %s"
+
+#: includes/admin.php:789
+msgid "Default icon"
+msgstr "Standardsymbol"
+
+#. translators: %s: icon name, e.g. Spicy.
+#: includes/admin.php:791
+#, php-format
+msgid "New %s icon"
+msgstr "Neues Symbol %s"
+
+#: includes/admin.php:798
+msgid "Save icons"
+msgstr "Symbole speichern"
+
+#. translators: %s: link to insdash, the maker of MenuDash.
+#: includes/admin.php:806
+#, php-format
+msgid "MenuDash by %s · add-ons, set-up and help"
+msgstr "MenuDash von %s · Add-ons, Einrichtung und Hilfe"
+
+#: includes/xlsx.php:61 includes/xlsx.php:67
+msgid "A part of the file is too large to be a menu."
+msgstr "Ein Teil der Datei ist zu gross für eine Speisekarte."
+
+#: includes/xlsx.php:71
+msgid ""
+"The file contains XML declarations a spreadsheet does not need; it was not "
+"read."
+msgstr ""
+"Die Datei enthält XML-Deklarationen, die eine Tabelle nicht braucht; sie "
+"wurde nicht gelesen."
+
+#: includes/xlsx.php:128
+msgid ""
+"This server cannot read Excel files (PHP's zip extension is missing). Export "
+"the sheet as CSV instead, or ask the host to enable \"zip\"."
+msgstr ""
+"Dieser Server kann keine Excel-Dateien lesen (die PHP-Erweiterung zip "
+"fehlt). Exportieren Sie das Blatt stattdessen als CSV oder bitten Sie den "
+"Hoster, „zip“ zu aktivieren."
+
+#: includes/xlsx.php:136
+msgid ""
+"This is not an Excel file (.xlsx). From Numbers: File → Export To → Excel."
+msgstr ""
+"Das ist keine Excel-Datei (.xlsx). Aus Numbers: Ablage → Exportieren → Excel."
+
+#: includes/xlsx.php:140
+msgid "The Excel file could not be opened."
+msgstr "Die Excel-Datei konnte nicht geöffnet werden."
+
+#: includes/xlsx.php:144
+msgid "The file has too many parts to be a menu."
+msgstr "Die Datei hat zu viele Teile für eine Speisekarte."
+
+#: includes/xlsx.php:148
+msgid ""
+"The file contains macros (.xlsm). Save it as a normal Excel workbook (.xlsx) "
+"or export CSV."
+msgstr ""
+"Die Datei enthält Makros (.xlsm). Speichern Sie sie als normale Excel-"
+"Arbeitsmappe (.xlsx) oder exportieren Sie eine CSV."
+
+#: includes/xlsx.php:157
+msgid "This does not look like an Excel workbook (.xlsx)."
+msgstr "Das sieht nicht nach einer Excel-Arbeitsmappe (.xlsx) aus."
+
+#: includes/xlsx.php:252
+msgid "The workbook has no sheets with cells in them."
+msgstr "Die Arbeitsmappe hat keine Tabellenblätter mit ausgefüllten Zellen."
+
+#. translators: %s: file name.
+#: includes/photo-store.php:73
+#, php-format
+msgid "%s is not a PNG, JPEG or WebP image."
+msgstr "%s ist kein PNG-, JPEG- oder WebP-Bild."
+
+#. translators: 1: file name, 2: width in pixels, 3: height in pixels.
+#: includes/photo-store.php:77
+#, php-format
+msgid "%1$s is too large (%2$d × %3$d px); save it at most 6000 px wide."
+msgstr ""
+"%1$s ist zu gross (%2$d × %3$d px); speichern Sie es höchstens 6000 px breit."
+
+msgid ""
+"A restaurant menu for your website, kept in a spreadsheet: upload the "
+"menu as CSV and the dish photos under MenuDash, then put [menudash] on a "
+"page. Guests read it in German, English and Chinese, all at once or one "
+"at a time, and filter by diet. Background and highlight colours and the "
+"diet icons are chosen on the MenuDash page, and a QR code to the menu "
+"prints as table cards. Add-ons: MenuDash Restaurant (details, opening "
+"hours, holidays, \"open now\"), MenuDash Specials (today's specials) and "
+"MenuDash Gift Cards (gift card orders)."
+msgstr ""
+"Eine Speisekarte für Ihre Website, gepflegt in einer Tabelle: Laden Sie "
+"unter MenuDash die Speisekarte als CSV und die Fotos der Gerichte hoch "
+"und setzen Sie dann [menudash] auf eine Seite. Gäste lesen sie auf "
+"Deutsch, Englisch und Chinesisch, alle Sprachen zusammen oder einzeln, "
+"und filtern nach Ernährung. Hintergrund- und Akzentfarbe sowie die "
+"Ernährungssymbole wählen Sie auf der MenuDash-Seite, und ein QR-Code zur "
+"Speisekarte lässt sich als Tischkarten drucken. Add-ons: MenuDash "
+"Restaurant (Angaben, Öffnungszeiten, Ferien, „Jetzt geöffnet“), MenuDash "
+"Specials (Tagesempfehlungen) und MenuDash Gift Cards (Gutschein-"
+"Bestellungen)."

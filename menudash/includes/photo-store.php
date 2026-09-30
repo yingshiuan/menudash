@@ -69,10 +69,12 @@ function mdash_photo_add( $tmp, $name ) {
 	$info = function_exists( 'wp_getimagesize' ) ? wp_getimagesize( $tmp ) : @getimagesize( $tmp ); // phpcs:ignore
 	$mime = $info ? $info['mime'] : '';
 	if ( ! in_array( $mime, array( 'image/png', 'image/jpeg', 'image/webp' ), true ) ) {
-		return array( 'ok' => false, 'error' => "$name is not a PNG, JPEG or WebP image." );
+		/* translators: %s: file name. */
+		return array( 'ok' => false, 'error' => sprintf( __( '%s is not a PNG, JPEG or WebP image.', 'menudash' ), $name ) );
 	}
 	if ( $info[0] * $info[1] > MDASH_MAX_PIXELS ) {
-		return array( 'ok' => false, 'error' => "$name is too large ({$info[0]} × {$info[1]} px); save it at most 6000 px wide." );
+		/* translators: 1: file name, 2: width in pixels, 3: height in pixels. */
+		return array( 'ok' => false, 'error' => sprintf( __( '%1$s is too large (%2$d × %3$d px); save it at most 6000 px wide.', 'menudash' ), $name, $info[0], $info[1] ) );
 	}
 	$alpha               = mdash_has_alpha( $tmp, $mime );
 	list( $ext, $out )   = mdash_photo_format( $alpha );
@@ -86,7 +88,8 @@ function mdash_photo_add( $tmp, $name ) {
 	wp_raise_memory_limit( 'image' );
 	$editor = wp_get_image_editor( $tmp );
 	if ( is_wp_error( $editor ) ) {
-		return array( 'ok' => false, 'error' => "$name could not be opened: " . $editor->get_error_message() );
+		/* translators: 1: file name, 2: the server's error message. */
+		return array( 'ok' => false, 'error' => sprintf( __( '%1$s could not be opened: %2$s', 'menudash' ), $name, $editor->get_error_message() ) );
 	}
 	$editor->set_quality( 82 );
 	$made = array();
@@ -98,7 +101,8 @@ function mdash_photo_add( $tmp, $name ) {
 			foreach ( $made as $m ) {
 				@unlink( $m ); // phpcs:ignore
 			}
-			return array( 'ok' => false, 'error' => "$name could not be saved: " . $saved->get_error_message() );
+			/* translators: 1: file name, 2: the server's error message. */
+			return array( 'ok' => false, 'error' => sprintf( __( '%1$s could not be saved: %2$s', 'menudash' ), $name, $saved->get_error_message() ) );
 		}
 		$made[] = $saved['path'];
 	}
@@ -119,6 +123,11 @@ function mdash_photo_add( $tmp, $name ) {
 }
 
 function mdash_photo_unlink( $p ) {
+	// Only file names the store itself makes (a slug and a hash); nothing from index.json
+	// can point outside the photos folder.
+	if ( ! isset( $p['file'], $p['ext'] ) || ! preg_match( '/^[a-z0-9-]+$/', (string) $p['file'] ) || ! preg_match( '/^[a-z0-9]+$/', (string) $p['ext'] ) ) {
+		return;
+	}
 	$dir = mdash_dir( 'photos' );
 	foreach ( MDASH_SIZES as $size ) {
 		$f = "$dir/{$p['file']}-$size.{$p['ext']}";

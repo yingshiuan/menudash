@@ -14,6 +14,7 @@ add_action( 'admin_post_menudash_csv', 'mdash_handle_csv' );
 add_action( 'admin_post_menudash_restore', 'mdash_handle_restore' );
 add_action( 'admin_post_menudash_icons', 'mdash_handle_icons' );
 add_action( 'admin_post_menudash_colors', 'mdash_handle_colors' );
+add_action( 'admin_post_menudash_fonts', 'mdash_handle_fonts' );
 add_action( 'wp_ajax_menudash_photo', 'mdash_ajax_photo' );
 add_action( 'wp_ajax_menudash_photo_delete', 'mdash_ajax_photo_delete' );
 add_filter( 'plugin_action_links_' . plugin_basename( MENUDASH_FILE ), 'mdash_action_links' );
@@ -30,15 +31,16 @@ function mdash_admin_menu() {
 
 /** Page slug => tab name. The first is the page the sidebar's MenuDash opens. */
 function mdash_admin_tabs() {
-	// Add-ons add their tabs here (MenuDash Restaurant, Gift Cards); Colours & icons stays last.
-	$tabs = (array) apply_filters( 'menudash_admin_tabs', array( 'menudash' => 'Menu' ) );
+	// Add-ons add their tabs here (MenuDash Restaurant, Gift Cards); Colours, fonts & icons stays last.
+	$tabs = (array) apply_filters( 'menudash_admin_tabs', array( 'menudash' => _x( 'Menu', 'restaurant menu (tab)', 'menudash' ) ) );
 	unset( $tabs['menudash-design'] );
-	$tabs['menudash-design'] = 'Colours & icons'; // Not "Design": that is WordPress's own Appearance menu in German.
+	// Not "Design": that is WordPress's own Appearance menu in German (外觀 in Chinese).
+	$tabs['menudash-design'] = __( 'Colours, fonts & icons', 'menudash' );
 	return $tabs;
 }
 
 function mdash_action_links( $links ) {
-	array_unshift( $links, '<a href="' . esc_url( admin_url( 'admin.php?page=menudash' ) ) . '">Upload menu</a>' );
+	array_unshift( $links, '<a href="' . esc_url( admin_url( 'admin.php?page=menudash' ) ) . '">' . esc_html__( 'Upload menu', 'menudash' ) . '</a>' );
 	return $links;
 }
 
@@ -58,6 +60,28 @@ function mdash_admin_assets( $hook ) {
 			'maxUpload' => (int) wp_max_upload_size(),
 		)
 	);
+	// The words assets/admin.js writes, in the owner's language.
+	$i18n = array(
+		/* translators: 1: number of the photo being uploaded, 2: number of photos, 3: file name. */
+		'uploading'   => __( 'Uploading %1$s of %2$s: %3$s', 'menudash' ),
+		'noMatch'     => __( 'uploaded, but matches no dish', 'menudash' ),
+		/* translators: %s: number of photos uploaded. */
+		'done'        => __( 'Done: %s uploaded', 'menudash' ),
+		/* translators: %s: number of photos. Added after "Done: 5 uploaded". */
+		'notMatched'  => __( ', %s not matched to a dish', 'menudash' ),
+		/* translators: %s: number of photos. Added after "Done: 5 uploaded". */
+		'failed'      => __( ', %s failed', 'menudash' ),
+		'showCheck'   => __( 'Show the updated check', 'menudash' ),
+		'shrinkFail'  => __( 'could not shrink', 'menudash' ),
+		'notImage'    => __( 'not an image', 'menudash' ),
+		'stillLarge'  => __( 'still larger than the server accepts after shrinking', 'menudash' ),
+		/* translators: %s: HTTP status code, e.g. 500. */
+		'serverSaid'  => __( 'the server answered %s', 'menudash' ),
+		'uploadFail'  => __( 'failed', 'menudash' ),
+		'confirmDel'  => __( 'Delete this photo?', 'menudash' ),
+		'deleteFail'  => __( 'Could not delete.', 'menudash' ),
+	);
+	wp_add_inline_script( 'menudash-admin', 'var menudashAdminI18n = ' . wp_json_encode( $i18n, JSON_HEX_TAG | JSON_HEX_AMP ) . ';', 'before' );
 }
 
 function mdash_can() {
@@ -101,26 +125,30 @@ function mdash_back( $result ) {
 function mdash_handle_csv() {
 	check_admin_referer( 'menudash_csv' );
 	if ( ! mdash_can() ) {
-		wp_die( 'You are not allowed to change the menu.', 403 );
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
 	}
 	$f = isset( $_FILES['csv'] ) ? $_FILES['csv'] : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 	if ( ! $f || UPLOAD_ERR_OK !== $f['error'] || ! is_uploaded_file( $f['tmp_name'] ) ) {
 		$code = $f ? (int) $f['error'] : UPLOAD_ERR_NO_FILE;
-		mdash_back( array( 'ok' => false, 'error' => UPLOAD_ERR_NO_FILE === $code ? 'Choose the CSV file first.' : "The upload failed (code $code)." ) );
+		$error = UPLOAD_ERR_NO_FILE === $code
+			? __( 'Choose the CSV file first.', 'menudash' )
+			/* translators: %d: PHP upload error code. */
+			: sprintf( __( 'The upload failed (code %d).', 'menudash' ), $code );
+		mdash_back( array( 'ok' => false, 'error' => $error ) );
 	}
 	$name = sanitize_text_field( wp_unslash( $f['name'] ) );
 	$ext  = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
 	if ( 'numbers' === $ext ) {
-		mdash_back( array( 'ok' => false, 'error' => 'A Numbers file can\'t be read by a website. In Numbers, choose File → Export To → Excel (keeps the sheets menu, specials, lunch) or CSV, and upload that.' ) );
+		mdash_back( array( 'ok' => false, 'error' => __( 'A Numbers file can\'t be read by a website. In Numbers, choose File → Export To → Excel (keeps the sheets menu, specials, lunch) or CSV, and upload that.', 'menudash' ) ) );
 	}
 	if ( in_array( $ext, array( 'xls', 'xlsm', 'xlsb', 'ods' ), true ) ) {
-		mdash_back( array( 'ok' => false, 'error' => 'Save the spreadsheet as an Excel workbook (.xlsx) or as CSV, and upload that.' ) );
+		mdash_back( array( 'ok' => false, 'error' => __( 'Save the spreadsheet as an Excel workbook (.xlsx) or as CSV, and upload that.', 'menudash' ) ) );
 	}
 	if ( 'xlsx' === $ext ) {
 		mdash_handle_xlsx( $f['tmp_name'], $name, (int) $f['size'] );
 	}
 	if ( $f['size'] > 2 * MB_IN_BYTES ) {
-		mdash_back( array( 'ok' => false, 'error' => 'That file is over 2 MB; a menu CSV is about 20 KB. Is it the right file?' ) );
+		mdash_back( array( 'ok' => false, 'error' => __( 'That file is over 2 MB; a menu CSV is about 20 KB. Is it the right file?', 'menudash' ) ) );
 	}
 	mdash_back( mdash_apply_menu_csv( $f['tmp_name'], $name ) + array( 'name' => $name ) );
 }
@@ -145,7 +173,7 @@ function mdash_apply_menu_csv( $path, $name ) {
  */
 function mdash_handle_xlsx( $tmp, $name, $size ) {
 	if ( $size > 10 * MB_IN_BYTES ) {
-		mdash_back( array( 'ok' => false, 'error' => 'That file is over 10 MB; a menu workbook is well under 1 MB. Is it the right file? (Pictures inside the workbook make it big; they are not needed.)' ) );
+		mdash_back( array( 'ok' => false, 'error' => __( 'That file is over 10 MB; a menu workbook is well under 1 MB. Is it the right file? (Pictures inside the workbook make it big; they are not needed.)', 'menudash' ) ) );
 	}
 	$x = mdash_xlsx_read( $tmp );
 	if ( ! $x['ok'] ) {
@@ -170,7 +198,8 @@ function mdash_handle_xlsx( $tmp, $name, $size ) {
 		$unused        = array();
 	}
 	if ( ! $found ) {
-		mdash_back( array( 'ok' => false, 'error' => 'No sheet called menu, specials or lunch in this workbook (found: ' . implode( ', ', array_keys( $x['sheets'] ) ) . '). Rename the sheets in Numbers or Excel, then export again.' ) );
+		/* translators: %s: the names of the workbook's sheets, comma-separated. The sheet names menu, specials and lunch stay in English. */
+		mdash_back( array( 'ok' => false, 'error' => sprintf( __( 'No sheet called menu, specials or lunch in this workbook (found: %s). Rename the sheets in Numbers or Excel, then export again.', 'menudash' ), implode( ', ', array_keys( $x['sheets'] ) ) ) ) );
 	}
 	// Each sheet as a CSV file of its own, for the parser and for "Put back".
 	$files = array();
@@ -188,16 +217,18 @@ function mdash_handle_xlsx( $tmp, $name, $size ) {
 		 */
 		$done = (array) apply_filters( 'menudash_xlsx_sheets', array(), $rest );
 		foreach ( $rest as $kind => $s ) {
-			$also[] = isset( $done[ $kind ] ) ? (string) $done[ $kind ] : sprintf( 'Sheet "%s" not used: it needs the MenuDash Specials add-on.', $s['sheet'] );
+			/* translators: %s: sheet name. */
+			$also[] = isset( $done[ $kind ] ) ? (string) $done[ $kind ] : sprintf( __( 'Sheet "%s" not used: it needs the MenuDash Specials add-on.', 'menudash' ), $s['sheet'] );
 		}
 	}
 	foreach ( $unused as $sheet ) {
-		$also[] = sprintf( 'Sheet "%s" not used (MenuDash reads the sheets menu, specials and lunch).', $sheet );
+		/* translators: %s: sheet name. The sheet names menu, specials and lunch stay in English. */
+		$also[] = sprintf( __( 'Sheet "%s" not used (MenuDash reads the sheets menu, specials and lunch).', 'menudash' ), $sheet );
 	}
 	if ( isset( $files['menu'] ) ) {
 		$result = mdash_apply_menu_csv( $files['menu']['path'], $files['menu']['label'] ) + array( 'name' => $files['menu']['label'] );
 	} else {
-		$result = array( 'ok' => true, 'kind' => 'Excel file', 'message' => 'No sheet called menu, so the menu was not changed.' );
+		$result = array( 'ok' => true, 'kind' => __( 'Excel file', 'menudash' ), 'message' => __( 'No sheet called menu, so the menu was not changed.', 'menudash' ) );
 	}
 	foreach ( $files as $s ) {
 		@unlink( $s['path'] ); // phpcs:ignore
@@ -209,12 +240,12 @@ function mdash_handle_colors() {
 	mdash_back_to( 'menudash-design' );
 	check_admin_referer( 'menudash_colors' );
 	if ( ! mdash_can() ) {
-		wp_die( 'You are not allowed to change the menu.', 403 );
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
 	}
 	if ( isset( $_POST['reset'] ) ) {
 		delete_option( MDASH_COLORS_OPTION );
 		mdash_purge_caches();
-		mdash_back( array( 'ok' => true, 'kind' => 'Colours', 'message' => 'Back to the default colours.' ) );
+		mdash_back( array( 'ok' => true, 'kind' => __( 'Colours', 'menudash' ), 'message' => __( 'Back to the default colours.', 'menudash' ) ) );
 	}
 	$in    = isset( $_POST['colors'] ) && is_array( $_POST['colors'] ) ? wp_unslash( $_POST['colors'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- checked by mdash_color_hex()
 	$mode  = isset( $_POST['colors_mode'] ) && 'theme' === $_POST['colors_mode'] && mdash_theme_colors() ? 'theme' : 'own';
@@ -227,23 +258,36 @@ function mdash_handle_colors() {
 	update_option( MDASH_COLORS_OPTION, $saved, false );
 	mdash_purge_caches();
 	$problems = mdash_color_problems( mdash_colors() );
-	mdash_back( array( 'ok' => ! $problems, 'kind' => 'Colours', 'message' => 'theme' === $mode ? 'Saved: the menu uses the theme\'s colours.' : 'Saved: the menu uses your own colours.', 'error' => implode( ' ', $problems ) ) );
+	mdash_back( array( 'ok' => ! $problems, 'kind' => __( 'Colours', 'menudash' ), 'message' => 'theme' === $mode ? __( 'Saved: the menu uses the theme\'s colours.', 'menudash' ) : __( 'Saved: the menu uses your own colours.', 'menudash' ), 'error' => implode( ' ', $problems ) ) );
+}
+
+function mdash_handle_fonts() {
+	mdash_back_to( 'menudash-design' );
+	check_admin_referer( 'menudash_fonts' );
+	if ( ! mdash_can() ) {
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
+	}
+	$mode = isset( $_POST['fonts_mode'] ) && 'own' === $_POST['fonts_mode'] ? 'own' : 'theme';
+	update_option( MDASH_FONTS_OPTION, $mode, false );
+	mdash_purge_caches();
+	mdash_back( array( 'ok' => true, 'kind' => __( 'Fonts', 'menudash' ), 'message' => 'theme' === $mode ? __( 'Saved: the menu uses the theme\'s fonts.', 'menudash' ) : __( 'Saved: the menu uses MenuDash\'s fonts.', 'menudash' ) ) );
 }
 
 function mdash_handle_icons() {
 	mdash_back_to( 'menudash-design' );
 	check_admin_referer( 'menudash_icons' );
 	if ( ! mdash_can() ) {
-		wp_die( 'You are not allowed to change the menu.', 403 );
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
 	}
-	$labels = mdash_icon_keys();
+	$labels = mdash_icon_labels();
 	$done   = array();
 	$errors = array();
 	if ( isset( $_POST['reset'] ) ) {
 		$key = sanitize_key( wp_unslash( $_POST['reset'] ) );
 		if ( isset( $labels[ $key ] ) ) {
 			mdash_icon_reset( $key );
-			$done[] = "$labels[$key] is back to the default icon";
+			/* translators: %s: icon name, e.g. Spicy. No full stop: several of these are joined with ". ". */
+			$done[] = sprintf( __( '%s is back to the default icon', 'menudash' ), $labels[ $key ] );
 		}
 	}
 	foreach ( $labels as $key => $label ) {
@@ -252,22 +296,25 @@ function mdash_handle_icons() {
 			continue;
 		}
 		if ( UPLOAD_ERR_OK !== $f['error'] || ! is_uploaded_file( $f['tmp_name'] ) ) {
-			$errors[] = "$label: the upload failed (code {$f['error']}).";
+			/* translators: 1: icon name, e.g. Spicy, 2: PHP upload error code. */
+			$errors[] = sprintf( __( '%1$s: the upload failed (code %2$d).', 'menudash' ), $label, $f['error'] );
 			continue;
 		}
 		if ( $f['size'] > 2 * MB_IN_BYTES ) {
-			$errors[] = "$label: the file is over 2 MB; an icon is usually a few KB.";
+			/* translators: %s: icon name, e.g. Spicy. */
+			$errors[] = sprintf( __( '%s: the file is over 2 MB; an icon is usually a few KB.', 'menudash' ), $label );
 			continue;
 		}
 		$r = mdash_icon_set( $key, $f['tmp_name'], wp_unslash( $f['name'] ) );
 		if ( $r['ok'] ) {
-			$done[] = "$label icon replaced";
+			/* translators: %s: icon name, e.g. Spicy. No full stop: several of these are joined with ". ". */
+			$done[] = sprintf( __( '%s icon replaced', 'menudash' ), $label );
 		} else {
 			$errors[] = "$label: " . $r['error'];
 		}
 	}
 	if ( ! $done && ! $errors ) {
-		$errors[] = 'Choose an icon file first.';
+		$errors[] = __( 'Choose an icon file first.', 'menudash' );
 	}
 	mdash_back(
 		array(
@@ -281,7 +328,7 @@ function mdash_handle_icons() {
 function mdash_handle_restore() {
 	check_admin_referer( 'menudash_restore' );
 	if ( ! mdash_can() ) {
-		wp_die( 'You are not allowed to change the menu.', 403 );
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
 	}
 	$file   = isset( $_POST['file'] ) ? sanitize_file_name( wp_unslash( $_POST['file'] ) ) : '';
 	$result = mdash_restore_csv( $file );
@@ -291,12 +338,15 @@ function mdash_handle_restore() {
 function mdash_ajax_photo() {
 	check_ajax_referer( 'menudash_photo' );
 	if ( ! mdash_can() ) {
-		wp_send_json_error( array( 'error' => 'You are not allowed to upload photos.' ), 403 );
+		wp_send_json_error( array( 'error' => __( 'You are not allowed to upload photos.', 'menudash' ) ), 403 );
 	}
 	$f = isset( $_FILES['photo'] ) ? $_FILES['photo'] : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 	if ( ! $f || UPLOAD_ERR_OK !== $f['error'] || ! is_uploaded_file( $f['tmp_name'] ) ) {
 		$code = $f ? (int) $f['error'] : UPLOAD_ERR_NO_FILE;
-		$why  = in_array( $code, array( UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE ), true ) ? 'the file is larger than this server accepts' : "upload error $code";
+		$why  = in_array( $code, array( UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE ), true )
+			? __( 'the file is larger than this server accepts', 'menudash' )
+			/* translators: %d: PHP upload error code. */
+			: sprintf( __( 'upload error %d', 'menudash' ), $code );
 		wp_send_json_error( array( 'error' => $why ) );
 	}
 	// The browser may have shrunk the photo and renamed it; the owner's name comes separately.
@@ -316,10 +366,10 @@ function mdash_ajax_photo() {
 function mdash_ajax_photo_delete() {
 	check_ajax_referer( 'menudash_photo' );
 	if ( ! mdash_can() ) {
-		wp_send_json_error( array( 'error' => 'Not allowed.' ), 403 );
+		wp_send_json_error( array( 'error' => __( 'Not allowed.', 'menudash' ) ), 403 );
 	}
 	$id = isset( $_POST['id'] ) ? sanitize_key( wp_unslash( $_POST['id'] ) ) : '';
-	mdash_photo_delete( $id ) ? wp_send_json_success() : wp_send_json_error( array( 'error' => 'No such photo.' ) );
+	mdash_photo_delete( $id ) ? wp_send_json_success() : wp_send_json_error( array( 'error' => __( 'No such photo.', 'menudash' ) ) );
 }
 
 function mdash_dish_label( $menu, $key ) {
@@ -337,10 +387,14 @@ function mdash_dish_label( $menu, $key ) {
 function mdash_menu_pages() {
 	$pages = get_posts(
 		array(
-			'post_type'      => array( 'page', 'post' ),
+			// Pages only, oldest first: a post an Author writes with [menudash] never becomes
+			// the menu page (the QR code's default target).
+			'post_type'      => 'page',
 			'post_status'    => array( 'publish', 'draft', 'private' ),
 			's'              => '[menudash',
 			'posts_per_page' => 5,
+			'orderby'        => 'menu_order ID',
+			'order'          => 'ASC',
 		)
 	);
 	return array_values( array_filter( $pages, function ( $p ) { return has_shortcode( $p->post_content, 'menudash' ); } ) );
@@ -354,7 +408,7 @@ function mdash_bytes( $n ) {
 function mdash_admin_dish_table( $list, $photos, $match ) {
 	?>
 	<table class="widefat striped mdash-table">
-		<thead><tr><th>Nr.</th><th>Photo</th><th>Name</th><th>中文</th><th>Marks</th><th class="num">Price</th></tr></thead>
+		<thead><tr><th><?php echo esc_html_x( 'Nr.', 'dish number (column heading)', 'menudash' ); ?></th><th><?php esc_html_e( 'Photo', 'menudash' ); ?></th><th><?php esc_html_e( 'Name', 'menudash' ); ?></th><th>中文</th><th><?php esc_html_e( 'Marks', 'menudash' ); ?></th><th class="num"><?php esc_html_e( 'Price', 'menudash' ); ?></th></tr></thead>
 		<?php foreach ( $list['sections'] as $s ) : ?>
 			<tbody>
 				<tr class="mdash-sec"><th colspan="6"><?php echo esc_html( implode( ' · ', array_unique( array_filter( $s['name'] ) ) ) ); ?></th></tr>
@@ -370,7 +424,7 @@ function mdash_admin_dish_table( $list, $photos, $match ) {
 							<?php if ( $pid ) : ?>
 								<img src="<?php echo esc_url( mdash_photo_url( $photos[ $pid ], 400 ) ); ?>" alt="" width="44" height="44" title="<?php echo esc_attr( $photos[ $pid ]['name'] ); ?>">
 							<?php else : ?>
-								<span class="mdash-missing">no photo</span>
+								<span class="mdash-missing"><?php esc_html_e( 'no photo', 'menudash' ); ?></span>
 							<?php endif; ?>
 						</td>
 						<td><?php echo esc_html( $main ); ?><?php if ( '' !== $other ) : ?><br><small><?php echo esc_html( $other ); ?></small><?php endif; ?></td>
@@ -403,7 +457,7 @@ function mdash_admin_page() {
 	?>
 	<div class="wrap mdash-admin">
 		<h1><?php echo esc_html( MENUDASH_NAME ); ?></h1>
-		<nav class="nav-tab-wrapper mdash-tabs" aria-label="MenuDash sections">
+		<nav class="nav-tab-wrapper mdash-tabs" aria-label="<?php esc_attr_e( 'MenuDash sections', 'menudash' ); ?>">
 			<?php foreach ( mdash_admin_tabs() as $slug => $label ) : ?>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . $slug ) ); ?>" class="nav-tab<?php echo $slug === $page ? ' nav-tab-active' : ''; ?>"<?php echo $slug === $page ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a>
 			<?php endforeach; ?>
@@ -413,7 +467,7 @@ function mdash_admin_page() {
 		<?php if ( $report ) : ?>
 			<?php if ( isset( $report['message'] ) ) : ?>
 				<div class="notice <?php echo $report['ok'] ? 'notice-success' : ( $report['message'] ? 'notice-warning' : 'notice-error' ); ?>">
-					<p><strong><?php echo esc_html( $report['kind'] ? $report['kind'] : 'Diet icons' ); ?>:</strong> <?php echo esc_html( trim( $report['message'] . ' ' . $report['error'] ) ); ?></p>
+					<p><strong><?php echo esc_html( $report['kind'] ? $report['kind'] : __( 'Diet icons', 'menudash' ) ); ?>:</strong> <?php echo esc_html( trim( $report['message'] . ' ' . $report['error'] ) ); ?></p>
 					<?php if ( ! empty( $report['also'] ) ) : ?>
 						<ul class="mdash-also"><?php foreach ( $report['also'] as $w ) : ?><li><?php echo esc_html( $w ); ?></li><?php endforeach; ?></ul>
 					<?php endif; ?>
@@ -421,17 +475,36 @@ function mdash_admin_page() {
 			<?php else : ?>
 			<div class="notice <?php echo $report['ok'] ? ( empty( $report['warnings'] ) ? 'notice-success' : 'notice-warning' ) : 'notice-error'; ?>">
 				<?php if ( $report['ok'] ) : ?>
-					<p><strong><?php echo ! empty( $report['restored'] ) ? 'Restored' : 'Uploaded'; ?> <?php echo esc_html( $report['name'] ); ?>.</strong>
-					The menu now has <?php echo (int) $report['sections']; ?> categories and <?php echo (int) $report['dishes']; ?> dishes.</p>
+					<?php
+					$done_text = ! empty( $report['restored'] )
+						/* translators: %s: file name. */
+						? __( 'Restored %s.', 'menudash' )
+						/* translators: %s: file name. */
+						: __( 'Uploaded %s.', 'menudash' );
+					?>
+					<p><strong><?php echo esc_html( sprintf( $done_text, $report['name'] ) ); ?></strong>
+					<?php
+					echo esc_html(
+						sprintf(
+							/* translators: 1: "12 categories", 2: "85 dishes". */
+							__( 'The menu now has %1$s and %2$s.', 'menudash' ),
+							/* translators: %d: number of categories. */
+							sprintf( _n( '%d category', '%d categories', (int) $report['sections'], 'menudash' ), (int) $report['sections'] ),
+							/* translators: %d: number of dishes. */
+							sprintf( _n( '%d dish', '%d dishes', (int) $report['dishes'], 'menudash' ), (int) $report['dishes'] )
+						)
+					);
+					?>
+					</p>
 				<?php else : ?>
-					<p><strong>The menu was not changed.</strong> <?php echo esc_html( $report['error'] ); ?></p>
+					<p><strong><?php esc_html_e( 'The menu was not changed.', 'menudash' ); ?></strong> <?php echo esc_html( $report['error'] ); ?></p>
 				<?php endif; ?>
 				<?php if ( ! empty( $report['warnings'] ) ) : ?>
-					<p>Please check:</p>
+					<p><?php esc_html_e( 'Please check:', 'menudash' ); ?></p>
 					<ul class="mdash-warn"><?php foreach ( $report['warnings'] as $w ) : ?><li><?php echo esc_html( $w ); ?></li><?php endforeach; ?></ul>
 				<?php endif; ?>
 				<?php if ( ! empty( $report['also'] ) ) : ?>
-					<p>From the same file:</p>
+					<p><?php esc_html_e( 'From the same file:', 'menudash' ); ?></p>
 					<ul class="mdash-also"><?php foreach ( $report['also'] as $w ) : ?><li><?php echo esc_html( $w ); ?></li><?php endforeach; ?></ul>
 				<?php endif; ?>
 			</div>
@@ -440,21 +513,31 @@ function mdash_admin_page() {
 		<?php if ( 'menudash' === $page ) : ?>
 		<p class="mdash-lead">
 			<?php if ( $pages ) : ?>
-				The menu is on:
+				<?php esc_html_e( 'The menu is on:', 'menudash' ); ?>
 				<?php foreach ( $pages as $i => $p ) : ?>
 					<?php echo $i ? ' · ' : ''; ?><a href="<?php echo esc_url( get_permalink( $p ) ); ?>" target="_blank" rel="noopener"><?php echo esc_html( get_the_title( $p ) ); ?></a><?php echo 'publish' !== $p->post_status ? ' (' . esc_html( $p->post_status ) . ')' : ''; ?>
 				<?php endforeach; ?>
 			<?php else : ?>
-				To show the menu, add the shortcode <code>[menudash]</code> to a page.
+				<?php
+				/* translators: %s: the shortcode [menudash]. */
+				printf( esc_html__( 'To show the menu, add the shortcode %s to a page.', 'menudash' ), '<code>[menudash]</code>' );
+				?>
 			<?php endif; ?>
-			Changes here show there straight away.
+			<?php esc_html_e( 'Changes here show there straight away.', 'menudash' ); ?>
 		</p>
 
 		<div class="mdash-cards">
 			<section class="mdash-card">
-				<h2>1. Menu</h2>
+				<h2><?php esc_html_e( '1. Menu', 'menudash' ); ?></h2>
 				<div class="mdash-card-howto">
-				<p>Your menu spreadsheet, exported as <strong>Excel</strong> (.xlsx; from Numbers: File → Export To → Excel) or as <strong>CSV</strong> (UTF-8, to keep the Chinese). It replaces the whole menu. In an Excel file, the sheet named <em>menu</em> is the menu<?php echo has_filter( 'menudash_xlsx_sheets' ) ? ', and sheets named <em>specials</em> and <em>lunch</em> update cards 3 and 4 in the same upload' : ''; ?>.</p>
+				<p>
+				<?php
+				$howto = has_filter( 'menudash_xlsx_sheets' )
+					? __( 'Your menu spreadsheet, exported as <strong>Excel</strong> (.xlsx; from Numbers: File → Export To → Excel) or as <strong>CSV</strong> (UTF-8, to keep the Chinese). It replaces the whole menu. In an Excel file, the sheet named <em>menu</em> is the menu, and sheets named <em>specials</em> and <em>lunch</em> update cards 3 and 4 in the same upload.', 'menudash' )
+					: __( 'Your menu spreadsheet, exported as <strong>Excel</strong> (.xlsx; from Numbers: File → Export To → Excel) or as <strong>CSV</strong> (UTF-8, to keep the Chinese). It replaces the whole menu. In an Excel file, the sheet named <em>menu</em> is the menu.', 'menudash' );
+				echo wp_kses( $howto, array( 'strong' => array(), 'em' => array() ) );
+				?>
+				</p>
 				</div>
 				<div class="mdash-card-upload">
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data" class="mdash-upload-row">
@@ -462,22 +545,35 @@ function mdash_admin_page() {
 					<?php wp_nonce_field( 'menudash_csv' ); ?>
 					<label class="mdash-drop" data-drop>
 						<input type="file" name="csv" class="mdash-file" accept=".csv,text/csv,text/plain,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
-						<span class="button button-small">Choose file</span>
-						<span class="mdash-drop-types">CSV or Excel (.xlsx)</span>
-						<span class="mdash-drop-name" data-empty="or drop it here">or drop it here</span>
+						<span class="button button-small"><?php esc_html_e( 'Choose file', 'menudash' ); ?></span>
+						<span class="mdash-drop-types"><?php esc_html_e( 'CSV or Excel (.xlsx)', 'menudash' ); ?></span>
+						<span class="mdash-drop-name" data-empty="<?php esc_attr_e( 'or drop it here', 'menudash' ); ?>"><?php esc_html_e( 'or drop it here', 'menudash' ); ?></span>
 					</label>
-					<div class="mdash-upload-btns"><?php submit_button( 'Upload menu', 'primary', 'submit', false ); ?></div>
+					<div class="mdash-upload-btns"><?php submit_button( __( 'Upload menu', 'menudash' ), 'primary', 'submit', false ); ?></div>
 				</form>
 				</div>
 				<div class="mdash-card-status">
 				<?php if ( $menu ) : ?>
-					<p class="mdash-now">Live now: <strong><?php echo esc_html( $menu['source']['name'] ); ?></strong>, uploaded <?php echo esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $menu['source']['time'] ) ); ?> — <?php echo (int) count( $menu['sections'] ); ?> categories, <?php echo (int) $menu['dishes']; ?> dishes.</p>
+					<p class="mdash-now">
+					<?php
+					printf(
+						/* translators: 1: file name, 2: date and time, 3: "12 categories", 4: "85 dishes". */
+						esc_html__( 'Live now: %1$s, uploaded %2$s — %3$s, %4$s.', 'menudash' ),
+						'<strong>' . esc_html( $menu['source']['name'] ) . '</strong>',
+						esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $menu['source']['time'] ) ),
+						/* translators: %d: number of categories. */
+						esc_html( sprintf( _n( '%d category', '%d categories', count( $menu['sections'] ), 'menudash' ), count( $menu['sections'] ) ) ),
+						/* translators: %d: number of dishes. */
+						esc_html( sprintf( _n( '%d dish', '%d dishes', (int) $menu['dishes'], 'menudash' ), (int) $menu['dishes'] ) )
+					);
+					?>
+					</p>
 				<?php else : ?>
-					<p class="mdash-now">No menu uploaded yet.</p>
+					<p class="mdash-now"><?php esc_html_e( 'No menu uploaded yet.', 'menudash' ); ?></p>
 				<?php endif; ?>
 				<?php if ( count( $files ) > 1 ) : ?>
 					<details>
-						<summary>Earlier files</summary>
+						<summary><?php esc_html_e( 'Earlier files', 'menudash' ); ?></summary>
 						<?php foreach ( $files as $f ) : ?>
 							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="mdash-restore">
 								<input type="hidden" name="action" value="menudash_restore">
@@ -485,9 +581,9 @@ function mdash_admin_page() {
 								<?php wp_nonce_field( 'menudash_restore' ); ?>
 								<span><?php echo esc_html( isset( $names[ $f ] ) ? $names[ $f ] : $f ); ?> <small>(<?php echo esc_html( preg_replace( '/^menu-(\d{4}-\d\d-\d\d)-(\d\d)(\d\d)(\d\d).*$/', '$1 $2:$3 UTC', $f ) ); ?>)</small></span>
 								<?php if ( $menu && $menu['source']['file'] === $f ) : ?>
-									<em>live</em>
+									<em><?php esc_html_e( 'live', 'menudash' ); ?></em>
 								<?php else : ?>
-									<button class="button button-small">Put back</button>
+									<button class="button button-small"><?php esc_html_e( 'Put back', 'menudash' ); ?></button>
 								<?php endif; ?>
 							</form>
 						<?php endforeach; ?>
@@ -497,16 +593,26 @@ function mdash_admin_page() {
 			</section>
 
 			<section class="mdash-card">
-				<h2>2. Dish photos</h2>
+				<h2><?php esc_html_e( '2. Dish photos', 'menudash' ); ?></h2>
 				<div class="mdash-card-howto">
-				<p>Select all the photos at once (⌘A in the folder); they upload straight away. Name each one after the dish number, e.g. <code>22_Dumplings.png</code>, or exactly like the dish when it has no number, e.g. <code>Jasmine Rice.png</code>. A photo with the same name as an earlier one replaces it. PNG with a transparent background looks best; big files are shrunk in the browser first (this server accepts up to <?php echo esc_html( mdash_bytes( wp_max_upload_size() ) ); ?> per file).</p>
+				<p>
+				<?php
+				printf(
+					/* translators: 1: example file name 22_Dumplings.png, 2: example file name Jasmine Rice.png, 3: upload size limit, e.g. 8 MB. */
+					esc_html__( 'Select all the photos at once (⌘A in the folder); they upload straight away. Name each one after the dish number, e.g. %1$s, or exactly like the dish when it has no number, e.g. %2$s. A photo with the same name as an earlier one replaces it. PNG with a transparent background looks best; big files are shrunk in the browser first (this server accepts up to %3$s per file).', 'menudash' ),
+					'<code>22_Dumplings.png</code>',
+					'<code>Jasmine Rice.png</code>',
+					esc_html( mdash_bytes( wp_max_upload_size() ) )
+				);
+				?>
+				</p>
 				</div>
 				<div class="mdash-card-upload">
 				<label class="mdash-drop mdash-drop-photos">
 					<input type="file" id="mdash-photos" class="mdash-file" accept="image/png,image/jpeg,image/webp" multiple>
-					<span class="button button-small">Choose photos</span>
-					<span class="mdash-drop-types">PNG, JPG or WebP</span>
-					<span class="mdash-drop-name">or drop them here</span>
+					<span class="button button-small"><?php esc_html_e( 'Choose photos', 'menudash' ); ?></span>
+					<span class="mdash-drop-types"><?php esc_html_e( 'PNG, JPG or WebP', 'menudash' ); ?></span>
+					<span class="mdash-drop-name"><?php esc_html_e( 'or drop them here', 'menudash' ); ?></span>
 				</label>
 				</div>
 				<div class="mdash-card-status">
@@ -535,20 +641,23 @@ function mdash_admin_page() {
 				$extra = (int) apply_filters( 'menudash_admin_menu_card_count', 0 );
 				$extra = ! $extra && has_action( 'menudash_admin_menu_cards' ) ? 1 : $extra;
 				?>
-				<h2><?php echo (int) ( 3 + $extra ); ?>. Check</h2>
-				<p><?php echo (int) count( $photos ); ?> photos uploaded.</p>
+				<?php /* translators: %d: the card's number, e.g. 3. */ ?>
+				<h2><?php echo esc_html( sprintf( __( '%d. Check', 'menudash' ), 3 + $extra ) ); ?></h2>
+				<?php /* translators: %d: number of photos. */ ?>
+				<p><?php echo esc_html( sprintf( _n( '%d photo uploaded.', '%d photos uploaded.', count( $photos ), 'menudash' ), count( $photos ) ) ); ?></p>
 
 				<?php if ( $menu && ( $unused || $match['spare'] ) ) : ?>
-					<h3>Photos not shown</h3>
-					<p>Rename these to the dish number and upload again, or delete them.</p>
+					<h3><?php esc_html_e( 'Photos not shown', 'menudash' ); ?></h3>
+					<p><?php esc_html_e( 'Rename these to the dish number and upload again, or delete them.', 'menudash' ); ?></p>
 					<ul class="mdash-unused">
 						<?php foreach ( array_merge( $unused, array_keys( $match['spare'] ) ) as $id ) : ?>
 							<?php $p = $photos[ $id ]; ?>
 							<li>
 								<img src="<?php echo esc_url( mdash_photo_url( $p, 400 ) ); ?>" alt="" width="56" height="56">
 								<span><?php echo esc_html( $p['name'] ); ?><br>
-									<small><?php echo isset( $match['spare'][ $id ] ) ? 'A newer photo is used for ' . esc_html( mdash_dish_label( $menu, $match['spare'][ $id ] ) ) : 'Matches no dish'; ?></small></span>
-								<button type="button" class="button-link mdash-del" data-id="<?php echo esc_attr( $id ); ?>">Delete</button>
+									<?php /* translators: %s: dish number and name. */ ?>
+									<small><?php echo esc_html( isset( $match['spare'][ $id ] ) ? sprintf( __( 'A newer photo is used for %s', 'menudash' ), mdash_dish_label( $menu, $match['spare'][ $id ] ) ) : __( 'Matches no dish', 'menudash' ) ); ?></small></span>
+								<button type="button" class="button-link mdash-del" data-id="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Delete', 'menudash' ); ?></button>
 							</li>
 						<?php endforeach; ?>
 					</ul>
@@ -557,24 +666,36 @@ function mdash_admin_page() {
 				<?php do_action( 'menudash_admin_check', $photos ); ?>
 
 				<?php if ( $menu ) : ?>
-					<h3>Menu <small><?php echo (int) $with; ?> of <?php echo (int) $menu['dishes']; ?> dishes with a photo</small></h3>
+					<h3><?php echo esc_html_x( 'Menu', 'restaurant menu (heading)', 'menudash' ); ?> <small>
+					<?php
+					/* translators: 1: dishes with a photo, 2: all dishes. */
+					echo esc_html( sprintf( _n( '%1$d of %2$d dish with a photo', '%1$d of %2$d dishes with a photo', (int) $menu['dishes'], 'menudash' ), $with, (int) $menu['dishes'] ) );
+					?>
+					</small></h3>
 					<?php mdash_admin_dish_table( $menu, $photos, $match ); ?>
 				<?php endif; ?>
 			</section>
 		<?php endif; ?>
 		<?php mdash_origin_admin_card(); ?>
 		<details class="mdash-card mdash-diag">
-			<summary>Server details</summary>
+			<summary><?php esc_html_e( 'Server details', 'menudash' ); ?></summary>
 			<?php
 			$editor = _wp_image_editor_choose( array( 'mime_type' => 'image/png' ) );
 			$rows   = array(
-				'PHP'                      => PHP_VERSION,
-				'Image editor'             => $editor ? $editor : 'none — photos cannot be resized',
-				'WebP output'              => wp_image_editor_supports( array( 'mime_type' => 'image/webp' ) ) ? 'yes' : 'no (PNG/JPEG used instead)',
-				'Upload limit per file'    => mdash_bytes( wp_max_upload_size() ),
-				'memory_limit'             => ini_get( 'memory_limit' ),
-				'Menu folder'              => mdash_dir() . ( wp_is_writable( mdash_dir() ) ? ' (writable)' : ' (NOT writable)' ),
-				'Plugin version'           => MENUDASH_VERSION,
+				'PHP'                                     => PHP_VERSION,
+				__( 'Image editor', 'menudash' )          => $editor ? $editor : __( 'none — photos cannot be resized', 'menudash' ),
+				__( 'WebP output', 'menudash' )           => wp_image_editor_supports( array( 'mime_type' => 'image/webp' ) ) ? __( 'yes', 'menudash' ) : __( 'no (PNG/JPEG used instead)', 'menudash' ),
+				__( 'Upload limit per file', 'menudash' ) => mdash_bytes( wp_max_upload_size() ),
+				'memory_limit'                            => ini_get( 'memory_limit' ),
+				__( 'Menu folder', 'menudash' )           => sprintf(
+					wp_is_writable( mdash_dir() )
+						/* translators: %s: folder path on the server. */
+						? __( '%s (writable)', 'menudash' )
+						/* translators: %s: folder path on the server. */
+						: __( '%s (NOT writable)', 'menudash' ),
+					mdash_dir()
+				),
+				__( 'Plugin version', 'menudash' )        => MENUDASH_VERSION,
 			);
 			?>
 			<table class="widefat striped"><?php foreach ( $rows as $k => $v ) : ?><tr><th><?php echo esc_html( $k ); ?></th><td><?php echo esc_html( $v ); ?></td></tr><?php endforeach; ?></table>
@@ -590,28 +711,30 @@ function mdash_admin_page() {
 		$keys   = mdash_color_keys();
 		?>
 		<section class="mdash-card mdash-colors-card">
-			<h2>Colours</h2>
-			<p>The background of the menu, the specials and the gift card form, and the highlight colour of buttons, filters, headings, the Recommended icon and the holiday notice. Text on the highlight colour turns dark by itself when the colour is light.</p>
+			<h2><?php esc_html_e( 'Colours', 'menudash' ); ?></h2>
+			<p><?php esc_html_e( 'The background of the menu, the specials and the gift card form, and the highlight colour of buttons, filters, headings, the Recommended icon and the holiday notice. Text on the highlight colour turns dark by itself when the colour is light.', 'menudash' ); ?></p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="menudash_colors">
 				<?php wp_nonce_field( 'menudash_colors' ); ?>
 				<?php if ( $themec ) : ?>
 					<fieldset class="mdash-colors-mode">
-						<legend class="screen-reader-text">Which colours</legend>
+						<legend class="screen-reader-text"><?php esc_html_e( 'Which colours', 'menudash' ); ?></legend>
 						<label><input type="radio" name="colors_mode" value="theme" <?php checked( 'theme', $mode ); ?> data-theme-bg="<?php echo esc_attr( $themec['bg'] ); ?>" data-theme-accent="<?php echo esc_attr( $themec['accent'] ); ?>">
-							<strong>The theme's colours</strong>
+							<strong><?php esc_html_e( 'The theme\'s colours', 'menudash' ); ?></strong>
 							<span class="mdash-swatch" style="background:<?php echo esc_attr( $themec['bg'] ); ?>"></span><span class="mdash-swatch" style="background:<?php echo esc_attr( $themec['accent'] ); ?>"></span>
-							<span class="mdash-muted">from <?php echo esc_html( wp_get_theme()->get( 'Name' ) ); ?>. They follow the theme: change them under Appearance → Editor → Styles.</span></label>
+							<?php /* translators: %s: theme name. */ ?>
+							<span class="mdash-muted"><?php echo esc_html( sprintf( __( 'from %s. They follow the theme: change them under Appearance → Editor → Styles.', 'menudash' ), wp_get_theme()->get( 'Name' ) ) ); ?></span></label>
 						<label><input type="radio" name="colors_mode" value="own" <?php checked( 'own', $mode ); ?>>
-							<strong>My own colours</strong> <span class="mdash-muted">chosen below and saved here; they stay saved when you switch to the theme's.</span></label>
+							<strong><?php esc_html_e( 'My own colours', 'menudash' ); ?></strong> <span class="mdash-muted"><?php esc_html_e( 'chosen below and saved here; they stay saved when you switch to the theme\'s.', 'menudash' ); ?></span></label>
 					</fieldset>
 				<?php endif; ?>
 				<div class="mdash-colors-layout">
 					<div class="mdash-colors-pick"<?php echo $themec && 'theme' === $mode ? ' data-off' : ''; ?>>
+						<?php $color_labels = mdash_color_labels(); ?>
 						<?php foreach ( $keys as $k => $c ) : ?>
 							<label class="mdash-color">
 								<input type="color" name="colors[<?php echo esc_attr( $k ); ?>]" value="<?php echo esc_attr( strtolower( $own[ $k ] ) ); ?>" data-color="<?php echo esc_attr( $k ); ?>">
-								<span><strong><?php echo esc_html( $c[0] ); ?></strong><br><code class="mdash-color-hex"><?php echo esc_html( $own[ $k ] ); ?></code><?php echo $own[ $k ] === $c[1] ? ' <small class="mdash-muted">default</small>' : ''; ?></span>
+								<span><strong><?php echo esc_html( $color_labels[ $k ] ); ?></strong><br><code class="mdash-color-hex"><?php echo esc_html( $own[ $k ] ); ?></code><?php echo $own[ $k ] === $c[1] ? ' <small class="mdash-muted">' . esc_html__( 'default', 'menudash' ) . '</small>' : ''; ?></span>
 							</label>
 						<?php endforeach; ?>
 					</div>
@@ -623,38 +746,68 @@ function mdash_admin_page() {
 					</div>
 				</div>
 				<p class="mdash-closed-actions">
-					<?php submit_button( 'Save colours', 'primary', 'save_colors', false ); ?>
+					<?php submit_button( __( 'Save colours', 'menudash' ), 'primary', 'save_colors', false ); ?>
 					<?php if ( ! $themec && mdash_colors_custom() ) : ?>
-						<button class="button" name="reset" value="1">Back to default</button>
+						<button class="button" name="reset" value="1"><?php esc_html_e( 'Back to default', 'menudash' ); ?></button>
 					<?php endif; ?>
 				</p>
 			</form>
 		</section>
+		<?php $tf = mdash_theme_fonts(); ?>
+		<section class="mdash-card mdash-fonts-card">
+			<h2><?php esc_html_e( 'Fonts', 'menudash' ); ?></h2>
+			<p><?php esc_html_e( 'The fonts of the menu, the specials, the gift card form and the recommended dishes. Chinese always uses the device\'s Chinese font.', 'menudash' ); ?></p>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="menudash_fonts">
+				<?php wp_nonce_field( 'menudash_fonts' ); ?>
+				<fieldset class="mdash-colors-mode">
+					<legend class="screen-reader-text"><?php esc_html_e( 'Which fonts', 'menudash' ); ?></legend>
+					<label><input type="radio" name="fonts_mode" value="theme" <?php checked( 'theme', mdash_fonts_mode() ); ?> <?php disabled( ! $tf ); ?>>
+						<strong><?php esc_html_e( 'The theme\'s fonts', 'menudash' ); ?></strong>
+						<?php /* translators: %s: theme name. */ ?>
+						<span class="mdash-muted"><?php echo esc_html( sprintf( $tf ? __( 'from %s. They follow the theme: change them under Appearance → Editor → Styles → Typography.', 'menudash' ) : __( '%s has no fonts to give (only block themes do), so MenuDash uses its own.', 'menudash' ), wp_get_theme()->get( 'Name' ) ) ); ?></span></label>
+					<label><input type="radio" name="fonts_mode" value="own" <?php checked( 'own' === mdash_fonts_mode() || ! $tf ); ?>>
+						<strong><?php esc_html_e( 'MenuDash\'s fonts', 'menudash' ); ?></strong>
+						<span class="mdash-muted"><?php esc_html_e( 'DM Sans for the text, Darker Grotesque for headings (the same as MenuDash Theme), included with MenuDash.', 'menudash' ); ?></span></label>
+				</fieldset>
+				<p class="mdash-closed-actions"><?php submit_button( __( 'Save fonts', 'menudash' ), 'primary', 'save_fonts', false ); ?></p>
+			</form>
+		</section>
 		<section class="mdash-card mdash-icons-card">
-			<h2>Diet icons</h2>
-			<p>Use your own icons for the diet marks: an SVG, or a square PNG with a transparent background. "Not spicy" is the Spicy icon, crossed out.</p>
+			<h2><?php esc_html_e( 'Diet icons', 'menudash' ); ?></h2>
+			<p><?php esc_html_e( 'Use your own icons for the diet marks: an SVG, or a square PNG with a transparent background. "Not spicy" is the Spicy icon, crossed out.', 'menudash' ); ?></p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data">
 				<input type="hidden" name="action" value="menudash_icons">
 				<?php wp_nonce_field( 'menudash_icons' ); ?>
 				<div class="mdash-icon-grid">
 					<?php $custom = mdash_icon_index(); ?>
-					<?php foreach ( mdash_icon_keys() as $key => $label ) : ?>
-						<div class="mdash-icon-item" data-drop title="Drop an icon file here">
+					<?php foreach ( mdash_icon_labels() as $key => $label ) : ?>
+						<div class="mdash-icon-item" data-drop title="<?php esc_attr_e( 'Drop an icon file here', 'menudash' ); ?>">
 							<span class="mdash-icon-prev"><?php echo mdash_icon( $key ); // phpcs:ignore ?></span>
 							<span class="mdash-icon-name"><strong><?php echo esc_html( $label ); ?></strong><br>
-								<small><?php echo isset( $custom[ $key ] ) ? 'Your icon: ' . esc_html( $custom[ $key ]['name'] ) : 'Default icon'; ?></small></span>
-							<input type="file" name="icon_<?php echo esc_attr( $key ); ?>" accept=".svg,image/svg+xml,image/png,image/jpeg,image/webp" aria-label="<?php echo esc_attr( "New $label icon" ); ?>">
+								<?php /* translators: %s: file name of the uploaded icon. */ ?>
+								<small><?php echo esc_html( isset( $custom[ $key ] ) ? sprintf( __( 'Your icon: %s', 'menudash' ), $custom[ $key ]['name'] ) : __( 'Default icon', 'menudash' ) ); ?></small></span>
+							<?php /* translators: %s: icon name, e.g. Spicy. */ ?>
+							<input type="file" name="icon_<?php echo esc_attr( $key ); ?>" accept=".svg,image/svg+xml,image/png,image/jpeg,image/webp" aria-label="<?php echo esc_attr( sprintf( __( 'New %s icon', 'menudash' ), $label ) ); ?>">
 							<?php if ( isset( $custom[ $key ] ) ) : ?>
-								<button class="button-link" name="reset" value="<?php echo esc_attr( $key ); ?>">Back to default</button>
+								<button class="button-link" name="reset" value="<?php echo esc_attr( $key ); ?>"><?php esc_html_e( 'Back to default', 'menudash' ); ?></button>
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>
 				</div>
-				<?php submit_button( 'Save icons', 'secondary', 'save_icons', false ); ?>
+				<?php submit_button( __( 'Save icons', 'menudash' ), 'secondary', 'save_icons', false ); ?>
 			</form>
 		</section>
 		<?php endif; ?>
-		<p class="mdash-by">MenuDash by <a href="https://insdash.ch/projects/menudash/" target="_blank" rel="noopener">insdash</a> · add-ons, set-up and help</p>
+		<p class="mdash-by">
+		<?php
+		printf(
+			/* translators: %s: link to insdash, the maker of MenuDash. */
+			esc_html__( 'MenuDash by %s · add-ons, set-up and help', 'menudash' ),
+			'<a href="https://insdash.ch/projects/menudash/" target="_blank" rel="noopener">insdash</a>'
+		);
+		?>
+		</p>
 		<?php echo mdash_sprite(); // phpcs:ignore -- built from our own sprite and cleaned SVG ?>
 	</div>
 	<?php

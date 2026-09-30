@@ -46,3 +46,8 @@ if ( ! mdash_photo_index() ) {
 if ( false === get_option( 'menudash_colors' ) ) {
 	update_option( 'menudash_colors', array( 'mode' => 'own', 'bg' => '', 'accent' => '' ), false );
 }
+
+// Likewise MenuDash's own fonts (DM Sans and Darker Grotesque), not the demo theme's.
+if ( false === get_option( 'menudash_fonts' ) ) {
+	update_option( 'menudash_fonts', 'own', false );
+}

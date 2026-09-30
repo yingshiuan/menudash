@@ -1,6 +1,7 @@
 <?php
 /**
- * CSV -> menu. Pure PHP, no WordPress calls, so dev/parser-test.php can run it on its own.
+ * CSV -> menu. Pure PHP, no WordPress calls (except __(), stood in for below), so
+ * dev/parser-test.php can run it on its own.
  *
  * The restaurant keeps its menu in a spreadsheet and exports it as CSV. Columns are found by their header name,
  * never by position, so they can be reordered or new ones added. A row with a name but no
@@ -8,6 +9,13 @@
  */
 
 defined( 'MENUDASH_PURE' ) || defined( 'ABSPATH' ) || exit;
+
+// Outside WordPress (the dev tests run this file alone), texts stay in English.
+if ( defined( 'MENUDASH_PURE' ) && ! function_exists( '__' ) ) {
+	function __( $text, $domain = 'default' ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName -- stands in for WordPress's __().
+		return $text;
+	}
+}
 
 const MDASH_LANGS = array( 'en', 'de', 'zh' );
 
@@ -72,10 +80,11 @@ function mdash_decode( $bytes, &$warnings ) {
 		$enc = $mac > $win ? 'MACINTOSH' : 'Windows-1252';
 		$out = mdash_convert( $bytes, $enc );
 		if ( null === $out ) {
-			$warnings[] = 'The file is not UTF-8 and this server cannot convert it. Export the CSV again as "Unicode (UTF-8)".';
+			$warnings[] = __( 'The file is not UTF-8 and this server cannot convert it. Export the CSV again as "Unicode (UTF-8)".', 'menudash' );
 			$out        = preg_replace( '/[\x80-\xFF]/', '?', $bytes );
 		} else {
-			$warnings[] = "The file was saved as $enc, not UTF-8, so it cannot hold Chinese characters. Export it again as \"Unicode (UTF-8)\" to keep the Chinese names.";
+			/* translators: %s: character encoding, e.g. Windows-1252. */
+			$warnings[] = sprintf( __( 'The file was saved as %s, not UTF-8, so it cannot hold Chinese characters. Export it again as "Unicode (UTF-8)" to keep the Chinese names.', 'menudash' ), $enc );
 		}
 		$bytes = $out;
 	}
@@ -179,7 +188,7 @@ function mdash_parse_csv( $bytes ) {
 		return array( 'ok' => false, 'error' => $error, 'menu' => null, 'warnings' => $warnings );
 	};
 	if ( ! $rows ) {
-		return $fail( 'The file is empty.' );
+		return $fail( __( 'The file is empty.', 'menudash' ) );
 	}
 
 	// Map header cells to fields. The first matching column wins; a plain "Name" or
@@ -199,11 +208,13 @@ function mdash_parse_csv( $bytes ) {
 	$has_name = isset( $col['name_en'] ) || isset( $col['name_de'] ) || isset( $col['name_zh'] );
 	if ( ! $has_name || ! isset( $col['price'] ) ) {
 		$seen = implode( ', ', array_filter( $header, 'strlen' ) );
-		return $fail( 'This does not look like the menu file: it needs a "Price" column and at least one of "Name (EN)", "Name (DE)", "Name (ZH)". Columns found: ' . ( '' === $seen ? 'none' : $seen ) . '.' );
+		/* translators: %s: the column headings found in the file, comma-separated. The column names in quotes stay in English. */
+		return $fail( sprintf( __( 'This does not look like the menu file: it needs a "Price" column and at least one of "Name (EN)", "Name (DE)", "Name (ZH)". Columns found: %s.', 'menudash' ), '' === $seen ? __( 'none', 'menudash' ) : $seen ) );
 	}
 	foreach ( array( 'name_en' => 'Name (EN)', 'name_de' => 'Name (DE)', 'name_zh' => 'Name (ZH)' ) as $field => $label ) {
 		if ( ! isset( $col[ $field ] ) ) {
-			$warnings[] = "No \"$label\" column; that language falls back to the others.";
+			/* translators: %s: column name, e.g. Name (EN). */
+			$warnings[] = sprintf( __( 'No "%s" column; that language falls back to the others.', 'menudash' ), $label );
 		}
 	}
 
@@ -230,7 +241,8 @@ function mdash_parse_csv( $bytes ) {
 
 		if ( '' === implode( '', $name ) ) {
 			if ( '' !== $no || '' !== $price_raw ) {
-				$warnings[] = "Row $line has a number or price but no name, so it was skipped.";
+				/* translators: %d: spreadsheet row number. */
+				$warnings[] = sprintf( __( 'Row %d has a number or price but no name, so it was skipped.', 'menudash' ), $line );
 			}
 			continue;
 		}
@@ -249,7 +261,8 @@ function mdash_parse_csv( $bytes ) {
 
 		$price = '' === $price_raw ? null : mdash_price( $price_raw );
 		if ( '' !== $price_raw && null === $price ) {
-			$warnings[] = "Row $line (" . mdash_label( $name, $no ) . "): the price \"$price_raw\" is not a number; it is shown as written.";
+			/* translators: 1: spreadsheet row number, 2: dish number and name, 3: the price as written in the file. */
+			$warnings[] = sprintf( __( 'Row %1$d (%2$s): the price "%3$s" is not a number; it is shown as written.', 'menudash' ), $line, mdash_label( $name, $no ), $price_raw );
 		}
 		$dish = array(
 			'no'      => $no,
@@ -269,17 +282,27 @@ function mdash_parse_csv( $bytes ) {
 				$dish['flags'][] = $f;
 			}
 		}
+		// A restaurant menu has hundreds of dishes at most; stop at 3000 (a huge file would
+		// otherwise be slow to read and be saved as one very large option).
+		$dish_count = isset( $dish_count ) ? $dish_count + 1 : 1;
+		if ( $dish_count > 3000 ) {
+			/* translators: %d: spreadsheet row number. */
+			$warnings[] = sprintf( __( 'The menu has more than 3000 dishes; it was read up to row %d.', 'menudash' ), $line - 1 );
+			break;
+		}
 		$dish['key'] = mdash_unique( '' !== $no ? 'n' . mdash_slug( $no ) : mdash_slug( mdash_base_name( $name['en'] ? $name['en'] : ( $name['de'] ? $name['de'] : $name['zh'] ) ) ), $keys );
 
 		if ( '' !== $no ) {
 			if ( isset( $numbers[ $no ] ) ) {
-				$warnings[] = "Nr. $no is used twice (rows {$numbers[$no]} and $line). Both are shown; a photo named \"{$no}_…\" goes to the first.";
+				/* translators: 1: dish number, 2: first row, 3: second row. */
+				$warnings[] = sprintf( __( 'Nr. %1$s is used twice (rows %2$d and %3$d). Both are shown; a photo named "%1$s_…" goes to the first.', 'menudash' ), $no, $numbers[ $no ], $line );
 			} else {
 				$numbers[ $no ] = $line;
 			}
 		}
 		if ( null === $current ) {
-			$warnings[] = "Row $line (" . mdash_label( $name, $no ) . ') comes before the first category heading.';
+			/* translators: 1: spreadsheet row number, 2: dish number and name. */
+			$warnings[] = sprintf( __( 'Row %1$d (%2$s) comes before the first category heading.', 'menudash' ), $line, mdash_label( $name, $no ) );
 			$current    = array( 'id' => 'sec-menu', 'name' => array( 'en' => '', 'de' => '', 'zh' => '' ), 'dishes' => array() );
 		}
 		$current['dishes'][] = $dish;
@@ -291,7 +314,7 @@ function mdash_parse_csv( $bytes ) {
 	$sections = array_values( array_filter( $sections, function ( $s ) { return (bool) $s['dishes']; } ) );
 
 	if ( ! $count ) {
-		return $fail( 'No dishes were found. A dish row needs a name and a price or number.' );
+		return $fail( __( 'No dishes were found. A dish row needs a name and a price or number.', 'menudash' ) );
 	}
 
 	mdash_check_twins( $sections, $warnings );
@@ -331,12 +354,13 @@ function mdash_check_twins( $sections, &$warnings ) {
 				list( $row, $flags ) = $seen[ $k ];
 				if ( $flags !== $d['flags'] ) {
 					$warnings[] = sprintf(
-						'"%s" is listed twice (rows %d and %d) with different marks: %s vs %s.',
+						/* translators: 1: dish name, 2: first row, 3: second row, 4: marks of the first, 5: marks of the second (e.g. spicy, vegan). */
+						__( '"%1$s" is listed twice (rows %2$d and %3$d) with different marks: %4$s vs %5$s.', 'menudash' ),
 						mdash_label( $d['name'] ),
 						$row,
 						$d['row'],
-						$flags ? implode( ', ', $flags ) : 'none',
-						$d['flags'] ? implode( ', ', $d['flags'] ) : 'none'
+						$flags ? implode( ', ', $flags ) : __( 'none', 'menudash' ),
+						$d['flags'] ? implode( ', ', $d['flags'] ) : __( 'none', 'menudash' )
 					);
 				}
 			} else {
