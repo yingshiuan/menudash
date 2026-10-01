@@ -1,3 +1,5 @@
+<img src="menudash/assets/brand/icon.svg" width="96" height="96" alt="MenuDash icon: two menu lines over a smiling mouth with a licking tongue">
+
 # MenuDash
 
 A restaurant menu for a WordPress site, kept in a spreadsheet. The restaurant uploads its menu as a **CSV file** and its **dish photos** in the dashboard, and the menu page updates by itself. Guests read the menu in **German, English and Chinese**, all at once or one at a time, and **filter by diet**.

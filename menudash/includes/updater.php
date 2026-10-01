@@ -92,6 +92,25 @@ function mdash_update_check( $update, $plugin_data, $plugin_file ) {
 		'url'          => $release['url'],
 		'requires'     => '6.3',
 		'requires_php' => '7.4',
+		'icons'        => mdash_update_icons(),
+		'banners'      => mdash_update_banners(),
+	);
+}
+
+/** The icon beside MenuDash on Dashboard → Updates (from the installed copy's own files). */
+function mdash_update_icons() {
+	return array(
+		'svg' => MENUDASH_URL . 'assets/brand/icon.svg',
+		'1x'  => MENUDASH_URL . 'assets/brand/icon-128.png',
+		'2x'  => MENUDASH_URL . 'assets/brand/icon-256.png',
+	);
+}
+
+/** The picture at the top of the "View version details" window. */
+function mdash_update_banners() {
+	return array(
+		'low'  => MENUDASH_URL . 'assets/brand/banner-772x250.jpg',
+		'high' => MENUDASH_URL . 'assets/brand/banner-1544x500.jpg',
 	);
 }
 
@@ -117,6 +136,8 @@ function mdash_update_details( $result, $action, $args ) {
 		'requires_php'  => '7.4',
 		'last_updated'  => $release['date'],
 		'download_link' => $release['package'],
+		'icons'         => mdash_update_icons(),
+		'banners'       => mdash_update_banners(),
 		'sections'      => array(
 			'changelog' => $notes,
 		),

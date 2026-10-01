@@ -22,11 +22,20 @@ add_filter( 'plugin_action_links_' . plugin_basename( MENUDASH_FILE ), 'mdash_ac
 function mdash_admin_menu() {
 	// Sidebar and page carry the plugin's name. Not plain "Menu": WordPress's own "Menüs"
 	// (navigation) sits nearby.
-	add_menu_page( MENUDASH_NAME, MENUDASH_NAME, MDASH_CAP, 'menudash', 'mdash_admin_page', 'dashicons-food', 26 );
+	add_menu_page( MENUDASH_NAME, MENUDASH_NAME, MDASH_CAP, 'menudash', 'mdash_admin_page', mdash_menu_icon(), 26 );
 	// The same page in four parts, each in the sidebar and as a tab at the top.
 	foreach ( mdash_admin_tabs() as $slug => $label ) {
 		add_submenu_page( 'menudash', MENUDASH_NAME . ' – ' . $label, $label, MDASH_CAP, $slug, 'mdash_admin_page' );
 	}
+}
+
+/**
+ * MenuDash's icon in one colour for the left bar. WordPress paints its fill in the admin
+ * colour scheme's icon colour (grey, white when open), as it does with its own icons.
+ */
+function mdash_menu_icon() {
+	$svg = file_get_contents( MENUDASH_DIR . 'assets/brand/menu-icon.svg' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	return $svg ? 'data:image/svg+xml;base64,' . base64_encode( $svg ) : 'dashicons-food'; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 }
 
 /** Page slug => tab name. The first is the page the sidebar's MenuDash opens. */

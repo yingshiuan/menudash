@@ -1,6 +1,6 @@
 # MenuDash: keeping the menu up to date
 
-The menu page builds itself from two things you upload: **the menu spreadsheet as a CSV file** and **the dish photos**. You never edit the page itself. Everything happens in the WordPress dashboard under **MenuDash** (the fork-and-knife icon in the left bar).
+The menu page builds itself from two things you upload: **the menu spreadsheet as a CSV file** and **the dish photos**. You never edit the page itself. Everything happens in the WordPress dashboard under **MenuDash** (its icon in the left bar: two lines over a smile).
 
 <img src="dashboard/01-menudash-page.png" alt="The MenuDash page in the WordPress dashboard" width="820"> <img src="dashboard/09-phone.png" alt="The same page on a phone" width="200">
 

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>MenuDash</title>
+  <!-- MenuDash icon: a menu's two lines (dish, price) over a smile with a licking tongue. Drawn for MenuDash. -->
+  <defs>
+    <!-- Everything below the smile's centre line, so the tongue hangs from it. -->
+    <clipPath id="md-below"><path d="M-54 -4 C-38 26 38 26 54 -4 L80 -4 L80 80 L-80 80 L-80 -4 Z"/></clipPath>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="#243F66"/>
+  <g stroke-linecap="round" stroke-width="14">
+    <path d="M66 76h84M66 112h84" stroke="#F5EFE6"/>
+    <path d="M174 76h18M174 112h18" stroke="#E8A33D"/>
+  </g>
+  <g transform="translate(128 166) scale(1.15)" fill="none" stroke="#F5EFE6" stroke-linecap="round" stroke-linejoin="round">
+    <g clip-path="url(#md-below)">
+      <path d="M13 0 V30 c0 11 6 17 13 17 s13-6 13-17 V0 Z" fill="#E8A33D" stroke-width="7"/>
+      <path d="M26 16 v14" stroke-width="4" stroke="#243F66" opacity=".35"/>
+    </g>
+    <path d="M-54 -4 C-38 26 38 26 54 -4" stroke-width="9"/>
+    <path d="M-64 -10 q10 -6 20 0 M44 -10 q10 -6 20 0" stroke-width="7"/>
+  </g>
+</svg>
