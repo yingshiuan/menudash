@@ -636,7 +636,7 @@ function mdash_admin_page() {
 					<?php if ( in_array( $menu['source']['file'], $files, true ) ) : ?>
 						<p class="mdash-download">
 							<a class="button button-small" href="<?php echo esc_url( mdash_download_url() ); ?>"><?php esc_html_e( 'Download menu (CSV)', 'menudash' ); ?></a>
-							<span class="description"><?php esc_html_e( 'The live menu as a spreadsheet file, e.g. to print it with a menu designer.', 'menudash' ); ?></span>
+							<span class="description"><?php esc_html_e( 'The live menu as a spreadsheet file: download it to change the menu and upload it again, or to print it with a menu designer.', 'menudash' ); ?></span>
 						</p>
 					<?php endif; ?>
 				<?php else : ?>

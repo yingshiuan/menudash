@@ -44,7 +44,7 @@ With an Excel file, the message lists each sheet:
 
 <img src="dashboard/03-earlier-files.png" alt="Earlier files, each with a Put back button" width="460">
 
-**Download:** **Download menu (CSV)** under *Live now* gives you the live menu back as a CSV file, with the same columns you uploaded, for example to print it with a menu designer. Each earlier file has its own *Download* link. It is UTF-8 with a BOM, so spreadsheet programs keep the Chinese, and you can upload it again as it is.
+**Download:** **Download menu (CSV)** under *Live now* gives you the live menu back as a CSV file, with the same columns you uploaded: change it in Excel or Numbers and upload it again, or use it to print the menu with a menu designer. Each earlier file has its own *Download* link. It is UTF-8 with a BOM, so spreadsheet programs keep the Chinese.
 
 ### How the spreadsheet is read
 

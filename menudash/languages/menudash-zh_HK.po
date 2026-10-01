@@ -1428,8 +1428,8 @@ msgid "Download menu (CSV)"
 msgstr "下載菜單（CSV）"
 
 #: includes/admin.php
-msgid "The live menu as a spreadsheet file, e.g. to print it with a menu designer."
-msgstr "目前上線的菜單（試算表檔案），例如用菜單設計工具印出來。"
+msgid "The live menu as a spreadsheet file: download it to change the menu and upload it again, or to print it with a menu designer."
+msgstr "目前上線的菜單（試算表檔案）：下載後可修改再上傳，或用菜單設計工具印出來。"
 
 #: includes/admin.php
 msgid "Download"

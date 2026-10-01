@@ -1522,8 +1522,8 @@ msgid "Download menu (CSV)"
 msgstr "Speisekarte herunterladen (CSV)"
 
 #: includes/admin.php
-msgid "The live menu as a spreadsheet file, e.g. to print it with a menu designer."
-msgstr "Die aktuelle Speisekarte als Tabellendatei, z. B. um sie mit einem Menü-Designer zu drucken."
+msgid "The live menu as a spreadsheet file: download it to change the menu and upload it again, or to print it with a menu designer."
+msgstr "Die aktuelle Speisekarte als Tabellendatei: herunterladen, um sie zu ändern und wieder hochzuladen, oder um sie mit einem Menü-Designer zu drucken."
 
 #: includes/admin.php
 msgid "Download"

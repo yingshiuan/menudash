@@ -1372,7 +1372,7 @@ msgid "Download menu (CSV)"
 msgstr ""
 
 #: includes/admin.php
-msgid "The live menu as a spreadsheet file, e.g. to print it with a menu designer."
+msgid "The live menu as a spreadsheet file: download it to change the menu and upload it again, or to print it with a menu designer."
 msgstr ""
 
 #: includes/admin.php
