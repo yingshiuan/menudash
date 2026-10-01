@@ -12,6 +12,7 @@ add_action( 'admin_menu', 'mdash_admin_menu' );
 add_action( 'admin_enqueue_scripts', 'mdash_admin_assets', 5 );
 add_action( 'admin_post_menudash_csv', 'mdash_handle_csv' );
 add_action( 'admin_post_menudash_restore', 'mdash_handle_restore' );
+add_action( 'admin_post_menudash_download', 'mdash_handle_download' );
 add_action( 'admin_post_menudash_icons', 'mdash_handle_icons' );
 add_action( 'admin_post_menudash_colors', 'mdash_handle_colors' );
 add_action( 'admin_post_menudash_fonts', 'mdash_handle_fonts' );
@@ -344,6 +345,61 @@ function mdash_handle_restore() {
 	mdash_back( $result + array( 'name' => $file, 'restored' => true ) );
 }
 
+/**
+ * Send a stored menu CSV (the live one by default) as a download, e.g. to print the menu
+ * with another program. It is the file as uploaded, or the menu sheet of an Excel upload,
+ * with a UTF-8 BOM in front so Excel shows the Chinese; the CSV parser skips the BOM.
+ */
+function mdash_handle_download() {
+	check_admin_referer( 'menudash_download' );
+	if ( ! mdash_can() ) {
+		wp_die( esc_html__( 'You are not allowed to change the menu.', 'menudash' ), 403 );
+	}
+	$files = mdash_csv_files();
+	$menu  = mdash_get_menu();
+	$file  = isset( $_GET['file'] ) ? sanitize_file_name( wp_unslash( $_GET['file'] ) ) : ( $menu ? $menu['source']['file'] : '' );
+	if ( ! in_array( $file, $files, true ) ) {
+		wp_die( esc_html__( 'That file no longer exists.', 'menudash' ), 404 );
+	}
+	$bytes = file_get_contents( mdash_dir( 'csv' ) . "/$file" ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	if ( false === $bytes ) {
+		wp_die( esc_html__( 'The file could not be read.', 'menudash' ), 500 );
+	}
+	if ( substr( $bytes, 0, 3 ) !== "\xEF\xBB\xBF" ) {
+		$bytes = "\xEF\xBB\xBF" . $bytes;
+	}
+	// Named like the upload (dinner.xlsx → dinner.csv), not like the stored date name.
+	// A file without a name of its own (one put back by its stored name) is named by its date
+	// only: the random part of the stored name is no use to anyone.
+	$names = mdash_csv_names();
+	if ( isset( $names[ $file ] ) ) {
+		$name = $names[ $file ];
+	} elseif ( $menu && $menu['source']['file'] === $file && ! empty( $menu['source']['name'] ) ) {
+		$name = $menu['source']['name'];
+	} else {
+		$name = $file;
+	}
+	$name = preg_replace( '/^(menu-\d{4}-\d\d-\d\d)-\d{6}-[A-Za-z0-9]{12}(-\d+)?\.csv$/', '$1.csv', $name );
+	$base = sanitize_file_name( pathinfo( $name, PATHINFO_FILENAME ) );
+	$base = '' === $base ? 'menu' : $base;
+	nocache_headers();
+	header( 'Content-Type: text/csv; charset=utf-8' );
+	header( 'X-Content-Type-Options: nosniff' );
+	header( 'Content-Disposition: attachment; filename="' . str_replace( '"', '', remove_accents( $base ) ) . '.csv"; filename*=UTF-8\'\'' . rawurlencode( $base . '.csv' ) );
+	header( 'Content-Length: ' . strlen( $bytes ) );
+	echo $bytes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- a file download, not HTML.
+	exit;
+}
+
+/** Link that downloads a stored menu CSV; without $file, the live one. */
+function mdash_download_url( $file = '' ) {
+	$args = array( 'action' => 'menudash_download' );
+	if ( '' !== $file ) {
+		$args['file'] = $file;
+	}
+	return wp_nonce_url( add_query_arg( $args, admin_url( 'admin-post.php' ) ), 'menudash_download' );
+}
+
 function mdash_ajax_photo() {
 	check_ajax_referer( 'menudash_photo' );
 	if ( ! mdash_can() ) {
@@ -577,6 +633,12 @@ function mdash_admin_page() {
 					);
 					?>
 					</p>
+					<?php if ( in_array( $menu['source']['file'], $files, true ) ) : ?>
+						<p class="mdash-download">
+							<a class="button button-small" href="<?php echo esc_url( mdash_download_url() ); ?>"><?php esc_html_e( 'Download menu (CSV)', 'menudash' ); ?></a>
+							<span class="description"><?php esc_html_e( 'The live menu as a spreadsheet file, e.g. to print it with a menu designer.', 'menudash' ); ?></span>
+						</p>
+					<?php endif; ?>
 				<?php else : ?>
 					<p class="mdash-now"><?php esc_html_e( 'No menu uploaded yet.', 'menudash' ); ?></p>
 				<?php endif; ?>
@@ -594,6 +656,7 @@ function mdash_admin_page() {
 								<?php else : ?>
 									<button class="button button-small"><?php esc_html_e( 'Put back', 'menudash' ); ?></button>
 								<?php endif; ?>
+								<a href="<?php echo esc_url( mdash_download_url( $f ) ); ?>"><?php esc_html_e( 'Download', 'menudash' ); ?></a>
 							</form>
 						<?php endforeach; ?>
 					</details>

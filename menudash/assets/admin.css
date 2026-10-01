@@ -21,9 +21,12 @@
 .mdash-admin .mdash-diag summary { cursor: pointer; font-weight: 600; }
 .mdash-admin .mdash-diag table { margin-top: 10px; }
 .mdash-admin .mdash-now { margin-top: 12px; }
+.mdash-admin .mdash-download { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
 .mdash-admin .mdash-warn { margin: 0 0 8px 18px; list-style: disc; }
 .mdash-admin details > summary { cursor: pointer; }
 .mdash-admin .mdash-restore { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+.mdash-admin .mdash-restore > span { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.mdash-admin .mdash-restore > :not(span) { flex: none; }
 
 .mdash-admin .mdash-drop { display: block; padding: 22px; border: 2px dashed #c3c4c7; border-radius: 8px; text-align: center; cursor: pointer; background: #f6f7f7; }
 .mdash-admin .mdash-drop.over { border-color: #A31E2C; background: #fbf0f1; }

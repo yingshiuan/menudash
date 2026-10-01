@@ -1422,3 +1422,15 @@ msgstr ""
 "MenuDash 頁面中選擇，連到菜單的 QR 碼可列印成桌卡。附加元件：MenuDash "
 "Restaurant（餐廳資料、營業時間、休假、「營業中」）、MenuDash Specials（今"
 "日推薦）和 MenuDash Gift Cards（禮券訂單）。"
+
+#: includes/admin.php
+msgid "Download menu (CSV)"
+msgstr "下載菜單（CSV）"
+
+#: includes/admin.php
+msgid "The live menu as a spreadsheet file, e.g. to print it with a menu designer."
+msgstr "目前上線的菜單（試算表檔案），例如用菜單設計工具印出來。"
+
+#: includes/admin.php
+msgid "Download"
+msgstr "下載"

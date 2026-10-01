@@ -1366,3 +1366,15 @@ msgid ""
 "hours, holidays, \"open now\"), MenuDash Specials (today's specials) and "
 "MenuDash Gift Cards (gift card orders)."
 msgstr ""
+
+#: includes/admin.php
+msgid "Download menu (CSV)"
+msgstr ""
+
+#: includes/admin.php
+msgid "The live menu as a spreadsheet file, e.g. to print it with a menu designer."
+msgstr ""
+
+#: includes/admin.php
+msgid "Download"
+msgstr ""

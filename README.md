@@ -29,6 +29,7 @@ The **colours** and **diet icons** are chosen on the same dashboard page, so the
 2. **Upload it** under **Dashboard → MenuDash**. A report lists the categories and dishes it read, and warns about anything odd, e.g. the same dish twice with different diet marks.
    - A file that isn't a menu is refused, so the live menu never breaks.
    - The last five uploads are kept, with a **Put back** button.
+   - **Download menu (CSV)** gives the live menu back as a file, e.g. to print it with a menu designer.
 3. **Upload the photos**, all at once. Name each one after the dish number (`22_Dumplings.png`) or the dish name (`Jasmine Rice.png`).
    - Photos are resized to 400 and 800 px, as WebP where the server can.
    - A check list shows every dish with its photo, and which photos matched nothing.
