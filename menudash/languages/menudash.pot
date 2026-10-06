@@ -454,6 +454,10 @@ msgstr ""
 msgid "Gluten-free"
 msgstr ""
 
+#: includes/icons.php:32
+msgid "Lactose-free"
+msgstr ""
+
 #: includes/icons.php:68
 msgid "Unknown icon."
 msgstr ""
@@ -1378,3 +1382,38 @@ msgstr ""
 #: includes/admin.php
 msgid "Download"
 msgstr ""
+
+#: includes/admin.php
+msgid "A filter button shows on the menu when it is ticked here and at least one dish in the menu file has the mark. Unticking hides only the button; the icons beside the dishes stay."
+msgstr ""
+
+#: includes/admin.php
+msgid "Filter button on the menu"
+msgstr ""
+
+#: includes/admin.php
+msgid "Filter buttons on the menu"
+msgstr ""
+
+#: includes/admin.php
+msgid "No dish marked: not shown on the menu"
+msgstr ""
+
+#: includes/admin.php
+msgid "Save icons and filters"
+msgstr ""
+
+#: includes/admin.php
+msgid "Filter buttons saved"
+msgstr ""
+
+#: includes/admin.php
+msgid "Nothing changed: choose an icon file or change a filter button."
+msgstr ""
+
+#: includes/admin.php
+#. translators: %d: number of dishes with this diet mark in the live menu.
+msgid "%d dish in the menu"
+msgid_plural "%d dishes in the menu"
+msgstr[0] ""
+msgstr[1] ""

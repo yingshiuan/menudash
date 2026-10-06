@@ -50,10 +50,10 @@ With an Excel file, the message lists each sheet:
 
 - **Category heading:** a row with a name but no **No.** and no **Price** (e.g. `STARTERS | VORSPEISEN | 前菜`). Text in brackets becomes a small note under the heading: `NOODLES (Hand-pulled every day)`.
 - **Dish:** any row with a name and a price or a number. The number may be empty.
-- **Diet marks:** any text in *Recommended*, *Spicy*, *Vegan*, *Vegetarian*, *Gluten Free* counts as "yes", usually `X`. Vegan dishes don't need the vegetarian mark too; the *Vegetarian* filter includes them.
+- **Diet marks:** any text in *Recommended*, *Spicy*, *Vegan*, *Vegetarian*, *Gluten Free*, *Lactose Free* counts as "yes", usually `X`. Vegan dishes don't need the vegetarian or lactose-free mark too; the *Vegetarian* and *Lactose-free* filters include them. A filter button only appears when at least one dish has its mark (see *Diet icons* below to switch one off).
 - **Portion:** text after ` - ` in a name, like `Vegetable Dumplings - 6 pcs.`, is shown smaller after the name.
 - **Missing translations:** if a name or description is empty in one language, guests see another one instead.
-- **Columns:** found by their title, so their order doesn't matter. German titles (*Nr.*, *Preis*, *Glutenfrei*…) work too.
+- **Columns:** found by their title, so their order doesn't matter. German titles (*Nr.*, *Preis*, *Glutenfrei*, *Laktosefrei*…) work too.
 - **Optional columns:**
   - **Photo:** a photo file name, to choose the photo for that dish by hand.
   - **Measure:** shown under the price (e.g. `100 g`).
@@ -155,7 +155,9 @@ Chinese always uses the device's Chinese font.
 
 ## Diet icons
 
-The five marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free) come with icons. To use your own, go to **MenuDash → Colours, fonts & icons → Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
+The six marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free, Lactose-free) come with icons. To use your own, go to **MenuDash → Colours, fonts & icons → Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
+
+Each mark there also has a **Filter button on the menu** tick box, with the number of dishes in the live menu that have the mark. A button shows on the menu when it is ticked **and** at least one dish has the mark ("No dish marked: not shown on the menu" otherwise). Uploading a new menu never changes the tick boxes. Unticking hides only the button; the icons beside the dishes stay. Spicy covers both Spicy and Not spicy.
 
 <img src="dashboard/05-diet-icons.png" alt="The Diet icons box: one slot per mark" width="720">
 

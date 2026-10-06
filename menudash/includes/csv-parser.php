@@ -36,11 +36,12 @@ function mdash_columns() {
 		'vegan'      => array( 'vegan' ),
 		'vegetarian' => array( 'vegetarian', 'vegetarisch', 'veggie' ),
 		'gf'         => array( 'glutenfree', 'glutenfrei', 'gf' ),
+		'lf'         => array( 'lactosefree', 'laktosefrei', 'lactosefrei', 'lf' ),
 		'photo'      => array( 'photo', 'picture', 'image', 'foto', 'bild' ),
 	);
 }
 
-const MDASH_FLAGS = array( 'pick', 'spicy', 'vegan', 'vegetarian', 'gf' );
+const MDASH_FLAGS = array( 'pick', 'spicy', 'vegan', 'vegetarian', 'gf', 'lf' );
 
 function mdash_header_key( $s ) {
 	$s = function_exists( 'mb_strtolower' ) ? mb_strtolower( $s, 'UTF-8' ) : strtolower( $s );

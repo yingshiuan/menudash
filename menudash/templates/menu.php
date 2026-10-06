@@ -12,10 +12,20 @@ $chips = array(
 	'veg'   => 'vegetarian',
 	'vegan' => 'vegan',
 	'gf'    => 'gf',
+	'lf'    => 'lf',
 	'spicy' => 'spicy',
 	'mild'  => 'spicy',
 );
-$marks = array( 'spicy', 'vegan', 'vegetarian', 'gf' ); // Recommended sits in front of the number instead.
+$marks = array( 'spicy', 'vegan', 'vegetarian', 'gf', 'lf' ); // Recommended sits in front of the number instead.
+// A filter button shows only when a dish has its mark and the owner hasn't switched it off.
+// Each button belongs to the mark of its icon ("Not spicy" to Spicy).
+$chip_counts = mdash_chip_counts( $menu );
+$chips_off   = mdash_chips_off();
+foreach ( $chips as $key => $mark ) {
+	if ( empty( $chip_counts[ $mark ] ) || in_array( $mark, $chips_off, true ) ) {
+		unset( $chips[ $key ] );
+	}
+}
 $ui    = 'all' === $view ? 'de' : $view;
 ?>
 <div class="menudash" id="menudash-menu" data-jump="menu" data-lang="<?php echo esc_attr( $view ); ?>" data-ui="<?php echo esc_attr( $ui ); ?>" data-offset="<?php echo esc_attr( $offset ); ?>"<?php echo 'auto' !== $offset ? ' style="--mdash-top:' . esc_attr( $offset ) . 'px"' : ''; ?>>
@@ -42,7 +52,7 @@ endif;
 </div>
 
 <div class="mdash-bar">
-	<div class="mdash-chips" role="group" aria-label="<?php echo esc_attr( mdash_ui_plain( 'filter' ) ); ?>">
+	<div class="mdash-chips" role="group" aria-label="<?php echo esc_attr( mdash_ui_plain( 'filter' ) ); ?>"<?php echo $chips ? '' : ' hidden'; ?>>
 		<?php foreach ( $chips as $key => $icon ) : ?>
 			<button type="button" class="mdash-chip" data-filter="<?php echo esc_attr( $key ); ?>" aria-pressed="false">
 				<span class="mdash-chip-ico<?php echo 'mild' === $key ? ' mdash-not' : ''; ?>"><?php echo mdash_icon( $icon ); // phpcs:ignore ?></span>

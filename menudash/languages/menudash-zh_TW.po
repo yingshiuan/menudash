@@ -468,6 +468,10 @@ msgstr "素食"
 msgid "Gluten-free"
 msgstr "無麩質"
 
+#: includes/icons.php:32
+msgid "Lactose-free"
+msgstr "無乳糖"
+
 #: includes/icons.php:68
 msgid "Unknown icon."
 msgstr "未知的圖示。"
@@ -1434,3 +1438,37 @@ msgstr "目前上線的菜單（試算表檔案）：下載後可修改再上傳
 #: includes/admin.php
 msgid "Download"
 msgstr "下載"
+
+#: includes/admin.php
+msgid "A filter button shows on the menu when it is ticked here and at least one dish in the menu file has the mark. Unticking hides only the button; the icons beside the dishes stay."
+msgstr "勾選此處，且菜單檔案中至少有一道菜帶有此標示時，菜單上才會顯示篩選按鈕。取消勾選只會隱藏按鈕，菜式旁的圖示仍會保留。"
+
+#: includes/admin.php
+msgid "Filter button on the menu"
+msgstr "菜單上的篩選按鈕"
+
+#: includes/admin.php
+msgid "Filter buttons on the menu"
+msgstr "菜單上的篩選按鈕"
+
+#: includes/admin.php
+msgid "No dish marked: not shown on the menu"
+msgstr "沒有菜式帶此標示：菜單上不顯示"
+
+#: includes/admin.php
+msgid "Save icons and filters"
+msgstr "儲存圖示及篩選"
+
+#: includes/admin.php
+msgid "Filter buttons saved"
+msgstr "已儲存篩選按鈕"
+
+#: includes/admin.php
+msgid "Nothing changed: choose an icon file or change a filter button."
+msgstr "沒有變更：請選擇圖示檔案或更改篩選按鈕。"
+
+#: includes/admin.php
+#. translators: %d: number of dishes with this diet mark in the live menu.
+msgid "%d dish in the menu"
+msgid_plural "%d dishes in the menu"
+msgstr[0] "菜單中有 %d 道菜"

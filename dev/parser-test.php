@@ -42,7 +42,9 @@ $first = $menu['sections'][0];
 check( 'STARTERS' === $first['name']['en'] && 'VORSPEISEN' === $first['name']['de'] && '前菜' === $first['name']['zh'], 'first heading in three languages', json_encode( $first['name'], JSON_UNESCAPED_UNICODE ) );
 $cucumber = $first['dishes'][0];
 check( '1' === $cucumber['no'] && '7.5' === $cucumber['price'] && '拍黃瓜' === $cucumber['name']['zh'], 'Nr. 1 Cucumber Salad: 7.5, 拍黃瓜', json_encode( $cucumber, JSON_UNESCAPED_UNICODE ) );
-check( array( 'spicy', 'vegan', 'gf' ) === $cucumber['flags'], 'Nr. 1 is spicy, vegan, gluten-free', implode( ',', $cucumber['flags'] ) );
+check( array( 'spicy', 'vegan', 'gf', 'lf' ) === $cucumber['flags'], 'Nr. 1 is spicy, vegan, gluten-free, lactose-free', implode( ',', $cucumber['flags'] ) );
+$pudding = $menu['sections'][3]['dishes'][0];
+check( 'Mango Pudding' === $pudding['name']['en'] && array( 'vegetarian', 'gf' ) === $pudding['flags'], 'Mango Pudding is vegetarian and gluten-free, not lactose-free', implode( ',', $pudding['flags'] ) );
 
 $all = array();
 foreach ( $menu['sections'] as $s ) {
@@ -83,7 +85,7 @@ check( (bool) preg_grep( '/not UTF-8/', $win['warnings'] ), 'Windows-1252 file g
 check( 'Gurke mit Knoblauch und Sesam' === $win['menu']['sections'][0]['dishes'][0]['desc']['de'] && 'Gemüse-Teigtaschen' === mdash_base_name( $win['menu']['sections'][0]['dishes'][1]['name']['de'] ), 'umlauts survive Windows-1252' );
 
 // Reordered and renamed columns, with German headers.
-$map = array( 3 => 'Name', 1 => 'Preis', 0 => 'Nr.', 4 => 'Name (DE)', 5 => 'Chinese Name', 13 => 'Glutenfrei', 11 => 'vegan', 12 => 'Vegetarisch', 10 => 'Scharf', 9 => 'Empfohlen', 6 => 'Description (EN)', 7 => 'Beschreibung (DE)' );
+$map = array( 3 => 'Name', 1 => 'Preis', 0 => 'Nr.', 4 => 'Name (DE)', 5 => 'Chinese Name', 13 => 'Glutenfrei', 14 => 'Laktosefrei', 11 => 'vegan', 12 => 'Vegetarisch', 10 => 'Scharf', 9 => 'Empfohlen', 6 => 'Description (EN)', 7 => 'Beschreibung (DE)' );
 $re  = array();
 foreach ( $rows as $i => $r ) {
 	$out = array();
@@ -94,7 +96,7 @@ foreach ( $rows as $i => $r ) {
 }
 $reordered = mdash_parse_csv( $to_csv( $re, ',' ) );
 $d1        = $reordered['ok'] ? $reordered['menu']['sections'][0]['dishes'][0] : null;
-check( $reordered['ok'] && 11 === $reordered['menu']['dishes'] && '7.5' === $d1['price'] && array( 'spicy', 'vegan', 'gf' ) === $d1['flags'] && 'Gurkensalat' === $d1['name']['de'], 'reordered columns with German headers read the same', $reordered['error'] );
+check( $reordered['ok'] && 11 === $reordered['menu']['dishes'] && '7.5' === $d1['price'] && array( 'spicy', 'vegan', 'gf', 'lf' ) === $d1['flags'] && 'Gurkensalat' === $d1['name']['de'], 'reordered columns with German headers read the same', $reordered['error'] );
 
 // ---------- Wrong files are refused, so they never replace a live menu ----------
 check( ! mdash_parse_csv( "Date,Guest,Table\n2026-01-01,Anna,4\n" )['ok'], 'a CSV without menu columns is rejected' );

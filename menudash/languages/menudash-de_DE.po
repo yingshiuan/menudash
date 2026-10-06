@@ -501,6 +501,10 @@ msgstr "Vegetarisch"
 msgid "Gluten-free"
 msgstr "Glutenfrei"
 
+#: includes/icons.php:32
+msgid "Lactose-free"
+msgstr "Laktosefrei"
+
 #: includes/icons.php:68
 msgid "Unknown icon."
 msgstr "Unbekanntes Symbol."
@@ -1528,3 +1532,38 @@ msgstr "Die aktuelle Speisekarte als Tabellendatei: herunterladen, um sie zu än
 #: includes/admin.php
 msgid "Download"
 msgstr "Herunterladen"
+
+#: includes/admin.php
+msgid "A filter button shows on the menu when it is ticked here and at least one dish in the menu file has the mark. Unticking hides only the button; the icons beside the dishes stay."
+msgstr "Eine Filter-Schaltfläche erscheint auf der Speisekarte, wenn sie hier angehakt ist und mindestens ein Gericht in der Menüdatei die Markierung hat. Ohne Haken wird nur die Schaltfläche ausgeblendet; die Symbole bei den Gerichten bleiben."
+
+#: includes/admin.php
+msgid "Filter button on the menu"
+msgstr "Filter-Schaltfläche auf der Speisekarte"
+
+#: includes/admin.php
+msgid "Filter buttons on the menu"
+msgstr "Filter-Schaltflächen auf der Speisekarte"
+
+#: includes/admin.php
+msgid "No dish marked: not shown on the menu"
+msgstr "Kein Gericht markiert: nicht auf der Speisekarte"
+
+#: includes/admin.php
+msgid "Save icons and filters"
+msgstr "Symbole und Filter speichern"
+
+#: includes/admin.php
+msgid "Filter buttons saved"
+msgstr "Filter-Schaltflächen gespeichert"
+
+#: includes/admin.php
+msgid "Nothing changed: choose an icon file or change a filter button."
+msgstr "Nichts geändert: Wählen Sie eine Symboldatei oder ändern Sie eine Filter-Schaltfläche."
+
+#: includes/admin.php
+#. translators: %d: number of dishes with this diet mark in the live menu.
+msgid "%d dish in the menu"
+msgid_plural "%d dishes in the menu"
+msgstr[0] "%d Gericht auf der Speisekarte"
+msgstr[1] "%d Gerichte auf der Speisekarte"

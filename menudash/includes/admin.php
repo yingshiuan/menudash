@@ -323,8 +323,18 @@ function mdash_handle_icons() {
 			$errors[] = "$label: " . $r['error'];
 		}
 	}
+	// The filter switches: the marks left unticked are saved as switched off.
+	if ( isset( $_POST['chips_form'] ) && ! isset( $_POST['reset'] ) ) {
+		$on  = isset( $_POST['chips'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['chips'] ) ) : array();
+		$off = array_values( array_diff( array_keys( $labels ), $on ) );
+		if ( mdash_chips_off() !== $off ) {
+			update_option( MDASH_CHIPS_OPTION, $off, false );
+			mdash_purge_caches();
+			$done[] = __( 'Filter buttons saved', 'menudash' );
+		}
+	}
 	if ( ! $done && ! $errors ) {
-		$errors[] = __( 'Choose an icon file first.', 'menudash' );
+		$errors[] = __( 'Nothing changed: choose an icon file or change a filter button.', 'menudash' );
 	}
 	mdash_back(
 		array(
@@ -848,11 +858,17 @@ function mdash_admin_page() {
 		<section class="mdash-card mdash-icons-card">
 			<h2><?php esc_html_e( 'Diet icons', 'menudash' ); ?></h2>
 			<p><?php esc_html_e( 'Use your own icons for the diet marks: an SVG, or a square PNG with a transparent background. "Not spicy" is the Spicy icon, crossed out.', 'menudash' ); ?></p>
+			<p><?php esc_html_e( 'A filter button shows on the menu when it is ticked here and at least one dish in the menu file has the mark. Unticking hides only the button; the icons beside the dishes stay.', 'menudash' ); ?></p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data">
 				<input type="hidden" name="action" value="menudash_icons">
 				<?php wp_nonce_field( 'menudash_icons' ); ?>
 				<div class="mdash-icon-grid">
-					<?php $custom = mdash_icon_index(); ?>
+					<?php
+					$custom      = mdash_icon_index();
+					$chips_off   = mdash_chips_off();
+					$chip_counts = mdash_chip_counts( mdash_get_menu() );
+					?>
+					<input type="hidden" name="chips_form" value="1">
 					<?php foreach ( mdash_icon_labels() as $key => $label ) : ?>
 						<div class="mdash-icon-item" data-drop title="<?php esc_attr_e( 'Drop an icon file here', 'menudash' ); ?>">
 							<span class="mdash-icon-prev"><?php echo mdash_icon( $key ); // phpcs:ignore ?></span>
@@ -864,10 +880,21 @@ function mdash_admin_page() {
 							<?php if ( isset( $custom[ $key ] ) ) : ?>
 								<button class="button-link" name="reset" value="<?php echo esc_attr( $key ); ?>"><?php esc_html_e( 'Back to default', 'menudash' ); ?></button>
 							<?php endif; ?>
+							<label class="mdash-chip-switch"><input type="checkbox" name="chips[]" value="<?php echo esc_attr( $key ); ?>" <?php checked( ! in_array( $key, $chips_off, true ) ); ?>> <?php echo esc_html( 'spicy' === $key ? __( 'Filter buttons on the menu', 'menudash' ) : __( 'Filter button on the menu', 'menudash' ) ); ?></label>
+							<small class="mdash-chip-count<?php echo $chip_counts[ $key ] ? '' : ' mdash-muted'; ?>">
+								<?php
+								echo esc_html(
+									$chip_counts[ $key ]
+										/* translators: %d: number of dishes with this diet mark in the live menu. */
+										? sprintf( _n( '%d dish in the menu', '%d dishes in the menu', $chip_counts[ $key ], 'menudash' ), $chip_counts[ $key ] )
+										: __( 'No dish marked: not shown on the menu', 'menudash' )
+								);
+								?>
+							</small>
 						</div>
 					<?php endforeach; ?>
 				</div>
-				<?php submit_button( __( 'Save icons', 'menudash' ), 'secondary', 'save_icons', false ); ?>
+				<?php submit_button( __( 'Save icons and filters', 'menudash' ), 'secondary', 'save_icons', false ); ?>
 			</form>
 		</section>
 		<?php endif; ?>

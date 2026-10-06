@@ -17,7 +17,7 @@ The **colours** and **diet icons** are chosen on the same dashboard page, so the
 ## What guests get
 
 - **Languages:** all three languages at once, or one at a time, via **All · DE · EN · 中文**. The choice is remembered, and `?lang=de` links straight to one language.
-- **Diet filters:** Recommended, Vegetarian (includes vegan), Vegan, Gluten-free, Spicy and Not spicy. Filters combine (Spicy and Not spicy switch each other off), and categories with nothing left are hidden.
+- **Diet filters:** Recommended, Vegetarian (includes vegan), Vegan, Gluten-free, Lactose-free (includes vegan), Spicy and Not spicy. A button only shows when a dish in the menu has its mark, and each can be switched off in the dashboard. Filters combine (Spicy and Not spicy switch each other off), and categories with nothing left are hidden.
 - **Navigation:** a sticky bar with the filters and the category tabs. It sits under the theme's own fixed header automatically.
 - **Photos:** dish photos next to each dish; tap one for a large view.
 - **Phone layout:** each language gets its own line, and a Chinese name that doesn't fit next to the German one moves to a line of its own.
@@ -94,12 +94,12 @@ One header row. Columns are found by their **title**, so their order doesn't mat
 **Example** (the start of [`sample/menu-sample.csv`](sample/menu-sample.csv)):
 
 ```csv
-No.,Price,Measure,Name (EN),Name (DE),Name (ZH),Description (EN),Description (DE),Description (ZH),Recommended,Spicy,Vegan,Vegetarian,Gluten Free
-,,,STARTERS,VORSPEISEN,前菜,,,,,,,,
-1,7.5,,Cucumber Salad,Gurkensalat,拍黃瓜,Smashed cucumber with garlic and sesame,Gurke mit Knoblauch und Sesam,蒜香芝麻拍黃瓜,,X,X,,X
-2,9,,Vegetable Dumplings - 6 pcs.,Gemüse-Teigtaschen - 6 Stk.,素餃子,"Steamed, filled with cabbage and mushrooms","Gedämpft, gefüllt mit Kohl und Pilzen",,X,,X,,
-,,,NOODLES (Hand-pulled every day),NUDELN (Täglich von Hand gezogen),麵食,,,,,,,,
-10,19.5,,Dan Dan Noodles,Dan-Dan-Nudeln,擔擔麵,Noodles with minced pork and chilli oil,Nudeln mit Schweinehack und Chiliöl,,X,X,,,
+No.,Price,Measure,Name (EN),Name (DE),Name (ZH),Description (EN),Description (DE),Description (ZH),Recommended,Spicy,Vegan,Vegetarian,Gluten Free,Lactose Free
+,,,STARTERS,VORSPEISEN,前菜,,,,,,,,,
+1,7.5,,Cucumber Salad,Gurkensalat,拍黃瓜,Smashed cucumber with garlic and sesame,Gurke mit Knoblauch und Sesam,蒜香芝麻拍黃瓜,,X,X,,X,X
+2,9,,Vegetable Dumplings - 6 pcs.,Gemüse-Teigtaschen - 6 Stk.,素餃子,"Steamed, filled with cabbage and mushrooms","Gedämpft, gefüllt mit Kohl und Pilzen",,X,,X,,,X
+,,,NOODLES (Hand-pulled every day),NUDELN (Täglich von Hand gezogen),麵食,,,,,,,,,
+10,19.5,,Dan Dan Noodles,Dan-Dan-Nudeln,擔擔麵,Noodles with minced pork and chilli oil,Nudeln mit Schweinehack und Chiliöl,,X,X,,,,X
 ```
 
 Rows 2 and 5 are category headings, and the others are dishes. The whole file is [`sample/menu-sample.csv`](sample/menu-sample.csv). GitHub shows them as a table; use **Download raw file** to get a copy to start from.
@@ -111,7 +111,7 @@ Rows 2 and 5 are category headings, and the others are dishes. The whole file is
 | `Measure` | `Menge`, `Unit` | Optional, shown under the price |
 | `Name (EN)`, `Name (DE)`, `Name (ZH)` | `Name`, `Chinese Name` … | The dish name. A portion after ` - ` is set smaller: `Dumplings - 6 pcs.` |
 | `Description (EN)`, `Description (DE)`, `Description (ZH)` | `Beschreibung` … | Optional |
-| `Recommended`, `Spicy`, `Vegan`, `Vegetarian`, `Gluten Free` | `Empfohlen`, `Scharf`, `Vegetarisch`, `Glutenfrei` | Any text (usually `X`) means yes |
+| `Recommended`, `Spicy`, `Vegan`, `Vegetarian`, `Gluten Free`, `Lactose Free` | `Empfohlen`, `Scharf`, `Vegetarisch`, `Glutenfrei`, `Laktosefrei` | Any text (usually `X`) means yes |
 | `Photo` | `Foto`, `Image` | Optional: a photo file name, to pick the photo by hand |
 
 **How rows are read:**
@@ -188,4 +188,4 @@ GPL-2.0-or-later. See [LICENSE](LICENSE).
 **Credits:**
 - **DM Sans** and **Darker Grotesque** fonts (the same as MenuDash Theme), under the SIL Open Font License. Licence files are in `menudash/assets/fonts/`.
 - **QR codes:** `menudash/assets/vendor/qrcode.js` is qrcode-generator 1.4.4 by Kazuhiko Arase, under the MIT license (in the file's header).
-- **Default diet icons:** four are adapted from Google Material Symbols (recommended, spicy, vegetarian, vegan), under the Apache License 2.0. See `menudash/assets/ICONS-LICENSE.txt`. The gluten-free icon was drawn by insdash. Any icon can be replaced under *MenuDash → Diet icons*.
+- **Default diet icons:** four are adapted from Google Material Symbols (recommended, spicy, vegetarian, vegan), under the Apache License 2.0. See `menudash/assets/ICONS-LICENSE.txt`. The gluten-free and lactose-free icons were drawn by insdash. Any icon can be replaced under *MenuDash → Diet icons*.

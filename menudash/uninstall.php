@@ -13,4 +13,5 @@ delete_option( 'menudash_colors' );
 delete_option( 'menudash_fonts' );
 delete_option( 'menudash_qr' );
 delete_option( 'menudash_origin' );
+delete_option( 'menudash_chips_off' );
 delete_site_transient( 'menudash_release' );

@@ -18,6 +18,7 @@ function mdash_icon_keys() {
 		'vegan'      => 'Vegan',
 		'vegetarian' => 'Vegetarian',
 		'gf'         => 'Gluten-free',
+		'lf'         => 'Lactose-free',
 	);
 }
 
@@ -29,7 +30,41 @@ function mdash_icon_labels() {
 		'vegan'      => __( 'Vegan', 'menudash' ),
 		'vegetarian' => __( 'Vegetarian', 'menudash' ),
 		'gf'         => __( 'Gluten-free', 'menudash' ),
+		'lf'         => __( 'Lactose-free', 'menudash' ),
 	);
+}
+
+/*
+ * Filter buttons on the menu. A button shows when the owner leaves it ticked (MenuDash →
+ * Colours, fonts & icons → Diet icons) and at least one dish in the live menu has its mark.
+ * The option lists the marks the owner switched off, so new marks start switched on.
+ */
+const MDASH_CHIPS_OPTION = 'menudash_chips_off';
+
+/** The marks the owner switched off as filter buttons. */
+function mdash_chips_off() {
+	$off = get_option( MDASH_CHIPS_OPTION, array() );
+	return is_array( $off ) ? array_values( array_intersect( $off, array_keys( mdash_icon_keys() ) ) ) : array();
+}
+
+/**
+ * How many dishes each filter button would find: vegan dishes count as vegetarian and as
+ * lactose-free, like the filters themselves. Keyed by mark (pick, spicy, vegan, vegetarian, gf, lf).
+ */
+function mdash_chip_counts( $menu ) {
+	$n = array_fill_keys( array_keys( mdash_icon_keys() ), 0 );
+	foreach ( (array) ( $menu ? $menu['sections'] : array() ) as $sec ) {
+		foreach ( $sec['dishes'] as $d ) {
+			$f = (array) $d['flags'];
+			$vegan = in_array( 'vegan', $f, true );
+			foreach ( $n as $mark => $c ) {
+				if ( in_array( $mark, $f, true ) || ( $vegan && in_array( $mark, array( 'vegetarian', 'lf' ), true ) ) ) {
+					$n[ $mark ]++;
+				}
+			}
+		}
+	}
+	return $n;
 }
 
 function mdash_icon_index( $fresh = false ) {

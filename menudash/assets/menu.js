@@ -100,7 +100,7 @@
 
     /* ---------- Diet filters ----------
        Every pressed chip must match (AND). Each dish lists its tokens in data-f:
-       pick, veg (vegetarian or vegan), vegan, gf, and spicy or mild.
+       pick, veg (vegetarian or vegan), vegan, gf, lf (lactose-free or vegan), and spicy or mild.
        Spicy and Not spicy exclude each other, so pressing one releases the other. */
     var opposite = { spicy: "mild", mild: "spicy" };
     function release(key) {

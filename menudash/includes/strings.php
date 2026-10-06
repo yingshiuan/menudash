@@ -29,6 +29,7 @@ function mdash_strings() {
 		'veg'        => array( 'de' => 'Vegetarisch', 'en' => 'Vegetarian', 'zh' => '素食' ),
 		'vegan'      => array( 'de' => 'Vegan', 'en' => 'Vegan', 'zh' => '純素' ),
 		'gf'         => array( 'de' => 'Glutenfrei', 'en' => 'Gluten-free', 'zh' => '無麩質' ),
+		'lf'         => array( 'de' => 'Laktosefrei', 'en' => 'Lactose-free', 'zh' => '無乳糖' ),
 		'mild'       => array( 'de' => 'Nicht scharf', 'en' => 'Not spicy', 'zh' => '不辣' ),
 		'spicy'      => array( 'de' => 'Scharf', 'en' => 'Spicy', 'zh' => '辣' ),
 		'vegetarian' => array( 'de' => 'Vegetarisch', 'en' => 'Vegetarian', 'zh' => '素食' ),

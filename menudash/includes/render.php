@@ -188,6 +188,9 @@ function mdash_filter_tokens( $flags ) {
 	if ( in_array( 'gf', $flags, true ) ) {
 		$t[] = 'gf';
 	}
+	if ( in_array( 'lf', $flags, true ) || in_array( 'vegan', $flags, true ) ) {
+		$t[] = 'lf'; // Vegan dishes have no milk either.
+	}
 	$t[] = in_array( 'spicy', $flags, true ) ? 'spicy' : 'mild';
 	return implode( ' ', $t );
 }
