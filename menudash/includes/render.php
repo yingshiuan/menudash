@@ -48,6 +48,7 @@ function mdash_shortcode( $atts ) {
 	$match  = mdash_photo_matches( $menu, $photos );
 	$view   = in_array( $atts['lang'], MDASH_VIEWS, true ) ? $atts['lang'] : 'all';
 	$offset = 'auto' === $atts['offset'] ? 'auto' : (string) absint( $atts['offset'] );
+	mdash_menu_schema_add( $menu, $photos, $match, 'menu' ); // The dishes for Google, printed in the footer.
 
 	ob_start();
 	include MENUDASH_DIR . 'templates/menu.php';

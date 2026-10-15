@@ -22,6 +22,7 @@ The **colours** and **diet icons** are chosen on the same dashboard page, so the
 - **Photos:** dish photos next to each dish; tap one for a large view.
 - **Phone layout:** each language gets its own line, and a Chinese name that doesn't fit next to the German one moves to a line of its own.
 - **Search and no-JS:** the menu is real HTML in all three languages, so search engines read it and it works without JavaScript.
+- **Dishes for Google:** the menu page also carries the menu as schema.org data (JSON-LD), so Google reads every dish as data: name in German with the English and Chinese names, description, price, diet (vegan, vegetarian, gluten-free, lactose-free), photo and a link to the dish's row. It follows each upload by itself.
 
 ## What the restaurant does
 
@@ -145,6 +146,12 @@ add_filter( 'menudash_strings', function ( $s ) {
 } );
 ```
 
+**Menu data for search engines:** change it, or return `false` to leave it out, with the `menudash_menu_schema` filter (the second argument is the box: `menu`, or `specials` / `lunch` from MenuDash Specials). Prices are in CHF; another currency goes through `menudash_currency`:
+
+```php
+add_filter( 'menudash_currency', function () { return 'EUR'; } );
+```
+
 ## Develop
 
 Everything runs in [WordPress Playground](https://wordpress.github.io/wordpress-playground/), so you only need Node. No PHP, database or server to install.
@@ -160,6 +167,7 @@ Layout:
 - `menudash/` is the plugin.
 - `menudash/includes/csv-parser.php` is plain PHP without WordPress, so the tests run it on its own.
 - `menudash/templates/menu.php` renders the page; `section.php` is one category (add-ons reuse it).
+- `menudash/includes/schema.php` builds the schema.org menu for search engines; add-ons add their boxes with `mdash_menu_schema_add()`.
 - `menudash/assets/` holds the front end and the admin page.
 
 ## Limits
@@ -174,7 +182,7 @@ Three add-on plugins build on MenuDash. Each adds its own tab to the MenuDash pa
 | Add-on | What it adds |
 |---|---|
 | **MenuDash Restaurant** | Restaurant details entered once (address, phone, e-mail, getting here, delivery and reservation links, social links); opening hours with time pickers; a holiday notice that appears and disappears by itself; an "open now" badge; blocks for block themes (Open now, Opening hours, Contact, Reserve / Order / Call / Directions buttons); the data Google shows about the restaurant. |
-| **MenuDash Specials** | Today's specials and the lunch menu of the week (today's lunch, or the whole week), each from its own short CSV, in the same style and languages as the menu. |
+| **MenuDash Specials** | Today's specials and the lunch menu of the week (today's lunch, or the whole week), each from its own short CSV, in the same style and languages as the menu, and for Google as their own menus. |
 | **MenuDash Gift Cards** | A gift card order form: guests choose amounts, pickup or post, and the order arrives by e-mail. Pause switch, test e-mail, spam protection (optionally with Cloudflare Turnstile). |
 
 The add-ons are not in this repository. They are set up for restaurants by **insdash**, together with MenuDash and, if wanted, the free [MenuDash Theme](https://github.com/yingshiuan/menudash-theme). Contact: [insdash.ch](https://insdash.ch).
