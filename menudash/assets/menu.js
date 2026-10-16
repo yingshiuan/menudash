@@ -37,6 +37,8 @@
     var tabs = Array.prototype.slice.call(root.querySelectorAll(".mdash-cats a"));
     var nav = root.querySelector(".mdash-cats");
     var noMatch = root.querySelector(".mdash-nomatch");
+    var chipBox = root.querySelector(".mdash-chips");
+    var filtered = root.querySelector(".mdash-filtered");
     var dialog = root.querySelector(".mdash-dlg");
     if (!bar && !root.hasAttribute("data-lite")) return; // No menu uploaded yet.
 
@@ -59,7 +61,17 @@
         return a && b && b.top > a.top + 4;
       });
       wrapped.forEach(function (h) { h.classList.add("mdash-own"); });
+      edges();
     }
+
+    /* ---------- Filter row wider than the screen: fade the side that has more ---------- */
+    function edges() {
+      if (!chipBox) return;
+      var x = chipBox.scrollLeft, more = chipBox.scrollWidth - chipBox.clientWidth;
+      chipBox.classList.toggle("mdash-more-l", x > 2);
+      chipBox.classList.toggle("mdash-more-r", x < more - 2);
+    }
+    if (chipBox) chipBox.addEventListener("scroll", edges, { passive: true });
 
     /* ---------- Language ---------- */
     function setLang(view, remember) {
@@ -128,10 +140,38 @@
         shown += inSec;
       });
       noMatch.hidden = shown > 0;
+      showFiltered(need, shown);
       if (remember) setParam("diet", need.join(","));
       fitNames();
       spy();
     }
+    /* While filtering, a line under the buttons: "18 of 110 dishes · Vegetarian" in each
+       interface language, and "Show all" to turn every filter off. */
+    var total = root.querySelectorAll(".mdash-section .mdash-dish").length;
+    var shownText = filtered ? Array.prototype.slice.call(filtered.querySelectorAll(".mdash-shown .mdash-u")) : [];
+    shownText.forEach(function (s) { s.setAttribute("data-tpl", s.textContent); });
+    function showFiltered(need, shown) {
+      if (!filtered) return;
+      filtered.hidden = need.length === 0;
+      if (!need.length) return;
+      shownText.forEach(function (s) {
+        var l = s.getAttribute("data-l");
+        var names = chips.filter(function (c) { return c.getAttribute("aria-pressed") === "true"; }).map(function (c) {
+          var t = c.querySelector('.mdash-u[data-l="' + l + '"]');
+          return (t || c).textContent.trim();
+        });
+        s.textContent = s.getAttribute("data-tpl").replace("%1$s", shown).replace("%2$s", total) + " · " + names.join(l === "zh" ? "、" : ", ");
+      });
+    }
+    function clearFilters() {
+      chips.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+      applyFilters(true);
+    }
+    if (filtered) filtered.querySelector(".mdash-clear").addEventListener("click", function () {
+      clearFilters();
+      if (chipBox) chipBox.scrollLeft = 0;
+    });
+
     chips.forEach(function (c) {
       c.addEventListener("click", function () {
         var on = c.getAttribute("aria-pressed") !== "true";
@@ -140,10 +180,7 @@
         applyFilters(true);
       });
     });
-    if (bar) root.querySelector(".mdash-reset").addEventListener("click", function () {
-      chips.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
-      applyFilters(true);
-    });
+    if (bar) root.querySelector(".mdash-reset").addEventListener("click", clearFilters);
     try {
       var diet = (new URLSearchParams(location.search).get("diet") || "").split(",");
       chips.forEach(function (c) {

@@ -17,7 +17,7 @@ The **colours** and **diet icons** are chosen on the same dashboard page, so the
 ## What guests get
 
 - **Languages:** all three languages at once, or one at a time, via **All · DE · EN · 中文**. The choice is remembered, and `?lang=de` links straight to one language.
-- **Diet filters:** Recommended, Vegetarian (includes vegan), Vegan, Gluten-free, Lactose-free (includes vegan), Spicy and Not spicy. A button only shows when a dish in the menu has its mark, and each can be switched off in the dashboard. Filters combine (Spicy and Not spicy switch each other off), and categories with nothing left are hidden.
+- **Diet filters:** Recommended, Vegetarian (includes vegan), Vegan, Gluten-free, Lactose-free (includes vegan), Spicy and Not spicy. A button only shows when a dish in the menu has its mark, and each can be switched off in the dashboard. Filters combine (Spicy and Not spicy switch each other off), and categories with nothing left are hidden. While a filter is on, a line under the buttons says how many dishes are shown and which filters are on ("8 of 11 dishes · Vegetarian"), with **Show all** to turn them all off. On a phone the button row fades at the edge where more buttons are.
 - **Navigation:** a sticky bar with the filters and the category tabs. It sits under the theme's own fixed header automatically.
 - **Photos:** dish photos next to each dish; tap one for a large view.
 - **Phone layout:** each language gets its own line, and a Chinese name that doesn't fit next to the German one moves to a line of its own.

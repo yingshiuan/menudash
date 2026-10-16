@@ -60,6 +60,13 @@ endif;
 			</button>
 		<?php endforeach; ?>
 	</div>
+	<?php if ( $chips ) : ?>
+		<?php // While a filter is on: how many dishes are shown, which filters, and one button to show all again. Filled in by menu.js. ?>
+		<div class="mdash-filtered" hidden aria-live="polite">
+			<span class="mdash-shown"><?php echo mdash_ui( 'shown' ); // phpcs:ignore -- fixed strings ?></span>
+			<button type="button" class="mdash-clear"><span aria-hidden="true">✕</span> <?php echo mdash_ui( 'show_all' ); // phpcs:ignore ?></button>
+		</div>
+	<?php endif; ?>
 	<nav class="mdash-cats" aria-label="<?php echo esc_attr( mdash_ui_plain( 'categories' ) ); ?>">
 		<?php
 		foreach ( $menu['sections'] as $sec ) :

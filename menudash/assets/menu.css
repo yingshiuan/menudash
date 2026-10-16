@@ -127,6 +127,21 @@ body.admin-bar .menudash { --mdash-top: 32px; }
   background: var(--mdash-ink); border-radius: 2px; transform: rotate(-45deg); box-shadow: 0 0 0 1.5px var(--mdash-paper);
 }
 
+/* More buttons beyond the edge: they fade out there, so guests see the row goes on. */
+.menudash .mdash-chips.mdash-more-r { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
+.menudash .mdash-chips.mdash-more-l { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent); }
+.menudash .mdash-chips.mdash-more-l.mdash-more-r { -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent); }
+
+/* While filtering: "18 of 110 dishes · Vegetarian   ✕ Show all". */
+.menudash .mdash-filtered { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 13px; line-height: 1.3; color: var(--mdash-ink); }
+.menudash .mdash-filtered[hidden] { display: none; }
+.menudash .mdash-shown { flex: 0 1 auto; min-width: 0; font-weight: 600; }
+.menudash .mdash-clear {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border: 1.5px solid var(--mdash-accent); border-radius: 999px;
+  flex: none; background: var(--mdash-paper); color: var(--mdash-accent); font-size: 13px; font-weight: 700; white-space: nowrap;
+}
+.menudash .mdash-clear:hover { background: var(--mdash-accent); color: var(--mdash-on-accent); }
+
 .menudash .mdash-cats { gap: 2px; margin-top: 6px; }
 .menudash .mdash-cats a {
   flex: none; padding: 8px 10px 9px; border-bottom: 2.5px solid transparent;

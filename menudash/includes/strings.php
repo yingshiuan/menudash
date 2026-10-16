@@ -35,6 +35,9 @@ function mdash_strings() {
 		'vegetarian' => array( 'de' => 'Vegetarisch', 'en' => 'Vegetarian', 'zh' => '素食' ),
 		'none'       => array( 'de' => 'Keine Gerichte passen zu diesen Filtern.', 'en' => 'No dishes match these filters.', 'zh' => '沒有符合篩選條件的菜式。' ),
 		'reset'      => array( 'de' => 'Filter zurücksetzen', 'en' => 'Clear filters', 'zh' => '清除篩選' ),
+		'show_all'   => array( 'de' => 'Alle zeigen', 'en' => 'Show all', 'zh' => '全部顯示' ),
+		// While filtering: %1$s dishes shown of %2$s, then the filters' names.
+		'shown'      => array( 'de' => '%1$s von %2$s Gerichten', 'en' => '%1$s of %2$s dishes', 'zh' => '%2$s 道菜中的 %1$s 道' ),
 		'close'      => array( 'de' => 'Schliessen', 'en' => 'Close', 'zh' => '關閉' ),
 		'photo'      => array( 'de' => 'Foto', 'en' => 'Photo', 'zh' => '照片' ),
 		'prices'     => array( 'de' => 'Alle Preise in CHF inkl. MwSt.', 'en' => 'All prices in CHF incl. VAT.', 'zh' => '所有價格以瑞士法郎計，已含增值稅。' ),
