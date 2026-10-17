@@ -49,6 +49,7 @@ function mdash_shortcode( $atts ) {
 	$view   = in_array( $atts['lang'], MDASH_VIEWS, true ) ? $atts['lang'] : 'all';
 	$offset = 'auto' === $atts['offset'] ? 'auto' : (string) absint( $atts['offset'] );
 	mdash_menu_schema_add( $menu, $photos, $match, 'menu' ); // The dishes for Google, printed in the footer.
+	$GLOBALS['mdash_menu_shown'] = true;
 
 	ob_start();
 	include MENUDASH_DIR . 'templates/menu.php';
@@ -57,13 +58,22 @@ function mdash_shortcode( $atts ) {
 
 /**
  * First thing inside a menu or specials box: applies the guest's saved language before the
- * box is drawn, so it doesn't flash the default first. In the second box with jump buttons
- * it also puts an empty row of their height above the first one, which menu.js fills, so
- * the page doesn't jump down when the buttons arrive. One line, so wpautop leaves it alone,
- * and no square brackets or "< ": WordPress escapes them (and what follows) in shortcode output.
+ * box is drawn, so it doesn't flash the default first. It also puts an empty row of the jump
+ * buttons' height above the first box with jump buttons, which menu.js fills, so the page
+ * doesn't jump down when the buttons arrive: from the first box already when the menu is
+ * known to follow (a lunch or specials box in the template, [menudash] in the page), else
+ * from the second box. One line, so wpautop leaves it alone, and no square brackets or "< ":
+ * WordPress escapes them (and what follows) in shortcode output.
  */
 function mdash_lang_script() {
-	return '<script>(function (r) { try { var q = new URLSearchParams(location.search).get("lang"), s = null, n = (navigator.language || "").slice(0, 2); try { s = localStorage.getItem("menudash-lang"); } catch (e) {} var l = /^(all|en|de|zh)$/.test(q) ? q : /^(all|en|de|zh)$/.test(s) ? s : r.getAttribute("data-lang"); r.setAttribute("data-lang", l); r.setAttribute("data-ui", l !== "all" ? l : n === "zh" ? "zh" : n === "de" || n === "fr" || n === "it" ? "de" : "en"); var f = Array.prototype.filter.call(document.querySelectorAll(".menudash"), function (e) { return e.hasAttribute("data-jump"); }).shift(); if (r.hasAttribute("data-jump") && f !== r && !document.querySelector(".mdash-jump-slot")) { var d = document.createElement("div"); d.className = "menudash mdash-jumpnav mdash-jump-slot"; d.setAttribute("aria-hidden", "true"); d.innerHTML = "<span class=\"mdash-jump-link\">&nbsp;</span>"; f.parentNode.insertBefore(d, f); } } catch (e) {} })(document.currentScript.parentNode);</script>';
+	$more = mdash_menu_follows() ? 'true' : 'false';
+	return '<script>(function (r) { try { var q = new URLSearchParams(location.search).get("lang"), s = null, n = (navigator.language || "").slice(0, 2); try { s = localStorage.getItem("menudash-lang"); } catch (e) {} var l = /^(all|en|de|zh)$/.test(q) ? q : /^(all|en|de|zh)$/.test(s) ? s : r.getAttribute("data-lang"); r.setAttribute("data-lang", l); r.setAttribute("data-ui", l !== "all" ? l : n === "zh" ? "zh" : n === "de" || n === "fr" || n === "it" ? "de" : "en"); var f = Array.prototype.filter.call(document.querySelectorAll(".menudash"), function (e) { return e.hasAttribute("data-jump"); }).shift(); if (r.hasAttribute("data-jump") && (f !== r || (' . $more . ' && r.getAttribute("data-jump") !== "menu")) && !document.querySelector(".mdash-jump-slot")) { var d = document.createElement("div"); d.className = "menudash mdash-jumpnav mdash-jump-slot"; d.setAttribute("aria-hidden", "true"); d.innerHTML = "<span class=\"mdash-jump-link\">&nbsp;</span>"; f.parentNode.insertBefore(d, f); } } catch (e) {} })(document.currentScript.parentNode);</script>';
+}
+
+/** True while the page's own content still has the menu ([menudash]) to show. */
+function mdash_menu_follows() {
+	$post = get_queried_object();
+	return empty( $GLOBALS['mdash_menu_shown'] ) && $post instanceof WP_Post && has_shortcode( $post->post_content, 'menudash' );
 }
 
 /** First non-empty value among $langs, as array( text, lang ). */
