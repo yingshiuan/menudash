@@ -119,7 +119,7 @@ foreach ( MDASH_LANGS as $l ) {
 				</div>
 				<?php if ( $photo ) : ?>
 					<button type="button" class="mdash-photo<?php echo $photo['alpha'] ? '' : ' mdash-square'; ?>" data-full="<?php echo esc_url( mdash_photo_url( $photo, 800 ) ); ?>" aria-label="<?php echo esc_attr( mdash_ui_plain( 'photo' ) . ': ' . $label ); ?>">
-						<img src="<?php echo esc_url( mdash_photo_url( $photo, 400 ) ); ?>" srcset="<?php echo esc_url( mdash_photo_url( $photo, 400 ) ); ?> 400w, <?php echo esc_url( mdash_photo_url( $photo, 800 ) ); ?> 800w" sizes="104px" width="400" height="400" alt="" loading="lazy" decoding="async">
+						<img src="<?php echo esc_url( mdash_photo_url( $photo, 400 ) ); ?>" srcset="<?php echo esc_attr( mdash_photo_srcset( $photo ) ); ?>" sizes="(min-width: 700px) 104px, 84px" width="400" height="400" alt="" loading="lazy" decoding="async">
 					</button>
 				<?php endif; ?>
 			</div>

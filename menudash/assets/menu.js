@@ -363,7 +363,12 @@
     var boxes = Array.prototype.filter.call(document.querySelectorAll(".menudash[data-jump]"), function (b) {
       return b.querySelector(".mdash-jump-label");
     });
-    if (boxes.length < 2) return null;
+    // The empty row the inline script of the second box kept free (render.php).
+    var slot = document.querySelector(".mdash-jump-slot");
+    if (boxes.length < 2) {
+      if (slot) slot.parentNode.removeChild(slot);
+      return null;
+    }
     var first = boxes[0];
     var nav = document.createElement("nav");
     nav.className = "menudash mdash-jumpnav";
@@ -386,7 +391,8 @@
     // The language switch of the menu (or of any box), copied: one switch for the whole page.
     var langs = document.querySelector(".menudash[data-jump='menu'] .mdash-langs") || document.querySelector(".menudash[data-jump] .mdash-langs");
     if (langs) nav.appendChild(langs.cloneNode(true));
-    first.parentNode.insertBefore(nav, first);
+    if (slot) slot.parentNode.replaceChild(nav, slot);
+    else first.parentNode.insertBefore(nav, first);
     init(nav);
     return nav;
   }
@@ -424,7 +430,7 @@
   function start() {
     // A box with data-own-js (the gift card form of MenuDash Gift Cards) runs its own script.
     Array.prototype.forEach.call(document.querySelectorAll(".menudash"), function (root) {
-      if (!root.hasAttribute("data-own-js")) init(root);
+      if (!root.hasAttribute("data-own-js") && !root.classList.contains("mdash-jump-slot")) init(root);
     });
     var nav = jumpNav();
     backToTop(nav);

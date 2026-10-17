@@ -2,7 +2,7 @@
 /**
  * Dish photos: uploads/menudash/photos/.
  *
- * Each upload is re-encoded at 400 and 800 px (WebP when the server can, otherwise PNG so
+ * Each upload is re-encoded at 200, 400 and 800 px (WebP when the server can, otherwise PNG so
  * the cut-outs keep their transparency) and the original is thrown away. Every upload gets
  * a new file name, so a replaced photo gets a new URL and no cache can show the old one.
  * photos/index.json maps each photo to the name the owner gave it, which is what the
@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const MDASH_SIZES = array( 800, 400 );
+const MDASH_SIZES = array( 800, 400, 200 );
 // 40 megapixels, e.g. 7300 × 5500. Opening a larger image could run the server out of memory.
 const MDASH_MAX_PIXELS = 40000000;
 
@@ -35,6 +35,20 @@ function mdash_photo_id( $name ) {
 
 function mdash_photo_url( $p, $size ) {
 	return mdash_url( "photos/{$p['file']}-$size.{$p['ext']}" );
+}
+
+/** srcset for a dish photo: 200, 400 and 800 px, or 400 and 800 while the 200 isn't made yet. */
+function mdash_photo_srcset( $p ) {
+	$sizes = ! empty( $p['small'] ) ? array( 200, 400, 800 ) : array( 400, 800 );
+	return implode(
+		', ',
+		array_map(
+			function ( $size ) use ( $p ) {
+				return mdash_photo_url( $p, $size ) . " {$size}w";
+			},
+			$sizes
+		)
+	);
 }
 
 /** True when the image file has an alpha channel, i.e. it is a cut-out rather than a square photo. */
@@ -117,9 +131,59 @@ function mdash_photo_add( $tmp, $name ) {
 		'file'  => $file,
 		'ext'   => $ext,
 		'alpha' => $alpha,
+		'small' => true,
 	);
 	mdash_photo_save_index( $idx );
 	return array( 'ok' => true, 'error' => '', 'id' => $id );
+}
+
+/**
+ * Photos uploaded before 2.9.1 have no 200 px copy; make it from the 400 px one, a few
+ * seconds' worth per dashboard visit. Until a photo has it, the menu uses the 400 px copy.
+ */
+add_action( 'admin_init', 'mdash_photo_fill_small' );
+function mdash_photo_fill_small() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	$idx  = mdash_photo_index();
+	$todo = array_filter(
+		$idx,
+		function ( $p ) {
+			return empty( $p['small'] );
+		}
+	);
+	if ( ! $todo ) {
+		return;
+	}
+	$dir   = mdash_dir( 'photos' );
+	$start = microtime( true );
+	$made  = 0;
+	wp_raise_memory_limit( 'image' );
+	foreach ( $todo as $id => $p ) {
+		if ( microtime( true ) - $start > 5 ) {
+			break;
+		}
+		// The same file-name check as mdash_photo_unlink(): nothing can point outside the folder.
+		if ( ! isset( $p['file'], $p['ext'] ) || ! preg_match( '/^[a-z0-9-]+$/', (string) $p['file'] ) || ! preg_match( '/^[a-z0-9]+$/', (string) $p['ext'] ) ) {
+			continue;
+		}
+		$src    = "$dir/{$p['file']}-400.{$p['ext']}";
+		$editor = file_exists( $src ) ? wp_get_image_editor( $src ) : null;
+		if ( ! $editor || is_wp_error( $editor ) ) {
+			continue;
+		}
+		$editor->set_quality( 82 );
+		$editor->resize( 200, 200, false );
+		list( , $out ) = mdash_photo_format( ! empty( $p['alpha'] ) );
+		if ( ! is_wp_error( $editor->save( "$dir/{$p['file']}-200.{$p['ext']}", $out ) ) ) {
+			$idx[ $id ]['small'] = true;
+			++$made;
+		}
+	}
+	if ( $made ) {
+		mdash_photo_save_index( $idx ); // Also empties the page caches, so the menu gets the new srcset.
+	}
 }
 
 function mdash_photo_unlink( $p ) {

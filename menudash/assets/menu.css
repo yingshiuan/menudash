@@ -312,6 +312,7 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 }
 .mdash-jumpnav .mdash-jump-link:hover, .mdash-jumpnav .mdash-jump-link:focus-visible { background: var(--mdash-accent); color: var(--mdash-on-accent); }
 .mdash-jumpnav .mdash-langs { margin: 0 0 0 auto; }
+.mdash-jump-slot .mdash-jump-link { visibility: hidden; }
 .mdash-totop {
   position: fixed; right: 16px; bottom: 16px; z-index: 60; width: 46px; height: 46px; border: 0; border-radius: 50%;
   background: var(--mdash-accent, #243F66); color: var(--mdash-on-accent, #fff); font-size: 22px; line-height: 1; cursor: pointer;
