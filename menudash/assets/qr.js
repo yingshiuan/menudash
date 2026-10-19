@@ -65,6 +65,16 @@
     return /^https?:\/\//i.test(u) ? u : "https://" + u;
   }
 
+  // As mdash_qr_code_url(): a link to this website gets ?from=qr inside the code.
+  function tagged(u) {
+    var a;
+    try { a = new URL(u); } catch (e) { return u; }
+    var host = a.hostname.toLowerCase().replace(/^www\./, "");
+    if (host !== card.getAttribute("data-host") || /[?&]from=/.test(u)) return u;
+    a.searchParams.set("from", "qr");
+    return a.href;
+  }
+
   function update() {
     var t = field("text").value.trim(), n = field("wifi_name").value.trim(), p = field("wifi_pass").value.trim();
     var m = form.querySelector("[name='qr[note]']").value.split("\n").map(function (l) { return l.trim(); }).filter(Boolean).slice(0, 4).join("\n");
@@ -89,8 +99,8 @@
     var wc = card.querySelector(".mdash-qr-wcode"), w = n ? wifi(n, p) : "";
     if (wc.getAttribute("data-url") !== w) { wc.setAttribute("data-url", w); draw(wc); }
     var u = link();
-    if (code.getAttribute("data-url") !== u) {
-      code.setAttribute("data-url", u);
+    if (code.getAttribute("data-url") !== tagged(u)) {
+      code.setAttribute("data-url", tagged(u));
       code.setAttribute("aria-label", ((window.menudashQrI18n || {}).codeLabel || "QR code: %s").replace("%s", u));
       part("url").textContent = u.replace(/^https?:\/\/(www\.)?/i, "").replace(/\/$/, "");
       draw(code);

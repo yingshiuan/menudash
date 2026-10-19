@@ -59,6 +59,24 @@ function mdash_qr_default_url() {
 	return home_url( '/' );
 }
 
+/** This website's host without "www.", to tell its own links from other sites'. */
+function mdash_qr_site_host() {
+	return preg_replace( '#^www\.#i', '', strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) );
+}
+
+/**
+ * The address inside the code: a link to this website gets ?from=qr, so MenuDash Statistics
+ * can tell a scan from someone typing the address. The words printed under the code don't
+ * show it, and links to other sites stay as they are.
+ */
+function mdash_qr_code_url( $url ) {
+	$host = preg_replace( '#^www\.#i', '', strtolower( (string) wp_parse_url( $url, PHP_URL_HOST ) ) );
+	if ( '' === $host || mdash_qr_site_host() !== $host || preg_match( '#[?&]from=#', $url ) ) {
+		return $url;
+	}
+	return add_query_arg( 'from', 'qr', $url );
+}
+
 /** "example.com/menu" for the card: no https://, no www., no slash at the end. */
 function mdash_qr_short_url( $url ) {
 	return untrailingslashit( preg_replace( '#^https?://(www\.)?#i', '', $url ) );
@@ -172,7 +190,7 @@ function mdash_qr_card( $s ) {
 	$name  = wp_specialchars_decode( (string) get_option( 'blogname' ), ENT_QUOTES );
 	ob_start();
 	?>
-	<div class="mdash-qr-card" data-words="<?php echo esc_attr( wp_json_encode( array_intersect_key( mdash_strings(), mdash_qr_word_keys() ) ) ); ?>">
+	<div class="mdash-qr-card" data-host="<?php echo esc_attr( mdash_qr_site_host() ); ?>" data-words="<?php echo esc_attr( wp_json_encode( array_intersect_key( mdash_strings(), mdash_qr_word_keys() ) ) ); ?>">
 		<div class="mdash-qr-top">
 			<?php if ( $logo ) : ?>
 				<img class="mdash-qr-logo" src="<?php echo esc_url( $logo ); ?>" alt="<?php echo esc_attr( $name ); ?>">
@@ -181,7 +199,7 @@ function mdash_qr_card( $s ) {
 			<?php endif; ?>
 		</div>
 		<p class="mdash-qr-text" data-qr-show="text" data-qr-own="<?php echo esc_attr( $s['text'] ); ?>"><?php echo esc_html( '' !== $s['text'] ? $s['text'] : $word( 'qr_title' ) ); ?></p>
-		<div class="mdash-qr-code" data-url="<?php echo esc_attr( $url ); ?>" role="img" aria-label="<?php echo esc_attr( sprintf( mdash_qr_i18n()['codeLabel'], $url ) ); ?>"></div>
+		<div class="mdash-qr-code" data-url="<?php echo esc_attr( mdash_qr_code_url( $url ) ); ?>" role="img" aria-label="<?php echo esc_attr( sprintf( mdash_qr_i18n()['codeLabel'], $url ) ); ?>"></div>
 		<p class="mdash-qr-url" data-qr-show="url"><?php echo esc_html( mdash_qr_short_url( $url ) ); ?></p>
 		<p class="mdash-qr-tip" data-qr-word="qr_tip"<?php echo $s['tip'] ? '' : ' hidden'; ?>><?php echo esc_html( $word( 'qr_tip' ) ); ?></p>
 		<p class="mdash-qr-note" data-qr-show="note"<?php echo '' === $s['note'] ? ' hidden' : ''; ?>><?php echo esc_html( $s['note'] ); ?></p>
@@ -244,7 +262,7 @@ function mdash_qr_admin_tab( $page ) {
 				<table class="form-table" role="presentation">
 					<tr><th scope="row"><label for="mdash-qr-url"><?php esc_html_e( 'Link', 'menudash' ); ?></label></th><td>
 						<input id="mdash-qr-url" name="qr[url]" type="text" class="large-text" maxlength="500" value="<?php echo esc_attr( $s['url'] ); ?>" placeholder="<?php echo esc_attr( mdash_qr_default_url() ); ?>" data-default="<?php echo esc_attr( mdash_qr_default_url() ); ?>">
-						<p class="description"><?php esc_html_e( 'Empty: your menu page. Printed cards keep working as long as this address does, so change it only when you have to.', 'menudash' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Empty: your menu page. Printed cards keep working as long as this address does, so change it only when you have to.', 'menudash' ); ?> <?php esc_html_e( 'The code adds "?from=qr" to links to this website, so the Statistics add-on can count scans; the address printed on the card stays short.', 'menudash' ); ?></p>
 					</td></tr>
 					<tr><th scope="row"><label for="mdash-qr-text"><?php esc_html_e( 'Own heading', 'menudash' ); ?></label></th><td>
 						<input id="mdash-qr-text" name="qr[text]" type="text" class="regular-text" maxlength="80" value="<?php echo esc_attr( $s['text'] ); ?>" placeholder="<?php echo esc_attr( mdash_strings()['qr_title']['en'] ); ?>">

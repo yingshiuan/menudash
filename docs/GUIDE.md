@@ -110,7 +110,7 @@ Under **MenuDash → Menu → Meat and fish origin**, list where your meat and f
 
 Under **MenuDash → QR code** is a QR code that opens your menu on the guest's phone, with a preview that changes while you type (scan the screen with your phone to test it).
 
-- **Link:** empty means your menu page. Printed cards keep working as long as that address does.
+- **Link:** empty means your menu page. Printed cards keep working as long as that address does. A link to your own website gets `?from=qr` inside the code (not in the address printed on the card), so the Statistics add-on can count how many guests scan it.
 - **Heading and tip are built in**, in the languages ticked under **Languages on the card**: "Scan for our menu" above the code and "Choose your language and filter by vegetarian, vegan, gluten-free or spicy." under the web address, one line per language. **Own heading** replaces the heading, the **Tip** can be switched off, and **Own message** adds up to 4 short lines. A full card shrinks its text a little by itself.
 - **Wi-Fi name and password:** only on the printed card, with a small Wi-Fi code that phones join by scanning; without a name there is no Wi-Fi part.
 - **Print size:** four A6 table cards on an A4 sheet (cut along the grey lines) or one A4 poster.

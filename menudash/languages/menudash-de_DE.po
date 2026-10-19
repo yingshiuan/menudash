@@ -1567,3 +1567,6 @@ msgid "%d dish in the menu"
 msgid_plural "%d dishes in the menu"
 msgstr[0] "%d Gericht auf der Speisekarte"
 msgstr[1] "%d Gerichte auf der Speisekarte"
+
+msgid "The code adds \"?from=qr\" to links to this website, so the Statistics add-on can count scans; the address printed on the card stays short."
+msgstr "Der Code fügt Links zu dieser Website «?from=qr» hinzu, damit das Statistik-Add-on Scans zählen kann; die auf der Karte gedruckte Adresse bleibt kurz."

@@ -1472,3 +1472,6 @@ msgstr "沒有變更：請選擇圖示檔案或更改篩選按鈕。"
 msgid "%d dish in the menu"
 msgid_plural "%d dishes in the menu"
 msgstr[0] "菜單中有 %d 道菜"
+
+msgid "The code adds \"?from=qr\" to links to this website, so the Statistics add-on can count scans; the address printed on the card stays short."
+msgstr "QR 碼會在連到本網站的連結加上「?from=qr」，讓統計外掛能計算掃描次數；卡片上印出的網址仍保持簡短。"
