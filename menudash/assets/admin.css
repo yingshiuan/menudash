@@ -1,3 +1,7 @@
+/* MenuDash's own colour for information on its screens (the add-ons' tabs too): the dark blue
+   of its icon and of the menu's default colours, for the check table, the upload bar and
+   highlights, and the Statistics charts. Buttons and links keep the dashboard's own colours. */
+.mdash-admin { --mdash-admin-accent: #243F66; --mdash-admin-tint: #eef1f6; }
 .mdash-admin .mdash-lead { font-size: 14px; }
 .mdash-admin .mdash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 16px 0; }
 /* Menu tab: the upload cards in one row. Each card is heading · instructions · upload ·
@@ -29,7 +33,7 @@
 .mdash-admin .mdash-restore > :not(span) { flex: none; }
 
 .mdash-admin .mdash-drop { display: block; padding: 22px; border: 2px dashed #c3c4c7; border-radius: 8px; text-align: center; cursor: pointer; background: #f6f7f7; }
-.mdash-admin .mdash-drop.over { border-color: #A31E2C; background: #fbf0f1; }
+.mdash-admin .mdash-drop.over { border-color: var(--mdash-admin-accent); background: var(--mdash-admin-tint); }
 /* A CSV drop box with its buttons beside it, in one row; they go below it on a narrow card. */
 /* Upload: the drop area across the whole card, the button(s) in a row below it. */
 .mdash-admin .mdash-upload-row { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
@@ -37,7 +41,7 @@
 /* The file input itself is hidden (it squeezes to "No fil…hosen" in a narrow box); the
    label opens it, and the line under the button shows the chosen file. */
 .mdash-admin .mdash-drop .mdash-file { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.mdash-admin .mdash-drop:focus-within { outline: 2px solid #A31E2C; outline-offset: 2px; }
+.mdash-admin .mdash-drop:focus-within { outline: 2px solid var(--mdash-admin-accent); outline-offset: 2px; }
 .mdash-admin .mdash-drop .button { pointer-events: none; }
 .mdash-admin .mdash-drop-name { display: block; margin-top: 6px; overflow-wrap: anywhere; font-size: 12px; }
 .mdash-admin .mdash-drop.has-file .mdash-drop-name { color: #1d2327; font-weight: 600; }
@@ -45,11 +49,11 @@
 .mdash-admin .mdash-upload-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 .mdash-admin .mdash-upload-btns .button { flex: 1 1 auto; margin: 0; text-align: center; }
 .mdash-admin .mdash-icon-item { border: 2px dashed #dcdcde; }
-.mdash-admin .mdash-icon-item.over { border-color: #A31E2C; background: #fbf0f1; }
+.mdash-admin .mdash-icon-item.over { border-color: var(--mdash-admin-accent); background: var(--mdash-admin-tint); }
 .mdash-admin .mdash-drop input { display: block; margin: 0 auto 8px; }
 .mdash-admin .mdash-drop span { color: #50575e; }
 .mdash-admin .mdash-meter { height: 8px; margin-top: 12px; background: #f0f0f1; border-radius: 4px; overflow: hidden; }
-.mdash-admin .mdash-meter span { display: block; width: 0; height: 100%; background: #A31E2C; transition: width .2s; }
+.mdash-admin .mdash-meter span { display: block; width: 0; height: 100%; background: var(--mdash-admin-accent); transition: width .2s; }
 .mdash-admin .mdash-log { max-height: 220px; overflow: auto; margin: 8px 0 0 0; list-style: none; font-size: 12px; }
 .mdash-admin .mdash-log .ok { color: #1a7f37; }
 .mdash-admin .mdash-log .warn { color: #996800; }
@@ -62,7 +66,7 @@
 .mdash-admin .mdash-del { color: #b32d2e; }
 
 .mdash-admin .mdash-table td, .mdash-admin .mdash-table th { vertical-align: middle; }
-.mdash-admin .mdash-table .mdash-sec th { background: #A31E2C; color: #fff; font-weight: 600; letter-spacing: .04em; }
+.mdash-admin .mdash-table .mdash-sec th { background: var(--mdash-admin-accent); color: #fff; font-weight: 600; letter-spacing: .04em; }
 .mdash-admin .mdash-table .num { text-align: right; font-variant-numeric: tabular-nums; }
 .mdash-admin .mdash-thumb { width: 52px; }
 .mdash-admin .mdash-thumb img { display: block; width: 44px; height: 44px; object-fit: contain; }
