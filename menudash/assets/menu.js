@@ -39,7 +39,7 @@
     var noMatch = root.querySelector(".mdash-nomatch");
     var chipBox = root.querySelector(".mdash-chips");
     var filtered = root.querySelector(".mdash-filtered");
-    var dialog = root.querySelector(".mdash-dlg");
+    var dialog = root.querySelector(".mdash-dlg:not(.mdash-list-dlg)"); // The photo; the guest's list has its own.
     if (!bar && !root.hasAttribute("data-lite")) return; // No menu uploaded yet.
 
     /* ---------- "Name / 中文" that doesn't fit ----------
@@ -227,6 +227,12 @@
         }
       }
       root.style.setProperty("--mdash-bar-h", Math.round(bar.getBoundingClientRect().height) + "px");
+      // "Stuck" while the bar is held at the top over the scrolling menu (themes style it then):
+      // it has moved away from what is above it (the language buttons), more than their margin.
+      var above = bar.previousElementSibling;
+      while (above && !above.getClientRects().length) above = above.previousElementSibling;
+      var stuck = !!above && bar.getBoundingClientRect().top > above.getBoundingClientRect().bottom + (parseFloat(getComputedStyle(above).marginBottom) || 0) + 2;
+      if (stuck !== bar.classList.contains("mdash-stuck")) bar.classList.toggle("mdash-stuck", stuck);
     }
 
     /* ---------- Category tabs follow the reading position ---------- */
@@ -304,6 +310,13 @@
         dialog.classList.toggle("mdash-square", btn.classList.contains("mdash-square"));
         cap.innerHTML = "";
         cap.appendChild(dish.querySelector(".mdash-name").cloneNode(true));
+        // The guest's list: "+ Add to my list" under the photo, for a dish that has a +.
+        var addHere = dialog.querySelector(".mdash-dlg-add");
+        var plus = dish.querySelector(".mdash-add[data-add]");
+        if (addHere) {
+          addHere.hidden = !plus || !root.classList.contains("mdash-has-list");
+          addHere.setAttribute("data-add", plus ? plus.getAttribute("data-add") : "");
+        }
         dialog.showModal();
       });
       // A click on the dimmed backdrop closes it too (the dialog itself is the target
@@ -336,7 +349,7 @@
     var edge = fromTop ? 0 : innerHeight;
     var els = document.elementsFromPoint(innerWidth / 2, y);
     for (var i = 0; i < els.length; i++) {
-      if (els[i].closest(".menudash, .mdash-totop")) continue;
+      if (els[i].closest(".menudash, .mdash-totop, .mdash-listbar")) continue; // MenuDash's own bars don't count.
       for (var e = els[i]; e && e !== document.body && e !== document.documentElement; e = e.parentElement) {
         var pos = getComputedStyle(e).position;
         if (pos === "fixed" || pos === "sticky") {
@@ -347,6 +360,11 @@
       }
     }
     return fromTop ? edge : innerHeight - edge;
+  }
+  /* How far from the bottom edge fixed bars reach: looked for at the very edge and a little
+     above it, for a bar that floats above the edge (a theme's pill-shaped phone bar). */
+  function bottomCover() {
+    return Math.max(coveredAt(innerHeight - 2, false), coveredAt(innerHeight - 30, false));
   }
   function scrollToEl(el) {
     var smooth = !(matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -420,11 +438,260 @@
       // From one screen into the menu on, until its end.
       var r = menu.getBoundingClientRect();
       var show = r.top < -innerHeight * 0.6 && r.bottom > innerHeight * 0.5;
-      if (show) btn.style.bottom = coveredAt(innerHeight - 2, false) + 16 + "px";
+      if (show) btn.style.bottom = bottomCover() + 12 + "px";
       btn.hidden = !show;
     }
     addEventListener("scroll", function () { if (!busy) { busy = true; requestAnimationFrame(update); } }, { passive: true });
     addEventListener("resize", update);
+  }
+
+  /* ---------- The guest's list (MenuDash → Menu → Guest list) ----------
+     The + beside a dish puts it on a list kept in this browser tab only (sessionStorage), to
+     show the staff when ordering: number, name in the guest's language with the German one
+     under it for the staff, how many, and a mark for a dish the guest has a question about. Nothing is sent from here; MenuDash Statistics counts the
+     taps on its own. The bar that opens the list is fixed, so it is moved out of the menu box
+     (a container query box would hold it), like the back-to-top button. */
+  var LIST_KEY = "menudash-list";
+  function guestList(root) {
+    var dlg = root.querySelector(".mdash-list-dlg");
+    var bar = root.querySelector(".mdash-listbar");
+    // The menu's dishes, and those of the specials and lunch boxes on this page ("sp:", "lu:").
+    var adds = Array.prototype.slice.call(document.querySelectorAll(".menudash .mdash-add[data-add]"));
+    if (!dlg || !bar || !dlg.showModal) return; // The + buttons stay invisible (menu.css).
+    var byKey = Object.create(null); // No inherited names ("constructor") from a tampered stored list.
+    adds.forEach(function (b) { byKey[b.getAttribute("data-add")] = b; });
+    var ol = dlg.querySelector(".mdash-list-items");
+    var empty = dlg.querySelector(".mdash-list-empty");
+    var totalBox = dlg.querySelector(".mdash-list-total");
+    var priceNote = dlg.querySelector(".mdash-list-price");
+    var labels = dlg.querySelector(".mdash-list-labels");
+    function words(name) {
+      try { return JSON.parse(labels.getAttribute("data-" + name)); } catch (e) { return {}; }
+    }
+    var more = words("more"), less = words("less"), ask = words("ask"), qword = words("qword"), remove = words("remove");
+    var sure = {};
+    try { sure = JSON.parse(dlg.getAttribute("data-sure")); } catch (e) { /* plain confirm */ }
+
+    // [{ k: dish key, n: how many, q: 1 when the guest has a question, d: what the list shows of
+    // the dish }], in the order added. The list follows the guest from page to page (the specials
+    // on the home page, the menu on its own page), so each dish keeps what the list shows of it;
+    // a dish on this page gets it fresh from its row.
+    var items = [];
+    function str(v) { return typeof v === "string" ? v.slice(0, 200) : ""; }
+    try {
+      var saved = JSON.parse(sessionStorage.getItem(LIST_KEY) || "[]");
+      if (Array.isArray(saved)) items = saved.filter(function (x) {
+        return x && typeof x.k === "string" && x.k.length <= 120 && x.n >= 1 && (byKey[x.k] || (x.d && typeof x.d === "object"));
+      }).slice(0, 100).map(function (x) {
+        var d = byKey[x.k] ? snapshot(x.k) : { no: str(x.d.no), de: str(x.d.de), en: str(x.d.en), zh: str(x.d.zh), price: str(x.d.price), measure: str(x.d.measure) };
+        return { k: x.k, n: Math.min(99, Math.floor(x.n)), q: x.q ? 1 : 0, d: d };
+      }).filter(function (x) { return x.d.de || x.d.en || x.d.zh; });
+    } catch (e) { /* no storage: the list lasts until the page is left */ }
+    function save() {
+      try { sessionStorage.setItem(LIST_KEY, JSON.stringify(items)); } catch (e) { /* private mode */ }
+    }
+    function find(k) {
+      for (var i = 0; i < items.length; i++) if (items[i].k === k) return items[i];
+      return null;
+    }
+    function ui() { return root.getAttribute("data-ui") || "de"; }
+    function say(map) { return map[ui()] || map.de || ""; }
+
+    // What the list keeps of a dish, read from its row: number, its name in each language (as
+    // each view shows it), price.
+    function snapshot(k) {
+      var li = byKey[k].closest(".mdash-dish");
+      var name = li.querySelector(".mdash-name");
+      var no = li.querySelector(".mdash-no");
+      var price = li.querySelector(".mdash-price");
+      function inView(v) {
+        var t = name.querySelector(':scope > .mdash-t[data-l~="' + v + '"]:not(.mdash-zh)');
+        return t ? t.textContent.replace(/\s+/g, " ").trim() : "";
+      }
+      var small = price && price.querySelector("small");
+      return {
+        no: no ? no.textContent.trim() : "",
+        de: inView("de"), en: inView("en"), zh: inView("zh"),
+        price: price ? (price.firstChild ? price.firstChild.textContent : price.textContent).trim() : "",
+        measure: small ? small.textContent.trim() : ""
+      };
+    }
+    // What the list shows of a dish now: the guest's language first; under it the German for
+    // the staff. Showing all languages: German first and 中文 and English under it, as on the menu.
+    function dish(it) {
+      var s = it.d;
+      var view = root.getAttribute("data-lang");
+      var first = view === "all" || view === "de" ? "de" : view;
+      var main = s[first] || s.de || s.en || s.zh;
+      var subs = [];
+      (view === "all" ? ["zh", "en"] : first !== "de" ? ["de"] : []).forEach(function (l) {
+        var x = s[l];
+        if (x && x !== main && !subs.some(function (y) { return y.text === x; })) subs.push({ text: x, lang: HTML_LANG[l] });
+      });
+      return { no: s.no, name: main, lang: HTML_LANG[s[first] ? first : "de"], subs: subs, price: s.price, measure: s.measure };
+    }
+
+    function el(tag, cls, text) {
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    }
+    function button(cls, text, label) {
+      var b = el("button", cls, text);
+      b.type = "button";
+      b.setAttribute("aria-label", label);
+      return b;
+    }
+
+    function render() {
+      ol.innerHTML = "";
+      var sum = 0, sums = true;
+      items.forEach(function (it) {
+        var d = dish(it);
+        var li = el("li", "mdash-li" + (it.q ? " mdash-li-asked" : ""));
+        li.setAttribute("data-k", it.k);
+        li.appendChild(el("span", "mdash-li-no", d.no));
+        var nm = el("div", "mdash-li-name");
+        var strong = el("strong", "", d.name);
+        strong.setAttribute("lang", d.lang);
+        nm.appendChild(strong);
+        d.subs.forEach(function (s) {
+          var sub = el("span", "mdash-li-own", s.text);
+          sub.setAttribute("lang", s.lang);
+          nm.appendChild(sub);
+        });
+        var q = el("span", "mdash-li-q", say(qword));
+        nm.appendChild(q);
+        li.appendChild(nm);
+        var ctl = el("div", "mdash-li-ctl");
+        var a = button("mdash-li-ask", say(qword), say(ask) + ": " + d.name);
+        a.setAttribute("aria-pressed", String(!!it.q));
+        ctl.appendChild(a);
+        ctl.appendChild(button("mdash-li-less", "−", say(less) + ": " + d.name));
+        ctl.appendChild(el("span", "mdash-li-n", String(it.n)));
+        ctl.appendChild(button("mdash-li-more", "+", say(more) + ": " + d.name));
+        li.appendChild(ctl);
+        li.appendChild(el("span", "mdash-li-price", d.price + (d.measure ? " " + d.measure : "")));
+        li.appendChild(button("mdash-li-del", "×", say(remove) + ": " + d.name));
+        ol.appendChild(li);
+        // A total only when every price is a plain number ("12", "23.5").
+        if (/^\d+(\.\d+)?$/.test(d.price) && !d.measure) sum += it.n * parseFloat(d.price);
+        else sums = false;
+      });
+      empty.hidden = items.length > 0;
+      totalBox.hidden = !items.length || !sums;
+      priceNote.hidden = totalBox.hidden; // "A guide only": the bill is what is ordered.
+      totalBox.querySelector("strong").textContent = String(parseFloat(sum.toFixed(2)));
+      dlg.querySelector(".mdash-list-clear").hidden = !items.length;
+    }
+
+    function update() {
+      var count = 0;
+      adds.forEach(function (b) {
+        var it = find(b.getAttribute("data-add"));
+        b.classList.toggle("mdash-in", !!it);
+        b.querySelector(".mdash-add-n").textContent = it ? String(it.n) : "";
+      });
+      items.forEach(function (it) { count += it.n; });
+      bar.hidden = count === 0;
+      bar.querySelector(".mdash-listbar-n").textContent = String(count);
+      place();
+      if (dlg.open) render();
+      save();
+    }
+
+    function change(k, by) {
+      var it = find(k);
+      if (!it && by > 0 && byKey[k]) items.push(it = { k: k, n: 0, q: 0, d: snapshot(k) });
+      if (!it) return;
+      it.n = Math.min(99, it.n + by);
+      if (it.n < 1) items.splice(items.indexOf(it), 1);
+      update();
+    }
+
+    adds.forEach(function (b) {
+      b.addEventListener("click", function () {
+        change(b.getAttribute("data-add"), 1);
+        bar.classList.remove("mdash-bump");
+        void bar.offsetWidth; // Restart the little bounce.
+        bar.classList.add("mdash-bump");
+      });
+    });
+    ol.addEventListener("click", function (ev) {
+      var b = ev.target.closest ? ev.target.closest("button") : null;
+      var row = b && b.closest(".mdash-li");
+      if (!row) return;
+      var k = row.getAttribute("data-k");
+      if (b.classList.contains("mdash-li-more")) change(k, 1);
+      else if (b.classList.contains("mdash-li-less")) change(k, -1);
+      else if (b.classList.contains("mdash-li-del")) {
+        var gone = find(k);
+        if (gone) change(k, -gone.n);
+        var next = ol.querySelector(".mdash-li-del") || dlg.querySelector(".mdash-close");
+        if (next) next.focus(); // The row is gone: on to the next one, or to close.
+        return;
+      }
+      else if (b.classList.contains("mdash-li-ask")) {
+        var it = find(k);
+        if (it) { it.q = it.q ? 0 : 1; update(); }
+      }
+      // The row was drawn again: keep the keyboard on the same button.
+      // Found by walking the rows, not by a selector built from the key (no CSS.escape needed).
+      var again = null;
+      Array.prototype.some.call(ol.children, function (li) {
+        if (li.getAttribute("data-k") === k) again = li.querySelector("." + b.className.split(" ")[0]);
+        return li.getAttribute("data-k") === k;
+      });
+      if (again) again.focus();
+    });
+    // "+ Add to my list" in a photo view: add the dish, close the photo, back to the menu.
+    document.addEventListener("click", function (ev) {
+      var b = ev.target.closest ? ev.target.closest(".mdash-dlg-add[data-add]") : null;
+      var k = b && b.getAttribute("data-add");
+      if (!k || !byKey[k]) return;
+      change(k, 1);
+      var photo = b.closest("dialog");
+      if (photo && photo.open) photo.close();
+      bar.classList.remove("mdash-bump");
+      void bar.offsetWidth;
+      bar.classList.add("mdash-bump");
+    });
+    dlg.querySelector(".mdash-list-clear").addEventListener("click", function () {
+      if (!confirm(say(sure) || "?")) return;
+      items = [];
+      update();
+      dlg.close();
+    });
+    dlg.addEventListener("click", function (ev) {
+      var r = dlg.getBoundingClientRect();
+      if (ev.target === dlg && (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom)) dlg.close();
+    });
+
+    // The bar: out of the menu box, in the menu's colours and interface language.
+    document.body.appendChild(bar);
+    var cs = getComputedStyle(root);
+    ["--mdash-accent", "--mdash-on-accent", "--mdash-sans"].forEach(function (p) { bar.style.setProperty(p, cs.getPropertyValue(p)); });
+    function place() {
+      // Not while the list is open: the page under it can't be measured then.
+      if (!bar.hidden && !dlg.open) bar.style.bottom = bottomCover() + 12 + "px";
+    }
+    bar.addEventListener("click", function () {
+      render();
+      dlg.showModal();
+    });
+    var busy = false;
+    addEventListener("scroll", function () { if (!busy) { busy = true; requestAnimationFrame(function () { busy = false; place(); }); } }, { passive: true });
+    addEventListener("resize", place);
+    // A new language: the bar's words and the names on the list follow.
+    function lang() {
+      bar.setAttribute("data-ui", ui());
+      if (dlg.open) render();
+    }
+    if (window.MutationObserver) new MutationObserver(lang).observe(root, { attributes: true, attributeFilter: ["data-ui", "data-lang"] });
+    lang();
+    adds.forEach(function (b) { b.closest(".menudash").classList.add("mdash-has-list"); });
+    update();
   }
 
   function start() {
@@ -434,6 +701,9 @@
     });
     var nav = jumpNav();
     backToTop(nav);
+    // The guest's list lives in the first box that brought it (menu, specials or lunch).
+    var listBox = document.querySelector(".menudash .mdash-list-dlg");
+    if (listBox) guestList(listBox.closest(".menudash"));
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();

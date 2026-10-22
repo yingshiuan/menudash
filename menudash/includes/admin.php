@@ -759,6 +759,7 @@ function mdash_admin_page() {
 			</section>
 		<?php endif; ?>
 		<?php mdash_origin_admin_card(); ?>
+		<?php mdash_list_admin_card(); ?>
 		<details class="mdash-card mdash-diag">
 			<summary><?php esc_html_e( 'Server details', 'menudash' ); ?></summary>
 			<?php

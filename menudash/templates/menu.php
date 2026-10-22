@@ -27,8 +27,9 @@ foreach ( $chips as $key => $mark ) {
 	}
 }
 $ui    = 'all' === $view ? 'de' : $view;
+$guest_list = mdash_list_on(); // The + beside each dish and the guest's list (includes/list.php).
 ?>
-<div class="menudash" id="menudash-menu" data-jump="menu" data-lang="<?php echo esc_attr( $view ); ?>" data-ui="<?php echo esc_attr( $ui ); ?>" data-offset="<?php echo esc_attr( $offset ); ?>"<?php echo 'auto' !== $offset ? ' style="--mdash-top:' . esc_attr( $offset ) . 'px"' : ''; ?>>
+<div class="menudash<?php echo $guest_list ? ' mdash-with-list' : ''; ?>" id="menudash-menu" data-jump="menu" data-lang="<?php echo esc_attr( $view ); ?>" data-ui="<?php echo esc_attr( $ui ); ?>" data-offset="<?php echo esc_attr( $offset ); ?>"<?php echo 'auto' !== $offset ? ' style="--mdash-top:' . esc_attr( $offset ) . 'px"' : ''; ?>>
 <?php echo mdash_lang_script(); // phpcs:ignore -- fixed markup ?>
 <span class="mdash-jump-label" hidden data-nav="<?php echo esc_attr( mdash_ui_plain( 'on_page' ) ); ?>" data-top="<?php echo esc_attr( mdash_ui_plain( 'to_top' ) ); ?>"><?php echo mdash_ui( 'menu_title' ); // phpcs:ignore -- fixed strings ?></span>
 <?php
@@ -80,7 +81,7 @@ endif;
 				// Category tabs stay short: one language, the interface one.
 				foreach ( mdash_chains() as $l => $chain ) {
 					list( $t, $tl ) = mdash_first( $titles, $chain );
-					printf( '<span class="mdash-u" data-l="%s" lang="%s">%s</span>', esc_attr( $l ), esc_attr( mdash_html_lang( $tl ) ), esc_html( $t ) );
+					printf( '<span class="mdash-u" data-l="%1$s" lang="%2$s" data-t="%3$s">%3$s</span>', esc_attr( $l ), esc_attr( mdash_html_lang( $tl ) ), esc_html( $t ) ); // data-t: keeps the bold width (menu.css).
 				}
 				?>
 			</a>
@@ -121,9 +122,12 @@ foreach ( $menu['sections'] as $sec ) {
 	?>
 </footer>
 
+<?php echo $guest_list ? mdash_list_markup() : ''; // phpcs:ignore -- built escaped in includes/list.php ?>
+
 <dialog class="mdash-dlg" aria-label="<?php echo esc_attr( mdash_ui_plain( 'photo' ) ); ?>">
 	<form method="dialog"><button class="mdash-close" aria-label="<?php echo esc_attr( mdash_ui_plain( 'close' ) ); ?>">&times;</button></form>
 	<img alt="">
 	<div class="mdash-cap"></div>
+	<?php echo $guest_list ? mdash_list_photo_button() : ''; // phpcs:ignore -- fixed markup, strings escaped in mdash_ui() ?>
 </dialog>
 </div>

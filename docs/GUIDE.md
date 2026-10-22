@@ -129,6 +129,20 @@ The pictures are always the dishes' photos (see [Photos](#photos)): to change on
 
 <img src="dashboard/30-recommended-dishes.png" alt="The Recommended dishes block with its sidebar" width="820">
 
+## Guest list (My list)
+
+Under **MenuDash → Menu → Guest list**, tick **Show the + buttons and the guest list on the menu** and **Save**. Each dish on the menu then has a **+** (on a phone; computers and large tablets show the menu without it).
+
+<img src="dashboard/47-guest-list-menu.png" alt="The menu on a phone with a + on each dish and the My list bar" width="300"> <img src="dashboard/48-guest-list.png" alt="My list: number, name in the guest's language and in German, quantity, Question, total" width="300">
+
+- A tap on **+** puts the dish on the guest's list (a tap on the photo opens it large, with **+ Add to my list** under it). **My list** at the bottom shows how many.
+- The list shows each dish with its number and its name in the language the guest reads the menu in, with the German name under it for your staff. Guests change how many with − and +, take a dish off with ✕, and can mark **Question** for a dish they want to ask about. A total is shown as a guide; the bill is what is ordered.
+- Guests order with your staff as usual: nothing is ordered online and nothing is sent to you. The list stays on the guest's phone until they close the page.
+- With MenuDash Specials, today's specials and the lunch menu get the **+** too, and the list follows the guest from page to page.
+- With MenuDash Statistics, you see how often each dish is put on a list and marked with a question (totals only).
+
+<img src="dashboard/49-guest-list-card.png" alt="The Guest list card on the Menu tab" width="720">
+
 ## Colours
 
 Under **MenuDash → Colours, fonts & icons → Colours**, choose which colours the menu (and the add-ons' boxes) use:

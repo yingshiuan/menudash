@@ -13,6 +13,8 @@ defined( 'ABSPATH' ) || exit;
 
 $htag = isset( $htag ) ? $htag : 'h2';
 $idp  = isset( $idp ) ? $idp : 'mdash-';
+$guest_list = ! empty( $guest_list ); // The menu sets it, and the specials and lunch on the menu's page (includes/list.php).
+$list_ns    = isset( $list_ns ) ? $list_ns : ''; // "sp:" or "lu:" before the key, so a special and a menu dish can't be taken for each other.
 $titles = array();
 $notes  = array();
 foreach ( MDASH_LANGS as $l ) {
@@ -121,6 +123,9 @@ foreach ( MDASH_LANGS as $l ) {
 					<button type="button" class="mdash-photo<?php echo $photo['alpha'] ? '' : ' mdash-square'; ?>" data-full="<?php echo esc_url( mdash_photo_url( $photo, 800 ) ); ?>" aria-label="<?php echo esc_attr( mdash_ui_plain( 'photo' ) . ': ' . $label ); ?>">
 						<img src="<?php echo esc_url( mdash_photo_url( $photo, 400 ) ); ?>" srcset="<?php echo esc_attr( mdash_photo_srcset( $photo ) ); ?>" sizes="(min-width: 700px) 104px, 84px" width="400" height="400" alt="" loading="lazy" decoding="async">
 					</button>
+				<?php endif; ?>
+				<?php if ( $guest_list ) : ?>
+					<button type="button" class="mdash-add" data-add="<?php echo esc_attr( $list_ns . $d['key'] ); ?>" aria-label="<?php echo esc_attr( mdash_ui_plain( 'list_add' ) . ': ' . $label ); ?>"><span class="mdash-add-n" aria-hidden="true"></span></button>
 				<?php endif; ?>
 			</div>
 		</li>

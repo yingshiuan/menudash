@@ -131,7 +131,7 @@
 .mdash-admin .mdash-qr-files .button-link { vertical-align: baseline; }
 .mdash-admin .mdash-qr-lang { margin-right: 14px; }
 /* Menu tab: meat and fish origin, with a German preview beside it on wide screens. */
-.mdash-admin .mdash-origin-card { margin-top: 16px; }
+.mdash-admin .mdash-origin-card, .mdash-admin .mdash-list-card { margin-top: 16px; }
 .mdash-admin .mdash-origin-layout { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px 40px; }
 .mdash-admin .mdash-origin-admin { border-collapse: collapse; margin: 8px 0 4px; }
 .mdash-admin .mdash-origin-admin th { padding: 4px 12px 4px 0; text-align: left; font-weight: 600; }
