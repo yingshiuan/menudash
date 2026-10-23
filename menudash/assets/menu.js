@@ -316,6 +316,7 @@
         if (addHere) {
           addHere.hidden = !plus || !root.classList.contains("mdash-has-list");
           addHere.setAttribute("data-add", plus ? plus.getAttribute("data-add") : "");
+          addHere.setAttribute("aria-pressed", String(!!plus && plus.classList.contains("mdash-in"))); // "✓ On my list"
         }
         dialog.showModal();
       });
@@ -464,6 +465,7 @@
     var empty = dlg.querySelector(".mdash-list-empty");
     var totalBox = dlg.querySelector(".mdash-list-total");
     var priceNote = dlg.querySelector(".mdash-list-price");
+    var shareBtn = dlg.querySelector(".mdash-list-share"), canvasOk = !!document.createElement("canvas").getContext;
     var labels = dlg.querySelector(".mdash-list-labels");
     function words(name) {
       try { return JSON.parse(labels.getAttribute("data-" + name)); } catch (e) { return {}; }
@@ -478,16 +480,22 @@
     // a dish on this page gets it fresh from its row.
     var items = [];
     function str(v) { return typeof v === "string" ? v.slice(0, 200) : ""; }
+    // A dish photo kept with the list: only one of this site (as the menu's), never from elsewhere.
+    function own(u) {
+      if (typeof u !== "string" || !u || u.length > 600) return "";
+      try { var a = new URL(u, location.href); return a.origin === location.origin && /^https?:$/.test(a.protocol) ? a.href : ""; } catch (e) { return ""; }
+    }
     try {
       var saved = JSON.parse(sessionStorage.getItem(LIST_KEY) || "[]");
       if (Array.isArray(saved)) items = saved.filter(function (x) {
         return x && typeof x.k === "string" && x.k.length <= 120 && x.n >= 1 && (byKey[x.k] || (x.d && typeof x.d === "object"));
       }).slice(0, 100).map(function (x) {
-        var d = byKey[x.k] ? snapshot(x.k) : { no: str(x.d.no), de: str(x.d.de), en: str(x.d.en), zh: str(x.d.zh), price: str(x.d.price), measure: str(x.d.measure) };
+        var d = byKey[x.k] ? snapshot(x.k) : { no: str(x.d.no), de: str(x.d.de), en: str(x.d.en), zh: str(x.d.zh), price: str(x.d.price), measure: str(x.d.measure), img: own(x.d.img), sq: x.d.sq ? 1 : 0 };
         return { k: x.k, n: Math.min(99, Math.floor(x.n)), q: x.q ? 1 : 0, d: d };
       }).filter(function (x) { return x.d.de || x.d.en || x.d.zh; });
     } catch (e) { /* no storage: the list lasts until the page is left */ }
     function save() {
+      if (dlg.hasAttribute("data-preview")) return; // the Menu tab's preview: a sample, never kept
       try { sessionStorage.setItem(LIST_KEY, JSON.stringify(items)); } catch (e) { /* private mode */ }
     }
     function find(k) {
@@ -498,7 +506,7 @@
     function say(map) { return map[ui()] || map.de || ""; }
 
     // What the list keeps of a dish, read from its row: number, its name in each language (as
-    // each view shows it), price.
+    // each view shows it), price, and its photo (the smallest size; sq: a square photo, not a cut-out).
     function snapshot(k) {
       var li = byKey[k].closest(".mdash-dish");
       var name = li.querySelector(".mdash-name");
@@ -509,11 +517,15 @@
         return t ? t.textContent.replace(/\s+/g, " ").trim() : "";
       }
       var small = price && price.querySelector("small");
+      var ph = li.querySelector(".mdash-photo"), im = ph && ph.querySelector("img");
+      var tiny = im && /(\S+)\s+200w/.exec(im.getAttribute("srcset") || "");
       return {
         no: no ? no.textContent.trim() : "",
         de: inView("de"), en: inView("en"), zh: inView("zh"),
         price: price ? (price.firstChild ? price.firstChild.textContent : price.textContent).trim() : "",
-        measure: small ? small.textContent.trim() : ""
+        measure: small ? small.textContent.trim() : "",
+        img: im ? own(tiny ? tiny[1] : im.getAttribute("src")) : "",
+        sq: ph && ph.classList.contains("mdash-square") ? 1 : 0
       };
     }
     // What the list shows of a dish now: the guest's language first; under it the German for
@@ -528,7 +540,7 @@
         var x = s[l];
         if (x && x !== main && !subs.some(function (y) { return y.text === x; })) subs.push({ text: x, lang: HTML_LANG[l] });
       });
-      return { no: s.no, name: main, lang: HTML_LANG[s[first] ? first : "de"], subs: subs, price: s.price, measure: s.measure };
+      return { no: s.no, name: main, lang: HTML_LANG[s[first] ? first : "de"], subs: subs, price: s.price, measure: s.measure, img: s.img, sq: s.sq };
     }
 
     function el(tag, cls, text) {
@@ -547,23 +559,29 @@
     function render() {
       ol.innerHTML = "";
       var sum = 0, sums = true;
+      // A column of photos when a dish on the list has one; a dish without stays aligned.
+      var pics = items.some(function (it) { return it.d.img; });
+      ol.classList.toggle("mdash-list-pics", pics);
       items.forEach(function (it) {
         var d = dish(it);
         var li = el("li", "mdash-li" + (it.q ? " mdash-li-asked" : ""));
         li.setAttribute("data-k", it.k);
         li.appendChild(el("span", "mdash-li-no", d.no));
+        // As on the menu: number, name and price on the first line; under it the other languages
+        // (and the question mark) on the left, the photo on the right; then − n + and Question.
         var nm = el("div", "mdash-li-name");
         var strong = el("strong", "", d.name);
         strong.setAttribute("lang", d.lang);
         nm.appendChild(strong);
+        li.appendChild(nm);
+        var subs = el("div", "mdash-li-subs");
         d.subs.forEach(function (s) {
           var sub = el("span", "mdash-li-own", s.text);
           sub.setAttribute("lang", s.lang);
-          nm.appendChild(sub);
+          subs.appendChild(sub);
         });
-        var q = el("span", "mdash-li-q", say(qword));
-        nm.appendChild(q);
-        li.appendChild(nm);
+        subs.appendChild(el("span", "mdash-li-q", say(qword)));
+        li.appendChild(subs);
         var ctl = el("div", "mdash-li-ctl");
         var a = button("mdash-li-ask", say(qword), say(ask) + ": " + d.name);
         a.setAttribute("aria-pressed", String(!!it.q));
@@ -574,6 +592,18 @@
         li.appendChild(ctl);
         li.appendChild(el("span", "mdash-li-price", d.price + (d.measure ? " " + d.measure : "")));
         li.appendChild(button("mdash-li-del", "×", say(remove) + ": " + d.name));
+        if (pics) {
+          var ph = el("span", "mdash-li-img" + (d.sq ? " mdash-li-sq" : ""));
+          if (d.img) {
+            var im = el("img");
+            im.src = d.img;
+            im.alt = "";
+            im.width = im.height = 56;
+            im.decoding = "async";
+            ph.appendChild(im);
+          }
+          li.appendChild(ph);
+        }
         ol.appendChild(li);
         // A total only when every price is a plain number ("12", "23.5").
         if (/^\d+(\.\d+)?$/.test(d.price) && !d.measure) sum += it.n * parseFloat(d.price);
@@ -584,6 +614,7 @@
       priceNote.hidden = totalBox.hidden; // "A guide only": the bill is what is ordered.
       totalBox.querySelector("strong").textContent = String(parseFloat(sum.toFixed(2)));
       dlg.querySelector(".mdash-list-clear").hidden = !items.length;
+      if (shareBtn) shareBtn.hidden = !items.length || !canvasOk;
     }
 
     function update() {
@@ -591,7 +622,9 @@
       adds.forEach(function (b) {
         var it = find(b.getAttribute("data-add"));
         b.classList.toggle("mdash-in", !!it);
-        b.querySelector(".mdash-add-n").textContent = it ? String(it.n) : "";
+        b.setAttribute("aria-pressed", String(!!it));
+        // On the list: a ✓ (menu.css), or how many once the guest has asked for more in the list.
+        b.querySelector(".mdash-add-n").textContent = it && it.n > 1 ? String(it.n) : "";
       });
       items.forEach(function (it) { count += it.n; });
       bar.hidden = count === 0;
@@ -610,14 +643,49 @@
       update();
     }
 
+    function bump() {
+      bar.classList.remove("mdash-bump");
+      void bar.offsetWidth; // Restart the little bounce.
+      bar.classList.add("mdash-bump");
+    }
+    // A + (or the photo view's button) puts the dish on the list, or takes it off when it is on
+    // it already, however many: "Undo" then puts it back for a few seconds, as it was.
+    var undo = root.querySelector(".mdash-undo");
+    var undone = null, undoTimer = 0;
+    function hideUndo() {
+      clearTimeout(undoTimer);
+      undone = null;
+      if (undo) undo.hidden = true;
+    }
+    function toggle(k) {
+      var it = find(k);
+      if (!it) {
+        hideUndo();
+        change(k, 1);
+        bump();
+        return;
+      }
+      var at = items.indexOf(it);
+      items.splice(at, 1);
+      update();
+      if (!undo) return;
+      undone = { it: it, at: at };
+      undo.hidden = false;
+      undo.style.bottom = bottomCover() + 12 + (bar.hidden ? 0 : 60) + "px"; // over the bar, if it is still there
+      clearTimeout(undoTimer);
+      undoTimer = setTimeout(hideUndo, 5000);
+    }
     adds.forEach(function (b) {
-      b.addEventListener("click", function () {
-        change(b.getAttribute("data-add"), 1);
-        bar.classList.remove("mdash-bump");
-        void bar.offsetWidth; // Restart the little bounce.
-        bar.classList.add("mdash-bump");
-      });
+      b.addEventListener("click", function () { toggle(b.getAttribute("data-add")); });
     });
+    if (undo) {
+      undo.querySelector(".mdash-undo-b").addEventListener("click", function () {
+        if (undone && !find(undone.it.k)) items.splice(Math.min(undone.at, items.length), 0, undone.it);
+        hideUndo();
+        update();
+        bump();
+      });
+    }
     ol.addEventListener("click", function (ev) {
       var b = ev.target.closest ? ev.target.closest("button") : null;
       var row = b && b.closest(".mdash-li");
@@ -645,20 +713,204 @@
       });
       if (again) again.focus();
     });
-    // "+ Add to my list" in a photo view: add the dish, close the photo, back to the menu.
+    // "+ Add to my list" / "✓ On my list" in a photo view: as the +, then back to the menu.
     document.addEventListener("click", function (ev) {
       var b = ev.target.closest ? ev.target.closest(".mdash-dlg-add[data-add]") : null;
       var k = b && b.getAttribute("data-add");
       if (!k || !byKey[k]) return;
-      change(k, 1);
       var photo = b.closest("dialog");
-      if (photo && photo.open) photo.close();
-      bar.classList.remove("mdash-bump");
-      void bar.offsetWidth;
-      bar.classList.add("mdash-bump");
+      if (photo && photo.open) photo.close(); // first, so the undo note isn't under the photo
+      toggle(k);
     });
+    // Off on the Menu tab ("Guests can share their list as a picture"): no button, no picture.
+    if (shareBtn) (function () {
+      // "Share": the list drawn as a picture on the phone (nothing is sent), shown in its place.
+      // "Save as picture" then hands just the picture to the phone's share sheet ("Save Image"),
+      // "Send with the menu link" the picture and the link (WhatsApp, Messages, AirDrop); with no
+      // share sheet, the picture downloads. Phone sized: a 390-point page at 3×, never shorter
+      // than a phone screen.
+      var pic = dlg.querySelector(".mdash-list-pic"), picImg = dlg.querySelector(".mdash-list-pic-img");
+      var picFile = null, picUrl = "", backBtn = dlg.querySelector(".mdash-list-back");
+      // The menu page (also from the specials on the home page); the QR code and the sent link carry
+      // ?from=share, so MenuDash Statistics counts the visits a shared list brings. The link printed
+      // on the picture stays short.
+      // This page's address without the guest's own choices (?lang=, ?diet=, #…), but with what
+      // picks the page on a site without pretty addresses (?page_id=12, ?pagename=menu).
+      var here = location.origin + location.pathname;
+      try {
+        var keep = new URLSearchParams();
+        new URLSearchParams(location.search).forEach(function (v, k) { if (/^(page_id|pagename|p)$/.test(k)) keep.set(k, v); });
+        if (keep.toString()) here += "?" + keep.toString();
+      } catch (e) { /* the path alone */ }
+      var menuLink = document.getElementById("menudash-menu") ? here : dlg.getAttribute("data-menu") || here;
+      var shareLink = menuLink + (menuLink.indexOf("?") < 0 ? "?" : "&") + "from=share";
+      function load(src) { // a loaded picture, or null (none, broken, or too slow)
+        return new Promise(function (done) {
+          if (!src) return done(null);
+          var img = new Image(), t = setTimeout(function () { done(null); }, 3000);
+          img.onload = function () { clearTimeout(t); done(img.naturalWidth ? img : null); };
+          img.onerror = function () { clearTimeout(t); done(null); };
+          img.src = src;
+        });
+      }
+      function logoReady() { return load(dlg.getAttribute("data-logo")); }
+      // The dishes' photos (the small ones the list shows, mostly loaded already): { url: image }.
+      function photosReady() {
+        var urls = [];
+        items.forEach(function (it) { if (it.d.img && urls.indexOf(it.d.img) < 0) urls.push(it.d.img); });
+        return Promise.all(urls.map(load)).then(function (got) {
+          var map = Object.create(null);
+          urls.forEach(function (u, i) { if (got[i]) map[u] = got[i]; });
+          return map;
+        });
+      }
+      // The drawing (list-picture.js) and the QR code maker (the one the QR code tab uses), loaded
+      // only when a guest taps Share: nothing of it weighs on the menu page.
+      function script(attr, ready) {
+        return new Promise(function (done) {
+          if (ready()) return done(true);
+          var src = dlg.getAttribute(attr);
+          if (!src) return done(false);
+          var js = document.createElement("script"), t = setTimeout(function () { done(false); }, 6000);
+          js.onload = function () { clearTimeout(t); done(ready()); };
+          js.onerror = function () { clearTimeout(t); done(false); };
+          js.src = src;
+          document.head.appendChild(js);
+        });
+      }
+      function drawReady() { return script("data-pic", function () { return typeof window.mdashListPicture === "function"; }); }
+      function qrReady() { return script("data-qr", function () { return typeof window.qrcode === "function"; }); }
+      function word(sel) { // a word of the list in the menu's interface language
+        var u = dlg.querySelector(sel + ' .mdash-u[data-l="' + ui() + '"]');
+        return u ? u.textContent.trim() : "";
+      }
+      // The list as the picture shows it, in the menu's colours and fonts.
+      function picture(logo, withQr, photos) {
+        var css = getComputedStyle(root);
+        function v(name, or) { return css.getPropertyValue(name).trim() || or; }
+        var sans = v("--mdash-sans", "sans-serif");
+        var place = {};
+        try { place = JSON.parse(dlg.getAttribute("data-place")) || {}; } catch (e) { /* name only */ }
+        var qr = null;
+        if (withQr) {
+          try { qr = window.qrcode(0, "M"); qr.addData(unescape(encodeURIComponent(shareLink)), "Byte"); qr.make(); } catch (e) { qr = null; }
+        }
+        return window.mdashListPicture({
+          rows: items.map(function (it) {
+            var d = dish(it);
+            return { n: it.n, no: d.no, name: d.name, subs: d.subs.map(function (x) { return x.text; }), q: !!it.q, img: photos ? photos[d.img] || null : null, sq: !!d.sq };
+          }),
+          title: word(".mdash-list-title"),
+          date: new Date().toLocaleDateString(HTML_LANG[ui()] || "de", { day: "numeric", month: "long", year: "numeric" }),
+          qword: say(qword),
+          logo: logo,
+          site: dlg.getAttribute("data-site") || location.host,
+          place: place,
+          link: menuLink.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""),
+          qr: qr,
+          photos: !!photos && items.some(function (it) { return it.d.img; }),
+          colors: { accent: v("--mdash-accent", "#243F66"), ink: v("--mdash-ink", "#2B1D1A"), muted: v("--mdash-muted", "#75625C"), bg: v("--mdash-bg", "#FFFFFF"), onAccent: v("--mdash-on-accent", "#FFFFFF") },
+          fonts: { sans: sans, display: v("--mdash-display", sans) }
+        });
+      }
+      // Everything the picture needs, then the picture (a canvas); null when it can't be drawn.
+      function make() {
+        var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+        return Promise.all([logoReady(), qrReady(), drawReady(), fonts, photosReady()]).then(function (got) {
+          if (!got[2]) return null;
+          try {
+            var cv = picture(got[0], got[1], got[4]);
+            cv.getContext("2d").getImageData(0, 0, 1, 1); // a picture from elsewhere can't go in
+            return cv;
+          } catch (e) { return picture(null, got[1], null); }
+        });
+      }
+      function showList() {
+        var back = document.activeElement === backBtn;
+        pic.hidden = true;
+        backBtn.hidden = true;
+        dlg.classList.remove("mdash-list-picmode");
+        if (back) shareBtn.focus();
+        if (picUrl) URL.revokeObjectURL(picUrl);
+        picUrl = "";
+        picFile = null;
+        picImg.removeAttribute("src");
+        dlg.querySelector(".mdash-list-pic-hold").hidden = true;
+      }
+      shareBtn.addEventListener("click", function () {
+        if (!items.length) return;
+        make().then(function (cv) {
+          if (!cv) return;
+          cv.toBlob(function (blob) {
+            if (!blob) return;
+            var name = (ui() === "de" ? "meine-auswahl" : "my-selection") + ".png";
+            try { picFile = new File([blob], name, { type: "image/png" }); } catch (e) { picFile = blob; picFile.name = name; }
+            picUrl = URL.createObjectURL(blob);
+            picImg.src = picUrl;
+            picImg.alt = word(".mdash-list-title");
+            dlg.classList.add("mdash-list-picmode");
+            pic.hidden = false;
+            backBtn.hidden = false;
+            dlg.scrollTop = 0;
+            dlg.querySelector(".mdash-list-save").focus();
+          }, "image/png");
+        });
+      });
+      function hand(withLink) {
+        if (!picFile) return;
+        // With the link, a short message before it ("Schau dir die Speisekarte von Sample Kitchen an:"). Only
+        // the menu's address goes along, never the dishes: the picture shows them, the website
+        // keeps nothing of the guest's list.
+        var msg = "";
+        try { msg = say(JSON.parse(dlg.getAttribute("data-msg"))); } catch (e) { /* the link alone */ }
+        var place = {};
+        try { place = JSON.parse(dlg.getAttribute("data-place")) || {}; } catch (e) { /* site name */ }
+        var who = place.name || dlg.getAttribute("data-site") || location.host;
+        msg = msg ? msg.replace("%s", function () { return who; }) + " " : ""; // the name as it is ("$&" in it stays)
+        var data = withLink ? { files: [picFile], text: msg + shareLink } : { files: [picFile] };
+        if (navigator.canShare && navigator.canShare(data)) {
+          navigator.share(data).catch(function () { /* closed by the guest */ });
+          return;
+        }
+        // No share sheet (an older phone, or a page without https): a download lands in Files,
+        // not in the photos, so say how to put it there.
+        dlg.querySelector(".mdash-list-pic-hold").hidden = false;
+        var a = document.createElement("a");
+        a.href = picUrl;
+        a.download = picFile.name || "my-list.png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+      dlg.querySelector(".mdash-list-save").addEventListener("click", function () { hand(false); });
+      dlg.querySelector(".mdash-list-send").addEventListener("click", function () { hand(true); });
+      backBtn.addEventListener("click", showList);
+      dlg.addEventListener("close", showList);
+
+      // The preview on the Menu tab (?mdash-list-preview=1, only for those who may edit the menu;
+      // includes/list.php): three dishes of this menu, drawn as a guest's picture, in place of
+      // the page. Nothing is stored or counted.
+      if (dlg.hasAttribute("data-preview")) {
+        var numbered = adds.filter(function (b) { return b.closest("#menudash-menu") && b.closest(".mdash-dish").querySelector(".mdash-no"); });
+        var withPhoto = numbered.filter(function (b) { return b.closest(".mdash-dish").querySelector(".mdash-photo"); });
+        var picks = (withPhoto.length >= 3 ? withPhoto : numbered).slice(0, 3); // with photos, as most lists have
+        items = picks.map(function (b, i) { return { k: b.getAttribute("data-add"), n: i ? 1 : 2, q: i === 1 ? 1 : 0, d: snapshot(b.getAttribute("data-add")) }; });
+        make().then(function (cv) {
+          if (!cv) return;
+          var img = new Image();
+          img.src = cv.toDataURL("image/png");
+          img.alt = word(".mdash-list-title");
+          img.style.cssText = "display:block;width:100%;height:auto";
+          document.body.innerHTML = "";
+          document.body.style.cssText = "margin:0;padding:0;background:" + getComputedStyle(root).getPropertyValue("--mdash-bg");
+          document.body.appendChild(img);
+          document.documentElement.setAttribute("data-mdash-preview", "ready");
+        });
+      }
+    })();
     dlg.querySelector(".mdash-list-clear").addEventListener("click", function () {
       if (!confirm(say(sure) || "?")) return;
+      hideUndo();
       items = [];
       update();
       dlg.close();
@@ -670,13 +922,19 @@
 
     // The bar: out of the menu box, in the menu's colours and interface language.
     document.body.appendChild(bar);
+    if (undo) document.body.appendChild(undo);
     var cs = getComputedStyle(root);
-    ["--mdash-accent", "--mdash-on-accent", "--mdash-sans"].forEach(function (p) { bar.style.setProperty(p, cs.getPropertyValue(p)); });
+    ["--mdash-accent", "--mdash-on-accent", "--mdash-sans"].forEach(function (p) {
+      bar.style.setProperty(p, cs.getPropertyValue(p));
+      if (undo) undo.style.setProperty(p, cs.getPropertyValue(p));
+    });
     function place() {
       // Not while the list is open: the page under it can't be measured then.
       if (!bar.hidden && !dlg.open) bar.style.bottom = bottomCover() + 12 + "px";
+      if (undo && !undo.hidden && !dlg.open) undo.style.bottom = bottomCover() + 12 + (bar.hidden ? 0 : 60) + "px";
     }
     bar.addEventListener("click", function () {
+      hideUndo();
       render();
       dlg.showModal();
     });
@@ -686,6 +944,7 @@
     // A new language: the bar's words and the names on the list follow.
     function lang() {
       bar.setAttribute("data-ui", ui());
+      if (undo) undo.setAttribute("data-ui", ui());
       if (dlg.open) render();
     }
     if (window.MutationObserver) new MutationObserver(lang).observe(root, { attributes: true, attributeFilter: ["data-ui", "data-lang"] });

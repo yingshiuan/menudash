@@ -129,19 +129,20 @@ The pictures are always the dishes' photos (see [Photos](#photos)): to change on
 
 <img src="dashboard/30-recommended-dishes.png" alt="The Recommended dishes block with its sidebar" width="820">
 
-## Guest list (My list)
+## Guest selection (My selection)
 
-Under **MenuDash → Menu → Guest list**, tick **Show the + buttons and the guest list on the menu** and **Save**. Each dish on the menu then has a **+** (on a phone; computers and large tablets show the menu without it).
+Under **MenuDash → Menu → Guest selection**, tick **Show the + buttons and the selection on the menu** and **Save**. Each dish on the menu then has a **+** (on a phone; computers and large tablets show the menu without it). The card shows **How guests use it** in three small phones, the last one the real picture made from your menu.
 
-<img src="dashboard/47-guest-list-menu.png" alt="The menu on a phone with a + on each dish and the My list bar" width="300"> <img src="dashboard/48-guest-list.png" alt="My list: number, name in the guest's language and in German, quantity, Question, total" width="300">
+<img src="dashboard/47-guest-list-menu.png" alt="The menu on a phone with a + on each dish and the My selection bar" width="300"> <img src="dashboard/48-guest-list.png" alt="My selection: number, name, price, photo, quantity and Question" width="300"> <img src="dashboard/50-guest-list-picture.png" alt="The selection as a picture, with Save and Share under it" width="300">
 
-- A tap on **+** puts the dish on the guest's list (a tap on the photo opens it large, with **+ Add to my list** under it). **My list** at the bottom shows how many.
-- The list shows each dish with its number and its name in the language the guest reads the menu in, with the German name under it for your staff. Guests change how many with − and +, take a dish off with ✕, and can mark **Question** for a dish they want to ask about. A total is shown as a guide; the bill is what is ordered.
-- Guests order with your staff as usual: nothing is ordered online and nothing is sent to you. The list stays on the guest's phone until they close the page.
-- With MenuDash Specials, today's specials and the lunch menu get the **+** too, and the list follows the guest from page to page.
-- With MenuDash Statistics, you see how often each dish is put on a list and marked with a question (totals only).
+- A tap on **+** puts the dish in the guest's selection and shows a ✓; a second tap takes it off, with **Undo** for a few seconds (a tap on the photo opens it large, with **+ Add to my selection** or **✓ In my selection** under it). How many of a dish is set in the selection; **My selection** at the bottom shows the total.
+- Each dish is laid out as on the menu: number, name and price on the first line, the photo on the right under the price, and the German name under the guest's language for your staff. Guests change how many with − and +, take a dish off with ✕, and can mark **Question** for a dish they want to ask about. A total is shown as a guide; the bill is what is ordered.
+- **Share with friends** (on by default; its own switch on the card): the phone draws the selection as a picture like a small flyer: your logo, the dishes with their photos (without prices), at the foot your name, address and phone (from MenuDash Restaurant, else the site's name) and a QR code to the menu. Under it, **Save** puts it in the photos and **Share** sends it with a short message and the menu's link ("Have a look at the … menu: …"). The QR code and the link carry `?from=share`. Only the picture shows the dishes; the link is the menu's address alone.
+- Guests order with your staff as usual: nothing is ordered online and nothing is sent to you. The selection stays on the guest's phone until they close the page.
+- With MenuDash Specials, today's specials and the lunch menu get the **+** too, and the selection follows the guest from page to page.
+- With MenuDash Statistics, you see how often each dish is chosen and marked with a question, how often a selection is saved or sent as a picture, and the menu visits from a shared picture (totals only).
 
-<img src="dashboard/49-guest-list-card.png" alt="The Guest list card on the Menu tab" width="720">
+<img src="dashboard/49-guest-list-card.png" alt="The Guest selection card on the Menu tab" width="720">
 
 ## Colours
 

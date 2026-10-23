@@ -1341,3 +1341,136 @@ msgstr "Die Arbeitsmappe hat keine Tabellenblätter mit ausgefüllten Zellen."
 
 #~ msgid "A restaurant menu for your website, kept in a spreadsheet: upload the menu as CSV and the dish photos under MenuDash, then put [menudash] on a page. Guests read it in German, English and Chinese, all at once or one at a time, and filter by diet. Background and highlight colours and the diet icons are chosen on the MenuDash page, and a QR code to the menu prints as table cards. Add-ons: MenuDash Restaurant (details, opening hours, holidays, \"open now\"), MenuDash Specials (today's specials) and MenuDash Gift Cards (gift card orders)."
 #~ msgstr "Eine Speisekarte für Ihre Website, gepflegt in einer Tabelle: Laden Sie unter MenuDash die Speisekarte als CSV und die Fotos der Gerichte hoch und setzen Sie dann [menudash] auf eine Seite. Gäste lesen sie auf Deutsch, Englisch und Chinesisch, alle Sprachen zusammen oder einzeln, und filtern nach Ernährung. Hintergrund- und Akzentfarbe sowie die Ernährungssymbole wählen Sie auf der MenuDash-Seite, und ein QR-Code zur Speisekarte lässt sich als Tischkarten drucken. Add-ons: MenuDash Restaurant (Angaben, Öffnungszeiten, Ferien, „Jetzt geöffnet“), MenuDash Specials (Tagesempfehlungen) und MenuDash Gift Cards (Gutschein-Bestellungen)."
+
+#: includes/list.php
+msgid "Guests can share their list as a picture"
+msgstr "Gäste können ihre Liste als Bild teilen"
+
+#: includes/list.php
+msgid "A \"Share\" button under the list makes a picture of it like a small flyer: your logo, the dishes (without prices), your address and phone (from MenuDash Restaurant), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
+msgstr "Eine Schaltfläche «Teilen» unter der Liste macht daraus ein Bild wie ein kleiner Flyer: Ihr Logo, die Gerichte (ohne Preise), Ihre Adresse und Telefonnummer (aus MenuDash Restaurant) und ein QR-Code zur Speisekarte. Gäste sichern es in ihren Fotos oder senden es mit dem Link zur Speisekarte an Freunde. Das Bild entsteht auf dem Handy des Gastes; an Sie wird nichts gesendet."
+
+#: includes/list.php
+msgid "Visits from a shared list show as \"Shared list\" in MenuDash Statistics."
+msgstr "Besuche über eine geteilte Liste erscheinen in MenuDash Statistics als «Geteilte Liste»."
+
+#: includes/list.php
+msgid "The + buttons are on the menu; guests can share their list as a picture."
+msgstr "Die +-Schaltflächen sind auf der Speisekarte; Gäste können ihre Liste als Bild teilen."
+
+#: includes/list.php
+msgid "The + buttons are on the menu; sharing the list is off."
+msgstr "Die +-Schaltflächen sind auf der Speisekarte; das Teilen der Liste ist aus."
+
+#: includes/admin.php
+msgid "Further down:"
+msgstr "Weiter unten:"
+
+#: includes/admin.php
+msgctxt "guest list switched on"
+msgid "on"
+msgstr "an"
+
+#: includes/admin.php
+msgctxt "guest list switched off"
+msgid "off"
+msgstr "aus"
+
+#: includes/admin.php
+msgid "How a shared picture looks"
+msgstr "So sieht ein geteiltes Bild aus"
+
+#: includes/admin.php
+msgid "Three dishes of your menu as an example, with your logo, colours, address and the QR code to the menu. It changes with them."
+msgstr "Drei Gerichte Ihrer Speisekarte als Beispiel, mit Ihrem Logo, Ihren Farben, Ihrer Adresse und dem QR-Code zur Speisekarte. Es passt sich an, wenn Sie diese ändern."
+
+#: includes/admin.php
+msgid "Example of a shared guest list"
+msgstr "Beispiel einer geteilten Gästeliste"
+
+#: includes/admin.php
+msgid "Open it large"
+msgstr "Groß öffnen"
+
+#: includes/list.php
+msgid "Which dishes guests put on their list: Statistics"
+msgstr "Welche Gerichte Gäste auf ihre Liste setzen: Statistik"
+
+#: includes/list.php
+msgid "How guests use it"
+msgstr "So nutzen Gäste die Auswahl"
+
+#: includes/list.php
+msgid "Tap + beside a dish."
+msgstr "Auf + neben einem Gericht tippen."
+
+#: includes/list.php
+msgid "Show the list to your staff when ordering."
+msgstr "Beim Bestellen die Liste dem Personal zeigen."
+
+#: includes/list.php
+msgid "Or share it as a picture with friends (example on the right)."
+msgstr "Oder sie als Bild mit Freunden teilen (Beispiel rechts)."
+
+#: includes/list.php
+msgid "A \"Share\" button under the list makes a picture of it like a small flyer: your logo, the dishes (without prices), your site's name (with MenuDash Restaurant also your address and phone), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
+msgstr "Eine Schaltfläche «Teilen» unter der Liste macht daraus ein Bild wie ein kleiner Flyer: Ihr Logo, die Gerichte (ohne Preise), der Name Ihrer Website (mit MenuDash Restaurant auch Ihre Adresse und Telefonnummer) und ein QR-Code zur Speisekarte. Gäste sichern es in ihren Fotos oder senden es mit dem Link zur Speisekarte an Freunde. Das Bild entsteht auf dem Handy des Gastes; an Sie wird nichts gesendet."
+
+#: includes/list.php
+msgid "Three dishes of your menu as an example, with your logo (or site name), colours and the QR code to the menu. It changes with them."
+msgstr "Drei Gerichte Ihrer Speisekarte als Beispiel, mit Ihrem Logo (oder dem Namen der Website), Ihren Farben und dem QR-Code zur Speisekarte. Es passt sich an, wenn Sie diese ändern."
+
+#: includes/list.php
+msgid "Or share it with friends as a picture. This one is made from your menu:"
+msgstr "Oder sie als Bild mit Freunden teilen. Dieses ist aus Ihrer Speisekarte gemacht:"
+
+#: includes/admin.php
+msgid "Guest selection"
+msgstr "Auswahl der Gäste"
+
+#: includes/admin.php
+msgid "The + buttons are on the menu; guests can share their selection as a picture."
+msgstr "Die +-Schaltflächen sind auf der Speisekarte; Gäste können ihre Auswahl als Bild teilen."
+
+#: includes/admin.php
+msgid "The + buttons are on the menu; sharing the selection is off."
+msgstr "Die +-Schaltflächen sind auf der Speisekarte; das Teilen der Auswahl ist aus."
+
+#: includes/admin.php
+msgid "Which dishes guests choose: Statistics"
+msgstr "Welche Gerichte Gäste auswählen: Statistik"
+
+#: includes/admin.php
+msgid "Show the selection to your staff when ordering."
+msgstr "Beim Bestellen die Auswahl dem Personal zeigen."
+
+#: includes/admin.php
+msgid "Example of a shared selection"
+msgstr "Beispiel einer geteilten Auswahl"
+
+#: includes/admin.php
+msgid "Show the + buttons and the selection on the menu"
+msgstr "+-Schaltflächen und Auswahl auf der Speisekarte zeigen"
+
+#: includes/admin.php
+msgid "Guests can share their selection as a picture"
+msgstr "Gäste können ihre Auswahl als Bild teilen"
+
+#: includes/admin.php
+msgid "Visits from a shared picture show as \"Shared selection\" in MenuDash Statistics."
+msgstr "Besuche über ein geteiltes Bild zeigt MenuDash Statistik als «Geteilte Auswahl»."
+
+#: includes/list.php
+#, php-format
+msgid "Guests tap + beside a dish to add it to their selection (on the menu: \"%s\"), then show it to your staff when they order. It shows each dish with its number, in the language the guest reads the menu in and in German for your staff, and guests can mark a dish they have a question about. Nothing is ordered online and nothing is sent: the selection stays on the guest's phone until they close the page."
+msgstr "Gäste tippen bei einem Gericht auf +, um es in ihre Auswahl aufzunehmen (auf der Speisekarte: «%s»), und zeigen sie beim Bestellen Ihrem Personal. Sie zeigt jedes Gericht mit Nummer, in der Sprache, in der der Gast die Speisekarte liest, und auf Deutsch für Ihr Personal, und Gäste können ein Gericht markieren, zu dem sie eine Frage haben. Es wird nichts online bestellt und nichts gesendet: Die Auswahl bleibt auf dem Handy des Gastes, bis er die Seite schliesst."
+
+#: includes/list.php
+#, php-format
+msgid "A \"%s\" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your address and phone (from MenuDash Restaurant), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
+msgstr "Eine Schaltfläche «%s» unter der Auswahl macht daraus ein Bild wie ein kleiner Flyer: Ihr Logo, die Gerichte (ohne Preise), Ihre Adresse und Telefonnummer (aus MenuDash Restaurant) und ein QR-Code zur Speisekarte. Gäste sichern es in ihren Fotos oder senden es mit dem Link zur Speisekarte an Freunde. Das Bild entsteht auf dem Handy des Gastes; an Sie wird nichts gesendet."
+
+#: includes/list.php
+#, php-format
+msgid "A \"%s\" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your site's name (with MenuDash Restaurant also your address and phone), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
+msgstr "Eine Schaltfläche «%s» unter der Auswahl macht daraus ein Bild wie ein kleiner Flyer: Ihr Logo, die Gerichte (ohne Preise), der Name Ihrer Website (mit MenuDash Restaurant auch Ihre Adresse und Telefonnummer) und ein QR-Code zur Speisekarte. Gäste sichern es in ihren Fotos oder senden es mit dem Link zur Speisekarte an Freunde. Das Bild entsteht auf dem Handy des Gastes; an Sie wird nichts gesendet."

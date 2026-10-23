@@ -125,7 +125,7 @@ foreach ( MDASH_LANGS as $l ) {
 					</button>
 				<?php endif; ?>
 				<?php if ( $guest_list ) : ?>
-					<button type="button" class="mdash-add" data-add="<?php echo esc_attr( $list_ns . $d['key'] ); ?>" aria-label="<?php echo esc_attr( mdash_ui_plain( 'list_add' ) . ': ' . $label ); ?>"><span class="mdash-add-n" aria-hidden="true"></span></button>
+					<button type="button" class="mdash-add" aria-pressed="false" data-add="<?php echo esc_attr( $list_ns . $d['key'] ); ?>" aria-label="<?php echo esc_attr( mdash_ui_plain( 'list_add' ) . ': ' . $label ); ?>"><span class="mdash-add-n" aria-hidden="true"></span></button>
 				<?php endif; ?>
 			</div>
 		</li>

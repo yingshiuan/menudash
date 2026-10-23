@@ -1336,3 +1336,136 @@ msgstr "活頁簿中沒有含內容的工作表。"
 
 #~ msgid "A restaurant menu for your website, kept in a spreadsheet: upload the menu as CSV and the dish photos under MenuDash, then put [menudash] on a page. Guests read it in German, English and Chinese, all at once or one at a time, and filter by diet. Background and highlight colours and the diet icons are chosen on the MenuDash page, and a QR code to the menu prints as table cards. Add-ons: MenuDash Restaurant (details, opening hours, holidays, \"open now\"), MenuDash Specials (today's specials) and MenuDash Gift Cards (gift card orders)."
 #~ msgstr "為您的網站提供餐廳菜單，內容保存在試算表中：在 MenuDash 上傳 CSV 菜單和菜式照片，然後在頁面中加入 [menudash]。客人可用德文、英文和中文閱讀，可同時顯示或逐一切換，並按飲食需要篩選。背景色、強調色和飲食標示圖示可在 MenuDash 頁面中選擇，連到菜單的 QR 碼可列印成桌卡。附加元件：MenuDash Restaurant（餐廳資料、營業時間、休假、「營業中」）、MenuDash Specials（今日推薦）和 MenuDash Gift Cards（禮券訂單）。"
+
+#: includes/list.php
+msgid "Guests can share their list as a picture"
+msgstr "客人可以將清單以圖片分享"
+
+#: includes/list.php
+msgid "A \"Share\" button under the list makes a picture of it like a small flyer: your logo, the dishes (without prices), your address and phone (from MenuDash Restaurant), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
+msgstr "清單下方的「分享」按鈕會把清單做成像小傳單一樣的圖片：您的標誌、菜式（不含價格）、您的地址和電話（來自 MenuDash Restaurant），以及前往菜單的 QR 碼。客人可以把它存到相簿，或連同菜單連結傳給朋友。圖片是在客人的手機上產生的，不會傳送任何資料給您。"
+
+#: includes/list.php
+msgid "Visits from a shared list show as \"Shared list\" in MenuDash Statistics."
+msgstr "透過分享的清單而來的瀏覽，會在 MenuDash Statistics 中顯示為「分享的清單」。"
+
+#: includes/list.php
+msgid "The + buttons are on the menu; guests can share their list as a picture."
+msgstr "菜單上已顯示 + 按鈕；客人可以將清單以圖片分享。"
+
+#: includes/list.php
+msgid "The + buttons are on the menu; sharing the list is off."
+msgstr "菜單上已顯示 + 按鈕；清單分享已關閉。"
+
+#: includes/admin.php
+msgid "Further down:"
+msgstr "往下："
+
+#: includes/admin.php
+msgctxt "guest list switched on"
+msgid "on"
+msgstr "已開啟"
+
+#: includes/admin.php
+msgctxt "guest list switched off"
+msgid "off"
+msgstr "已關閉"
+
+#: includes/admin.php
+msgid "How a shared picture looks"
+msgstr "分享的圖片看起來像這樣"
+
+#: includes/admin.php
+msgid "Three dishes of your menu as an example, with your logo, colours, address and the QR code to the menu. It changes with them."
+msgstr "以您菜單上的三道菜為例，含您的標誌、顏色、地址和前往菜單的 QR 碼。這些變更時，圖片也會跟著改變。"
+
+#: includes/admin.php
+msgid "Example of a shared guest list"
+msgstr "分享的客人清單範例"
+
+#: includes/admin.php
+msgid "Open it large"
+msgstr "放大開啟"
+
+#: includes/list.php
+msgid "Which dishes guests put on their list: Statistics"
+msgstr "客人把哪些菜加入清單：統計"
+
+#: includes/list.php
+msgid "How guests use it"
+msgstr "客人怎麼使用"
+
+#: includes/list.php
+msgid "Tap + beside a dish."
+msgstr "點一下菜式旁邊的 +。"
+
+#: includes/list.php
+msgid "Show the list to your staff when ordering."
+msgstr "點餐時把清單給服務人員看。"
+
+#: includes/list.php
+msgid "Or share it as a picture with friends (example on the right)."
+msgstr "或把它做成圖片分享給朋友（範例在右邊）。"
+
+#: includes/list.php
+msgid "A \"Share\" button under the list makes a picture of it like a small flyer: your logo, the dishes (without prices), your site's name (with MenuDash Restaurant also your address and phone), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
+msgstr "清單下方的「分享」按鈕會把清單做成像小傳單一樣的圖片：您的標誌、菜式（不含價格）、您網站的名稱（有 MenuDash Restaurant 時還有您的地址和電話），以及前往菜單的 QR 碼。客人可以把它存到相簿，或連同菜單連結傳給朋友。圖片是在客人的手機上產生的，不會傳送任何資料給您。"
+
+#: includes/list.php
+msgid "Three dishes of your menu as an example, with your logo (or site name), colours and the QR code to the menu. It changes with them."
+msgstr "以您菜單上的三道菜作為範例，含您的標誌（或網站名稱）、顏色，以及前往菜單的 QR 碼。它會隨著這些設定一起更新。"
+
+#: includes/list.php
+msgid "Or share it with friends as a picture. This one is made from your menu:"
+msgstr "或做成圖片分享給朋友。這張是用您的菜單做的："
+
+#: includes/admin.php
+msgid "Guest selection"
+msgstr "客人選菜"
+
+#: includes/admin.php
+msgid "The + buttons are on the menu; guests can share their selection as a picture."
+msgstr "菜單上已有 + 按鈕；客人可以把想點的菜做成圖片分享。"
+
+#: includes/admin.php
+msgid "The + buttons are on the menu; sharing the selection is off."
+msgstr "菜單上已有 + 按鈕；分享已關閉。"
+
+#: includes/admin.php
+msgid "Which dishes guests choose: Statistics"
+msgstr "客人選了哪些菜：統計"
+
+#: includes/admin.php
+msgid "Show the selection to your staff when ordering."
+msgstr "點餐時把選好的菜給服務人員看。"
+
+#: includes/admin.php
+msgid "Example of a shared selection"
+msgstr "分享圖片範例"
+
+#: includes/admin.php
+msgid "Show the + buttons and the selection on the menu"
+msgstr "在菜單上顯示 + 按鈕和想點的菜"
+
+#: includes/admin.php
+msgid "Guests can share their selection as a picture"
+msgstr "客人可以把想點的菜做成圖片分享"
+
+#: includes/admin.php
+msgid "Visits from a shared picture show as \"Shared selection\" in MenuDash Statistics."
+msgstr "從分享圖片來的造訪，會在 MenuDash 統計中顯示為「分享的選菜」。"
+
+#: includes/list.php
+#, php-format
+msgid "Guests tap + beside a dish to add it to their selection (on the menu: \"%s\"), then show it to your staff when they order. It shows each dish with its number, in the language the guest reads the menu in and in German for your staff, and guests can mark a dish they have a question about. Nothing is ordered online and nothing is sent: the selection stays on the guest's phone until they close the page."
+msgstr "客人點一下菜式旁的 +，就能把它加入想點的菜（菜單上顯示為「%s」），點餐時給服務人員看。每道菜都會顯示編號、客人閱讀菜單所用的語言，以及給服務人員看的德文名稱；客人也可以標記有疑問的菜。不會在線上點餐，也不會傳送任何資料：選好的菜只保存在客人的手機上，直到關閉頁面。"
+
+#: includes/list.php
+#, php-format
+msgid "A \"%s\" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your address and phone (from MenuDash Restaurant), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
+msgstr "想點的菜下方的「%s」按鈕會把它做成像小傳單一樣的圖片：您的標誌、菜式（不含價格）、您的地址和電話（來自 MenuDash Restaurant），以及前往菜單的 QR 碼。客人可以把它存到相簿，或連同菜單連結傳給朋友。圖片是在客人的手機上產生的，不會傳送任何資料給您。"
+
+#: includes/list.php
+#, php-format
+msgid "A \"%s\" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your site's name (with MenuDash Restaurant also your address and phone), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
+msgstr "想點的菜下方的「%s」按鈕會把它做成像小傳單一樣的圖片：您的標誌、菜式（不含價格）、您網站的名稱（有 MenuDash Restaurant 時還有您的地址和電話），以及前往菜單的 QR 碼。客人可以把它存到相簿，或連同菜單連結傳給朋友。圖片是在客人的手機上產生的，不會傳送任何資料給您。"

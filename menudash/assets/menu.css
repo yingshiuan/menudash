@@ -307,6 +307,9 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 .menudash .mdash-dlg:not(.mdash-list-dlg) { padding-top: 52px; }
 .menudash .mdash-dlg .mdash-close { background: transparent; box-shadow: none; color: var(--mdash-muted); font-size: 30px; }
 .menudash .mdash-dlg .mdash-close:hover { background: rgba(43, 29, 26, .06); color: var(--mdash-ink); }
+/* The ✕ drawn, not the × character: the same height and line as the list's ‹ (16 px, 2.2 px lines). */
+.menudash .mdash-dlg .mdash-close { font-size: 0; }
+.menudash .mdash-dlg .mdash-close::before { content: ""; position: absolute; inset: 0; width: 16px; height: 16px; margin: auto; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.6 1.6l12.8 12.8M14.4 1.6 1.6 14.4' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.6 1.6l12.8 12.8M14.4 1.6 1.6 14.4' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
 /* "+ Add to my list" under the photo (guest list on, phones only). */
 .menudash .mdash-dlg-add-row { margin-top: 14px; text-align: center; }
 .menudash .mdash-dlg-add {
@@ -314,7 +317,11 @@ body.admin-bar .menudash { --mdash-top: 32px; }
   background: var(--mdash-accent); color: var(--mdash-on-accent); font-size: 16px; font-weight: 700;
 }
 .menudash .mdash-dlg-add[hidden] { display: none; }
-.menudash .mdash-dlg-add span { font-size: 20px; line-height: 1; }
+.menudash .mdash-dlg-add-off, .menudash .mdash-dlg-add-on { display: inline-flex; align-items: center; gap: 8px; }
+.menudash .mdash-dlg-add-off > [aria-hidden], .menudash .mdash-dlg-add-on > [aria-hidden] { font-size: 20px; line-height: 1; }
+.menudash .mdash-dlg-add[aria-pressed="true"] .mdash-dlg-add-off, .menudash .mdash-dlg-add:not([aria-pressed="true"]) .mdash-dlg-add-on { display: none; }
+/* On the list: outlined, as the list's buttons; a tap takes it off. */
+.menudash .mdash-dlg-add[aria-pressed="true"] { padding: 9.5px 20.5px; border: 1.5px solid var(--mdash-accent); background: transparent; color: var(--mdash-accent); }
 .menudash .mdash-cap .mdash-name { font-size: 18px; }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -369,6 +376,11 @@ body.admin-bar .menudash { --mdash-top: 32px; }
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M5 0h2v5h5v2H7v5H5V7H0V5h5z'/%3E%3C/svg%3E") center / 100% no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M5 0h2v5h5v2H7v5H5V7H0V5h5z'/%3E%3C/svg%3E") center / 100% no-repeat;
 }
+.menudash .mdash-add.mdash-in .mdash-add-n:empty { /* on the list: a ✓ (a tap takes it off again) */
+  width: 13px; height: 10px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 10'%3E%3Cpath d='M4.6 9.8 0 5.2l1.5-1.5 3.1 3.1L11.5 0 13 1.5z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 10'%3E%3Cpath d='M4.6 9.8 0 5.2l1.5-1.5 3.1 3.1L11.5 0 13 1.5z'/%3E%3C/svg%3E");
+}
 .menudash .mdash-add:hover { background: rgba(36, 63, 102, .08); background: color-mix(in srgb, var(--mdash-accent) 10%, transparent); }
 .menudash .mdash-add.mdash-in, .menudash .mdash-add.mdash-in:hover { background: var(--mdash-accent); color: var(--mdash-on-accent); }
 .menudash .mdash-photo + .mdash-add { position: absolute; right: -8px; bottom: -12px; }
@@ -385,7 +397,7 @@ body.admin-bar .menudash { --mdash-top: 32px; }
   appearance: none; position: fixed; left: 50%; bottom: 16px; z-index: 60; transform: translateX(-50%); /* centred: ↑ is bottom left */
   display: inline-flex; align-items: center; gap: 10px; width: auto; height: 48px; min-height: 0; margin: 0; padding: 0 7px 0 18px;
   border: 0; border-radius: 999px; background: var(--mdash-accent, #243F66); color: var(--mdash-on-accent, #fff);
-  font: 700 15px/1 var(--mdash-sans, sans-serif); letter-spacing: normal; text-transform: none; cursor: pointer;
+  font: 700 15px/1 var(--mdash-sans, sans-serif); letter-spacing: normal; text-transform: none; white-space: nowrap; cursor: pointer; /* centred from 50 %: would wrap at half the width */
   box-shadow: 0 4px 14px rgba(43, 29, 26, .3); transition: bottom .3s ease; /* follows a theme bar that slides away */
 }
 .mdash-listbar[hidden] { display: none; }
@@ -393,7 +405,24 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 .mdash-listbar .mdash-u[lang="zh-Hant"] { font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
 .mdash-listbar[data-ui="en"] .mdash-u:not([data-l="en"]),
 .mdash-listbar[data-ui="de"] .mdash-u:not([data-l="de"]),
-.mdash-listbar[data-ui="zh"] .mdash-u:not([data-l="zh"]) { display: none; }
+.mdash-listbar[data-ui="zh"] .mdash-u:not([data-l="zh"]),
+.mdash-undo[data-ui="en"] .mdash-u:not([data-l="en"]),
+.mdash-undo[data-ui="de"] .mdash-u:not([data-l="de"]),
+.mdash-undo[data-ui="zh"] .mdash-u:not([data-l="zh"]) { display: none; }
+/* "Removed from your list · Undo", a few seconds after a + took a dish off; over the bar. */
+.mdash-undo {
+  position: fixed; left: 50%; bottom: 16px; z-index: 61; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 14px; width: max-content; max-width: calc(100vw - 32px); margin: 0; padding: 0 6px 0 18px; min-height: 48px;
+  border-radius: 999px; background: #2B1D1A; color: #fff; font: 600 15px/1.25 var(--mdash-sans, sans-serif);
+  box-shadow: 0 4px 14px rgba(43, 29, 26, .3);
+}
+.mdash-undo[hidden] { display: none; }
+.mdash-undo .mdash-u[lang="zh-Hant"] { font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+.mdash-undo-b {
+  appearance: none; min-height: 36px; margin: 0; padding: 0 14px; border: 0; border-radius: 999px;
+  background: #fff; color: #2B1D1A; font: 700 15px/1 var(--mdash-sans, sans-serif); letter-spacing: normal; text-transform: none; cursor: pointer;
+}
+.mdash-undo-b:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .mdash-listbar-n {
   display: grid; place-items: center; min-width: 34px; height: 34px; padding: 0 9px; border-radius: 999px;
   background: var(--mdash-on-accent, #fff); color: var(--mdash-accent, #243F66); font-size: 15px; font-variant-numeric: tabular-nums;
@@ -410,9 +439,17 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 .menudash .mdash-list-tip { margin-top: 6px; color: var(--mdash-ink-2); font-size: 17px; line-height: 1.35; }
 .menudash .mdash-list-items { margin: 14px 0 0; padding: 0; border-top: 1.5px solid var(--mdash-ink); list-style: none; }
 .menudash .mdash-li {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "no name price del" "no ctl ctl ctl";
-  column-gap: 12px; row-gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--mdash-line);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "no name price del" "no subs subs subs" "no ctl ctl ctl";
+  column-gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--mdash-line);
 }
+/* With photos: as on the menu, on the right under the price, beside the other languages. */
+.menudash .mdash-list-pics .mdash-li { grid-template-areas: "no name price del" "no subs img img" "no ctl ctl ctl"; }
+.menudash .mdash-li-img { grid-area: img; justify-self: end; display: block; width: 64px; height: 64px; margin-top: 6px; }
+.menudash .mdash-li-img:empty { height: 0; margin: 0; } /* a dish without a photo: no gap */
+.menudash .mdash-li-subs { grid-area: subs; min-width: 0; }
+.menudash .mdash-li-ctl { margin-top: 10px; }
+.menudash .mdash-li-img img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.menudash .mdash-li-sq img { object-fit: cover; border-radius: 8px; }
 .menudash .mdash-li-no { grid-area: no; min-width: 2ch; font-size: 17px; font-weight: 700; line-height: 1.3; font-variant-numeric: tabular-nums; }
 .menudash .mdash-li-name { grid-area: name; min-width: 0; }
 .menudash .mdash-li-name strong { display: block; font-size: 17px; font-weight: 700; line-height: 1.3; } /* as the dish names on the menu */
@@ -444,10 +481,53 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 .menudash .mdash-list-price { margin-top: 2px; color: var(--mdash-ink-2); font-size: 15px; line-height: 1.4; }
 .menudash .mdash-list-total[hidden], .menudash .mdash-list-empty[hidden], .menudash .mdash-list-price[hidden] { display: none; }
 .menudash .mdash-list-own { margin-top: 16px; color: var(--mdash-ink-2); font-size: 15px; line-height: 1.45; }
+/* "Share" under the list, then the picture with "Save as picture" and "Send with the menu link":
+   big buttons, so guests of any age find them. */
+.menudash .mdash-list-share-row { margin-top: 16px; }
+.menudash .mdash-list-share, .menudash .mdash-list-save, .menudash .mdash-list-send {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 50px; padding: 0 20px;
+  border: 1.5px solid var(--mdash-accent); border-radius: 999px; background: var(--mdash-accent); color: var(--mdash-on-accent); font-size: 17px; font-weight: 700;
+}
+.menudash .mdash-list-send { background: transparent; color: var(--mdash-accent); } /* the second choice: outline */
+.menudash .mdash-list-pic-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.menudash .mdash-list-pic-btns button { min-width: 0; padding: 0 12px; }
+.menudash .mdash-list-share[hidden] { display: none; }
+.menudash .mdash-list-share::before, .menudash .mdash-list-send::before { /* an arrow up out of a box: the phone's share sign */
+  content: ""; flex: none; width: 20px; height: 22px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 22'%3E%3Cpath d='M9 3.4 5.7 6.7 4.3 5.3 10 -.4l5.7 5.7-1.4 1.4L11 3.4V14H9zM2 8h4v2H4v10h12V10h-2V8h4v14H2z'/%3E%3C/svg%3E") center / 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 22'%3E%3Cpath d='M9 3.4 5.7 6.7 4.3 5.3 10 -.4l5.7 5.7-1.4 1.4L11 3.4V14H9zM2 8h4v2H4v10h12V10h-2V8h4v14H2z'/%3E%3C/svg%3E") center / 100% no-repeat;
+}
+.menudash .mdash-list-save::before { /* a down arrow into a tray */
+  content: ""; flex: none; width: 20px; height: 20px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M9 1h2v10.6l3.3-3.3 1.4 1.4L10 15.4 4.3 9.7l1.4-1.4L9 11.6zM1 13h2v4h14v-4h2v6H1z'/%3E%3C/svg%3E") center / 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M9 1h2v10.6l3.3-3.3 1.4 1.4L10 15.4 4.3 9.7l1.4-1.4L9 11.6zM1 13h2v4h14v-4h2v6H1z'/%3E%3C/svg%3E") center / 100% no-repeat;
+}
+/* The picture: in place of the list (title and ✕ stay). */
+.menudash .mdash-list-picmode > :not(form, .mdash-list-title, .mdash-list-pic, .mdash-list-back) { display: none; }
+/* A bar on top, as on a phone: ‹ back to the list on the left, the title in the middle, ✕ on the right. */
+.menudash .mdash-list-picmode .mdash-list-title { margin-top: -10px; padding: 0 44px; font-size: 24px; line-height: 40px; text-align: center; }
+.menudash .mdash-list-back {
+  position: absolute; top: 10px; left: 10px; z-index: 1; display: grid; place-items: center; width: 40px; height: 40px;
+  border-radius: 50%; color: var(--mdash-muted);
+}
+.menudash .mdash-list-back[hidden] { display: none; }
+.menudash .mdash-list-back:hover { background: rgba(43, 29, 26, .06); color: var(--mdash-ink); }
+.menudash .mdash-list-back::before { /* ‹ drawn like the ✕: 16 px high, 2.2 px lines */
+  content: ""; width: 9px; height: 16px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 16'%3E%3Cpath d='M7.9 1.1 1.1 8l6.8 6.9' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 16'%3E%3Cpath d='M7.9 1.1 1.1 8l6.8 6.9' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat;
+}
+.menudash .mdash-list-pic[hidden] { display: none; }
+.menudash .mdash-list-pic { margin-top: 14px; text-align: center; }
+.menudash .mdash-dlg .mdash-list-pic-img { /* not the photo view's size (.mdash-dlg img) */
+  display: block; width: auto; max-width: 100%; height: auto; max-height: 56vh; max-height: 56dvh; margin: 0 auto 16px;
+  border-radius: 14px; box-shadow: 0 2px 12px rgba(43, 29, 26, .18), 0 0 0 1px var(--mdash-line);
+  -webkit-touch-callout: default; /* press and hold also offers "Save Image" on an iPhone */
+}
+.menudash .mdash-list-pic-hold { margin: -6px 0 12px; color: var(--mdash-ink-2); font-size: 15px; line-height: 1.4; }
+.menudash .mdash-list-pic-hold[hidden] { display: none; }
 .menudash .mdash-list-actions { margin-top: 8px; }
 .menudash .mdash-list-clear { color: var(--mdash-ink-2); font-size: 16px; text-decoration: underline; }
 .menudash .mdash-list-clear[hidden] { display: none; }
 /* Phones only: the list is for guests at the table. On computers and large tablets (wider than
    781 px, where WordPress themes switch to their phone layout) there is no + and no bar. */
-@media (min-width: 782px) { .menudash .mdash-add, .menudash .mdash-dlg-add, .mdash-listbar { display: none !important; } }
-@media print { .menudash .mdash-add, .mdash-listbar { display: none !important; } }
+@media (min-width: 782px) { .menudash .mdash-add, .menudash .mdash-dlg-add, .mdash-listbar, .mdash-undo { display: none !important; } }
+@media print { .menudash .mdash-add, .mdash-listbar, .mdash-undo { display: none !important; } }

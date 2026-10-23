@@ -65,20 +65,30 @@ function mdash_strings() {
 		'whole_menu' => array( 'de' => 'Ganze Speisekarte', 'en' => 'See the whole menu', 'zh' => '查看完整菜單' ),
 		'empty'      => array( 'de' => 'Die Speisekarte wird gerade aktualisiert.', 'en' => 'The menu is being updated.', 'zh' => '菜單更新中。' ),
 		// The guest's list (MenuDash → Menu → Guest list): + beside each dish, the list to show the staff.
-		'list_add'   => array( 'de' => 'Auf meine Liste', 'en' => 'Add to my list', 'zh' => '加入我的清單' ),
-		'list_title' => array( 'de' => 'Meine Liste', 'en' => 'My list', 'zh' => '我的清單' ),
+		'list_add'   => array( 'de' => 'Zu meiner Auswahl', 'en' => 'Add to my selection', 'zh' => '加入想點的菜' ),
+		'list_on'    => array( 'de' => 'In meiner Auswahl', 'en' => 'In my selection', 'zh' => '已加入想點的菜' ),
+		'list_gone'  => array( 'de' => 'Aus der Auswahl genommen', 'en' => 'Removed from your selection', 'zh' => '已移除' ),
+		'list_undo'  => array( 'de' => 'Rückgängig', 'en' => 'Undo', 'zh' => '復原' ),
+		'list_save'  => array( 'de' => 'Speichern', 'en' => 'Save', 'zh' => '儲存' ), // short: beside "Teilen" under the picture
+		'list_share' => array( 'de' => 'Mit Freunden teilen', 'en' => 'Share with friends', 'zh' => '分享給朋友' ),
+		'list_send'  => array( 'de' => 'Teilen', 'en' => 'Share', 'zh' => '分享' ), // the picture with the menu's link
+		// Sent with the picture and the menu's link ("Teilen" under the picture); %s: the restaurant's name.
+		'list_msg'   => array( 'de' => 'Schau dir die Speisekarte von %s an:', 'en' => 'Have a look at the %s menu:', 'zh' => '來看看 %s 的菜單：' ),
+		'list_hold'  => array( 'de' => 'Bild gedrückt halten, um es in den Fotos zu sichern.', 'en' => 'Press and hold the picture to save it to your photos.', 'zh' => '長按圖片即可儲存到相簿。' ),
+		'list_back'  => array( 'de' => 'Zurück zur Auswahl', 'en' => 'Back to my selection', 'zh' => '返回想點的菜' ),
+		'list_title' => array( 'de' => 'Meine Auswahl', 'en' => 'My selection', 'zh' => '我想點的菜' ),
 		'list_tip'   => array( 'de' => 'Bitte bestellen Sie Ihre Gerichte bei unserem Servicepersonal.', 'en' => 'Please order your dishes with our service staff.', 'zh' => '請向我們的服務人員點餐。' ),
 		'list_ask'   => array( 'de' => 'Ich habe eine Frage dazu', 'en' => 'I have a question about this', 'zh' => '我對此有疑問' ),
 		'list_more'  => array( 'de' => 'Eins mehr', 'en' => 'One more', 'zh' => '加一份' ),
 		'list_less'  => array( 'de' => 'Eins weniger', 'en' => 'One less', 'zh' => '減一份' ),
-		'list_remove' => array( 'de' => 'Von der Liste nehmen', 'en' => 'Remove from the list', 'zh' => '從清單移除' ),
+		'list_remove' => array( 'de' => 'Aus der Auswahl nehmen', 'en' => 'Remove from my selection', 'zh' => '移除' ),
 		'list_total' => array( 'de' => 'Total', 'en' => 'Total', 'zh' => '合計' ),
 		'list_q'     => array( 'de' => 'Frage', 'en' => 'Question', 'zh' => '有疑問' ),
 		'list_price' => array( 'de' => 'Richtpreis. Der Endpreis richtet sich nach Ihrer Bestellung beim Personal.', 'en' => 'A guide only. The final price is based on your order with our staff.', 'zh' => '僅供參考，最終價格以您向服務人員點的餐為準。' ),
-		'list_clear' => array( 'de' => 'Liste leeren', 'en' => 'Clear list', 'zh' => '清空清單' ),
-		'list_sure'  => array( 'de' => 'Die ganze Liste leeren?', 'en' => 'Clear the whole list?', 'zh' => '確定清空整個清單？' ),
-		'list_empty' => array( 'de' => 'Ihre Liste ist leer. Tippen Sie bei einem Gericht auf +.', 'en' => 'Your list is empty. Tap + beside a dish.', 'zh' => '清單是空的。請點選菜式旁的 +。' ),
-		'list_own'   => array( 'de' => 'Die Liste bleibt nur auf Ihrem Handy und wird nicht gesendet.', 'en' => 'The list stays on your phone and is not sent.', 'zh' => '清單只保存在您的手機上，不會傳送出去。' ),
+		'list_clear' => array( 'de' => 'Auswahl leeren', 'en' => 'Clear selection', 'zh' => '全部清空' ),
+		'list_sure'  => array( 'de' => 'Die ganze Auswahl leeren?', 'en' => 'Clear your whole selection?', 'zh' => '確定全部清空？' ),
+		'list_empty' => array( 'de' => 'Ihre Auswahl ist leer. Tippen Sie bei einem Gericht auf +.', 'en' => 'Your selection is empty. Tap + beside a dish.', 'zh' => '還沒有選菜。請點選菜式旁的 +。' ),
+		'list_own'   => array( 'de' => 'Ihre Auswahl bleibt nur auf Ihrem Handy und wird nicht gesendet.', 'en' => 'Your selection stays on your phone and is not sent.', 'zh' => '選好的菜只保存在您的手機上，不會傳送出去。' ),
 	) );
 	return $strings;
 }

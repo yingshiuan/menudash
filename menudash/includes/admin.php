@@ -600,6 +600,13 @@ function mdash_admin_page() {
 			<?php endif; ?>
 			<?php esc_html_e( 'Changes here show there straight away.', 'menudash' ); ?>
 		</p>
+		<?php // Quick links to the cards further down, below the uploads and the check. ?>
+		<p class="mdash-quick">
+			<?php esc_html_e( 'Further down:', 'menudash' ); ?>
+			<a href="#mdash-origin"><?php esc_html_e( 'Meat and fish origin', 'menudash' ); ?></a> ·
+			<a href="#mdash-guest-list"><?php esc_html_e( 'Guest selection', 'menudash' ); ?></a>
+			<span class="mdash-quick-state<?php echo mdash_list_on() ? ' is-on' : ''; ?>"><?php echo mdash_list_on() ? esc_html_x( 'on', 'guest list switched on', 'menudash' ) : esc_html_x( 'off', 'guest list switched off', 'menudash' ); ?></span>
+		</p>
 
 		<div class="mdash-cards">
 			<section class="mdash-card">
@@ -748,13 +755,16 @@ function mdash_admin_page() {
 				<?php do_action( 'menudash_admin_check', $photos ); ?>
 
 				<?php if ( $menu ) : ?>
-					<h3><?php echo esc_html_x( 'Menu', 'restaurant menu (heading)', 'menudash' ); ?> <small>
+					<?php // Every dish: a long table, so folded away; open right after an upload, to check it. ?>
+					<details class="mdash-check-menu"<?php echo $report ? ' open' : ''; ?>>
+					<summary><h3><?php echo esc_html_x( 'Menu', 'restaurant menu (heading)', 'menudash' ); ?> <small>
 					<?php
 					/* translators: 1: dishes with a photo, 2: all dishes. */
 					echo esc_html( sprintf( _n( '%1$d of %2$d dish with a photo', '%1$d of %2$d dishes with a photo', (int) $menu['dishes'], 'menudash' ), $with, (int) $menu['dishes'] ) );
 					?>
-					</small></h3>
+					</small></h3></summary>
 					<?php mdash_admin_dish_table( $menu, $photos, $match ); ?>
+					</details>
 				<?php endif; ?>
 			</section>
 		<?php endif; ?>
@@ -895,7 +905,7 @@ function mdash_admin_page() {
 						</div>
 					<?php endforeach; ?>
 				</div>
-				<?php submit_button( __( 'Save icons and filters', 'menudash' ), 'secondary', 'save_icons', false ); ?>
+				<?php submit_button( __( 'Save icons and filters', 'menudash' ), 'primary', 'save_icons', false ); ?>
 			</form>
 		</section>
 		<?php endif; ?>

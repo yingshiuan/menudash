@@ -265,3 +265,11 @@
     if (!own.hidden) own.querySelector("input").focus();
   });
 })();
+
+/* Guest list card: "share as a picture" can only be ticked while the list is on. */
+(function () {
+  var on = document.querySelector('.mdash-list-card input[name="list_on"]');
+  var share = document.querySelector('.mdash-list-card input[name="list_share"]');
+  if (!on || !share) return;
+  on.addEventListener("change", function () { share.disabled = !on.checked; });
+})();

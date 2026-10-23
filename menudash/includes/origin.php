@@ -298,7 +298,7 @@ function mdash_origin_admin_card() {
 	$empty = array( 'product' => '', 'own' => array( 'de' => '', 'en' => '', 'zh' => '' ), 'countries' => array(), 'ask' => false );
 	$rows  = $o['rows'] ? $o['rows'] : array( $empty );
 	?>
-	<section class="mdash-card mdash-origin-card">
+	<section class="mdash-card mdash-origin-card" id="mdash-origin">
 		<h2><?php esc_html_e( 'Meat and fish origin (Herkunft)', 'menudash' ); ?></h2>
 		<p>
 		<?php
