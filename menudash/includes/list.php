@@ -17,11 +17,14 @@ const MDASH_LIST_OPTION       = 'menudash_list';
 const MDASH_LIST_SHARE_OPTION = 'menudash_list_share'; // '1' (the default) or '0'
 
 add_action( 'admin_post_menudash_list', 'mdash_handle_list' );
-// The menu page, kept for a day (mdash_list_menu_url()): looked up again once a page is saved.
-add_action( 'save_post_page', 'mdash_list_forget_menu_page' );
+// The menu page, kept for a day (mdash_list_menu_url()): looked up again once a page is saved,
+// published, unpublished or put in the bin.
+add_action( 'transition_post_status', 'mdash_list_forget_menu_page', 10, 3 );
 
-function mdash_list_forget_menu_page() {
-	delete_transient( 'menudash_menu_pages' );
+function mdash_list_forget_menu_page( $new_status, $old_status, $post ) {
+	if ( 'page' === $post->post_type ) {
+		delete_transient( 'menudash_menu_pages' );
+	}
 }
 
 /** True when the + buttons and the list show on the menu. */
@@ -314,9 +317,9 @@ function mdash_list_admin_card() {
 				echo esc_html(
 					sprintf(
 						function_exists( 'mdash_detail' )
-							/* translators: %s: the button's name on the menu, e.g. "Mit Freunden teilen". */
+							/* translators: %s: the button's name on the menu, e.g. "Als Bild teilen". */
 							? __( 'A "%s" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your address and phone (from MenuDash Restaurant), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest\'s phone; nothing is sent to you.', 'menudash' )
-							/* translators: %s: the button's name on the menu, e.g. "Mit Freunden teilen". */
+							/* translators: %s: the button's name on the menu, e.g. "Als Bild teilen". */
 							: __( 'A "%s" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your site\'s name (with MenuDash Restaurant also your address and phone), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest\'s phone; nothing is sent to you.', 'menudash' ),
 						$words['list_share'][ $lang ]
 					)

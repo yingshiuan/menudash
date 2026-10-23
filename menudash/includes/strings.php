@@ -70,7 +70,7 @@ function mdash_strings() {
 		'list_gone'  => array( 'de' => 'Aus der Auswahl genommen', 'en' => 'Removed from your selection', 'zh' => '已移除' ),
 		'list_undo'  => array( 'de' => 'Rückgängig', 'en' => 'Undo', 'zh' => '復原' ),
 		'list_save'  => array( 'de' => 'Speichern', 'en' => 'Save', 'zh' => '儲存' ), // short: beside "Teilen" under the picture
-		'list_share' => array( 'de' => 'Mit Freunden teilen', 'en' => 'Share with friends', 'zh' => '分享給朋友' ),
+		'list_share' => array( 'de' => 'Als Bild teilen', 'en' => 'Share as a picture', 'zh' => '分享圖片' ),
 		'list_send'  => array( 'de' => 'Teilen', 'en' => 'Share', 'zh' => '分享' ), // the picture with the menu's link
 		// Sent with the picture and the menu's link ("Teilen" under the picture); %s: the restaurant's name.
 		'list_msg'   => array( 'de' => 'Schau dir die Speisekarte von %s an:', 'en' => 'Have a look at the %s menu:', 'zh' => '來看看 %s 的菜單：' ),
