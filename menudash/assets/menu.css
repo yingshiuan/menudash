@@ -343,11 +343,18 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 .mdash-jumpnav .mdash-langs { margin: 0 0 0 auto; }
 .mdash-jump-slot .mdash-jump-link { visibility: hidden; }
 /* Bottom left on phones: on the right it would cover the dishes' + buttons. */
-.mdash-totop {
-  position: fixed; left: 16px; bottom: 16px; z-index: 60; width: 42px; height: 42px; border: 0; border-radius: 50%;
-  background: var(--mdash-accent, #243F66); color: var(--mdash-on-accent, #fff); font-size: 20px; line-height: 1; cursor: pointer;
-  box-shadow: 0 4px 14px rgba(43, 29, 26, .25); transition: bottom .3s ease;
+.mdash-totop { /* frosted glass, the arrow drawn bold in the menu's colour; a theme may restyle it */
+  position: fixed; left: 16px; bottom: 16px; z-index: 60; display: grid; place-items: center; width: 42px; height: 42px; padding: 0;
+  border: 1px solid rgba(255, 255, 255, .6); border-radius: 50%; cursor: pointer;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 253, 250, .55)); color: var(--mdash-accent, #243F66);
+  -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85), 0 6px 18px rgba(43, 29, 26, .22); transition: bottom .3s ease;
 }
+.mdash-totop span { /* the text ↑ is thin and depends on the font: drawn instead */
+  display: block; width: 22px; height: 22px; font-size: 0; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20V5M5.5 11.5 12 5l6.5 6.5'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20V5M5.5 11.5 12 5l6.5 6.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+@media (prefers-reduced-transparency: reduce) { .mdash-totop { background: rgba(255, 253, 250, .97); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 .mdash-totop[hidden] { display: none; }
 /* Computers have no + buttons (phones only), so there ↑ goes back to the usual right corner. */
 @media (min-width: 782px) { .mdash-totop { left: auto; right: 16px; } }
@@ -383,6 +390,16 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 }
 .menudash .mdash-add:hover { background: rgba(36, 63, 102, .08); background: color-mix(in srgb, var(--mdash-accent) 10%, transparent); }
 .menudash .mdash-add.mdash-in, .menudash .mdash-add.mdash-in:hover { background: var(--mdash-accent); color: var(--mdash-on-accent); }
+/* Not on the list yet: a light see-through circle with a bright edge and a soft shadow (glass), so
+   it reads over a photo and on any page colour. No backdrop blur: on 100+ dishes that many blurred
+   layers make scrolling heavy on older phones. A theme may restyle it. */
+.menudash .mdash-add:not(.mdash-in) {
+  border: 1px solid rgba(255, 255, 255, .6);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .82), rgba(255, 253, 250, .66));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85), 0 3px 10px rgba(43, 29, 26, .2);
+}
+.menudash .mdash-add:not(.mdash-in):hover { background: rgba(255, 255, 255, .9); }
+@media (prefers-reduced-transparency: reduce) { .menudash .mdash-add:not(.mdash-in) { background: rgba(255, 253, 250, .97); } }
 .menudash .mdash-photo + .mdash-add { position: absolute; right: -8px; bottom: -12px; }
 .menudash .mdash-side > .mdash-add:not(.mdash-photo + .mdash-add) { margin-right: -8px; } /* in line with those on a photo */
 @container (min-width: 560px) {

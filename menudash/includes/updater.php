@@ -66,8 +66,12 @@ function mdash_parse_release( $data ) {
 	if ( '' === $package ) {
 		return null;
 	}
+	// "Tested up to: 7.1" in the release notes: the newest WordPress the release was tested with,
+	// so the Updates screen doesn't say "Not tested".
+	$tested = preg_match( '/Tested up to:?\s*(?:WordPress\s*)?(\d+\.\d+(?:\.\d+)?)/i', (string) ( $data['body'] ?? '' ), $m ) ? $m[1] : '';
 	return array(
 		'version' => $version,
+		'tested'  => $tested,
 		'package' => $package,
 		'url'     => 'https://github.com/' . MDASH_REPO . '/releases/tag/' . rawurlencode( (string) $data['tag_name'] ),
 		'notes'   => substr( (string) ( $data['body'] ?? '' ), 0, 20000 ),
@@ -92,6 +96,7 @@ function mdash_update_check( $update, $plugin_data, $plugin_file ) {
 		'url'          => $release['url'],
 		'requires'     => '6.3',
 		'requires_php' => '7.4',
+		'tested'       => isset( $release['tested'] ) ? $release['tested'] : '',
 		'icons'        => mdash_update_icons(),
 		'banners'      => mdash_update_banners(),
 	);
@@ -134,6 +139,7 @@ function mdash_update_details( $result, $action, $args ) {
 		'homepage'      => 'https://insdash.ch/projects/menudash/',
 		'requires'      => '6.3',
 		'requires_php'  => '7.4',
+		'tested'        => isset( $release['tested'] ) ? $release['tested'] : '',
 		'last_updated'  => $release['date'],
 		'download_link' => $release['package'],
 		'icons'         => mdash_update_icons(),
