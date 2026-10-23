@@ -73,7 +73,7 @@ function mdash_strings() {
 		'list_share' => array( 'de' => 'Als Bild teilen', 'en' => 'Share as a picture', 'zh' => '分享圖片' ),
 		'list_send'  => array( 'de' => 'Teilen', 'en' => 'Share', 'zh' => '分享' ), // the picture with the menu's link
 		// Sent with the picture and the menu's link ("Teilen" under the picture); %s: the restaurant's name.
-		'list_msg'   => array( 'de' => 'Schau dir die Speisekarte von %s an:', 'en' => 'Have a look at the %s menu:', 'zh' => '來看看 %s 的菜單：' ),
+		'list_msg'   => array( 'de' => 'Das ist meine Auswahl. Schau dir die Speisekarte von %s an:', 'en' => 'This is my selection. Have a look at the %s menu:', 'zh' => '這是我想點的菜。來看看 %s 的菜單：' ),
 		'list_hold'  => array( 'de' => 'Bild gedrückt halten, um es in den Fotos zu sichern.', 'en' => 'Press and hold the picture to save it to your photos.', 'zh' => '長按圖片即可儲存到相簿。' ),
 		'list_back'  => array( 'de' => 'Zurück zur Auswahl', 'en' => 'Back to my selection', 'zh' => '返回想點的菜' ),
 		'list_title' => array( 'de' => 'Meine Auswahl', 'en' => 'My selection', 'zh' => '我想點的菜' ),

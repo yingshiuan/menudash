@@ -79,6 +79,19 @@ function mdash_parse_release( $data ) {
 	);
 }
 
+/**
+ * The tested WordPress version for WordPress's compatibility line. "7.1" from the notes covers
+ * every 7.1.x, as on wordpress.org; WordPress compares it with its full version (7.1.3).
+ */
+function mdash_update_tested( $release ) {
+	$tested = isset( $release['tested'] ) ? (string) $release['tested'] : '';
+	$wp     = preg_replace( '/-.*$/', '', (string) get_bloginfo( 'version' ) );
+	if ( preg_match( '/^\d+\.\d+$/', $tested ) && 0 === strpos( $wp . '.', $tested . '.' ) ) {
+		return $wp;
+	}
+	return $tested;
+}
+
 /** WordPress's update check. It compares the versions itself and only needs ours. */
 function mdash_update_check( $update, $plugin_data, $plugin_file ) {
 	if ( plugin_basename( MENUDASH_FILE ) !== $plugin_file ) {
@@ -96,7 +109,7 @@ function mdash_update_check( $update, $plugin_data, $plugin_file ) {
 		'url'          => $release['url'],
 		'requires'     => '6.3',
 		'requires_php' => '7.4',
-		'tested'       => isset( $release['tested'] ) ? $release['tested'] : '',
+		'tested'       => mdash_update_tested( $release ),
 		'icons'        => mdash_update_icons(),
 		'banners'      => mdash_update_banners(),
 	);
@@ -139,7 +152,7 @@ function mdash_update_details( $result, $action, $args ) {
 		'homepage'      => 'https://insdash.ch/projects/menudash/',
 		'requires'      => '6.3',
 		'requires_php'  => '7.4',
-		'tested'        => isset( $release['tested'] ) ? $release['tested'] : '',
+		'tested'        => mdash_update_tested( $release ),
 		'last_updated'  => $release['date'],
 		'download_link' => $release['package'],
 		'icons'         => mdash_update_icons(),
