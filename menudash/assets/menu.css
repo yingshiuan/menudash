@@ -400,13 +400,18 @@ body.admin-bar .menudash { --mdash-top: 32px; }
 }
 .menudash .mdash-add:not(.mdash-in):hover { background: rgba(255, 255, 255, .9); }
 @media (prefers-reduced-transparency: reduce) { .menudash .mdash-add:not(.mdash-in) { background: rgba(255, 253, 250, .97); } }
-.menudash .mdash-photo + .mdash-add { position: absolute; right: -8px; bottom: -12px; }
-.menudash .mdash-side > .mdash-add:not(.mdash-photo + .mdash-add) { margin-right: -8px; } /* in line with those on a photo */
+/* Right under the photo's corner, its edge in line with the prices: beside a round plate it
+   just touches the plate's edge, never the food (a + inside the corner would cover the rim, as
+   the free corner of a round photo holds only a circle of 17 % of its width). The row gets 10 px
+   more at the bottom for it. */
+.menudash .mdash-photo + .mdash-add { position: absolute; right: 0; bottom: -20px; }
+.menudash.mdash-has-list .mdash-dish:has(.mdash-photo + .mdash-add) { padding-bottom: 24px; }
 @container (min-width: 560px) {
-  /* In the photo's column: on its corner, or at the top where a dish has no photo. */
+  /* In the photo's column: under its corner, or at the top where a dish has no photo. */
   .menudash .mdash-add { grid-column: 4; grid-row: 1; justify-self: end; /* in one line with those on a photo */ }
-  .menudash .mdash-photo + .mdash-add { position: relative; right: auto; bottom: auto; justify-self: end; align-self: end; margin: 0 -8px -12px 0; } /* as on a phone */
+  .menudash .mdash-photo + .mdash-add { position: relative; right: auto; bottom: auto; justify-self: end; align-self: end; margin: 0 0 -20px 0; } /* as on a phone */
 }
+@media (min-width: 782px) { .menudash.mdash-has-list .mdash-dish:has(.mdash-photo + .mdash-add) { padding-bottom: 14px; } } /* no + there */
 
 /* The bar that opens the list, fixed at the bottom; menu.js moves it out of the menu box and
    gives it the menu's colours. It shows the words of the menu's interface language (data-ui). */
