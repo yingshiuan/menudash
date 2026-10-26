@@ -9,6 +9,17 @@
   var LANG_KEY = "menudash-lang";
   var VIEWS = ["all", "en", "de", "zh"];
   var HTML_LANG = { en: "en", de: "de", zh: "zh-Hant" };
+  // Where this script comes from: the share picture's two helpers are loaded only from MenuDash's
+  // own assets on this site or that host (a CDN), never from an address written in the page.
+  var OWN_ORIGIN = (function () {
+    try { return new URL(document.currentScript.src).origin; } catch (e) { return location.origin; }
+  })();
+  function ownAsset(src) {
+    try {
+      var u = new URL(src, location.href);
+      return (u.origin === location.origin || u.origin === OWN_ORIGIN) && /\/assets\/(list-picture|vendor\/qrcode)\.js$/.test(u.pathname);
+    } catch (e) { return false; }
+  }
 
   function browserUi() {
     var n = (navigator.language || "").slice(0, 2);
@@ -467,12 +478,18 @@
     var priceNote = dlg.querySelector(".mdash-list-price");
     var shareBtn = dlg.querySelector(".mdash-list-share"), canvasOk = !!document.createElement("canvas").getContext;
     var labels = dlg.querySelector(".mdash-list-labels");
+    // The two hints: a line over the dishes while the selection is empty, and after the first +
+    // of this visit a few seconds of "Your selection is down here" over the bar. Nothing is stored
+    // for them: a guest who comes back to the page with a selection doesn't get the note again.
+    var hint = root.querySelector(".mdash-list-hint");
+    var firstSec = adds.length && adds[0].closest(".mdash-section");
+    if (hint && firstSec) firstSec.parentNode.insertBefore(hint, firstSec); // in that box, in its language
+    else if (hint) hint.parentNode.removeChild(hint);
+    var first = root.querySelector(".mdash-list-first"), firstDone = false, firstTimer = 0;
     function words(name) {
       try { return JSON.parse(labels.getAttribute("data-" + name)); } catch (e) { return {}; }
     }
     var more = words("more"), less = words("less"), ask = words("ask"), qword = words("qword"), remove = words("remove");
-    var sure = {};
-    try { sure = JSON.parse(dlg.getAttribute("data-sure")); } catch (e) { /* plain confirm */ }
 
     // [{ k: dish key, n: how many, q: 1 when the guest has a question, d: what the list shows of
     // the dish }], in the order added. The list follows the guest from page to page (the specials
@@ -628,6 +645,8 @@
       });
       items.forEach(function (it) { count += it.n; });
       bar.hidden = count === 0;
+      if (hint) hint.hidden = count > 0;
+      if (count === 0) hideFirst();
       bar.querySelector(".mdash-listbar-n").textContent = String(count);
       place();
       if (dlg.open) render();
@@ -649,7 +668,8 @@
       bar.classList.add("mdash-bump");
     }
     // A + (or the photo view's button) puts the dish on the list, or takes it off when it is on
-    // it already, however many: "Undo" then puts it back for a few seconds, as it was.
+    // it already, however many: "Undo" then puts it back for a few seconds, as it was. "Clear"
+    // under the list empties it at once, with the same note to bring it all back.
     var undo = root.querySelector(".mdash-undo");
     var undone = null, undoTimer = 0;
     function hideUndo() {
@@ -657,30 +677,55 @@
       undone = null;
       if (undo) undo.hidden = true;
     }
-    function toggle(k) {
-      var it = find(k);
-      if (!it) {
-        hideUndo();
-        change(k, 1);
-        bump();
-        return;
-      }
-      var at = items.indexOf(it);
-      items.splice(at, 1);
-      update();
+    function showUndo(what) { // { it, at } for one dish, { all: [...] } for the whole list
       if (!undo) return;
-      undone = { it: it, at: at };
+      undone = what;
+      undo.querySelector(".mdash-undo-t").hidden = !!what.all;
+      undo.querySelector(".mdash-undo-all").hidden = !what.all;
       undo.hidden = false;
+      hideFirst(); // one note at a time
       undo.style.bottom = bottomCover() + 12 + (bar.hidden ? 0 : 60) + "px"; // over the bar, if it is still there
       clearTimeout(undoTimer);
       undoTimer = setTimeout(hideUndo, 5000);
+    }
+    function hideFirst() {
+      clearTimeout(firstTimer);
+      if (first) first.hidden = true;
+    }
+    function showFirst() {
+      if (!first || firstDone) return;
+      firstDone = true;
+      first.hidden = false;
+      place();
+      firstTimer = setTimeout(hideFirst, 4000);
+    }
+    function toggle(k) {
+      var it = find(k);
+      if (!it) {
+        var wasEmpty = !items.length;
+        hideUndo();
+        change(k, 1);
+        bump();
+        if (wasEmpty) showFirst();
+        return;
+      }
+      hideFirst();
+      var at = items.indexOf(it);
+      items.splice(at, 1);
+      update();
+      showUndo({ it: it, at: at });
     }
     adds.forEach(function (b) {
       b.addEventListener("click", function () { toggle(b.getAttribute("data-add")); });
     });
     if (undo) {
       undo.querySelector(".mdash-undo-b").addEventListener("click", function () {
-        if (undone && !find(undone.it.k)) items.splice(Math.min(undone.at, items.length), 0, undone.it);
+        if (undone && undone.all) {
+          // The cleared list back, as it was; a dish added since stays, after it.
+          items = undone.all.concat(items.filter(function (x) { return !undone.all.some(function (y) { return y.k === x.k; }); }));
+        } else if (undone && !find(undone.it.k)) {
+          items.splice(Math.min(undone.at, items.length), 0, undone.it);
+        }
         hideUndo();
         update();
         bump();
@@ -770,7 +815,7 @@
         return new Promise(function (done) {
           if (ready()) return done(true);
           var src = dlg.getAttribute(attr);
-          if (!src) return done(false);
+          if (!src || !ownAsset(src)) return done(false);
           var js = document.createElement("script"), t = setTimeout(function () { done(false); }, 6000);
           js.onload = function () { clearTimeout(t); done(ready()); };
           js.onerror = function () { clearTimeout(t); done(false); };
@@ -909,11 +954,12 @@
       }
     })();
     dlg.querySelector(".mdash-list-clear").addEventListener("click", function () {
-      if (!confirm(say(sure) || "?")) return;
+      var all = items.slice();
       hideUndo();
       items = [];
       update();
       dlg.close();
+      showUndo({ all: all }); // after closing: the note sits over the page, not under the list
     });
     dlg.addEventListener("click", function (ev) {
       var r = dlg.getBoundingClientRect();
@@ -923,18 +969,22 @@
     // The bar: out of the menu box, in the menu's colours and interface language.
     document.body.appendChild(bar);
     if (undo) document.body.appendChild(undo);
+    if (first) document.body.appendChild(first);
     var cs = getComputedStyle(root);
     ["--mdash-accent", "--mdash-on-accent", "--mdash-sans"].forEach(function (p) {
       bar.style.setProperty(p, cs.getPropertyValue(p));
       if (undo) undo.style.setProperty(p, cs.getPropertyValue(p));
+      if (first) first.style.setProperty(p, cs.getPropertyValue(p));
     });
     function place() {
       // Not while the list is open: the page under it can't be measured then.
       if (!bar.hidden && !dlg.open) bar.style.bottom = bottomCover() + 12 + "px";
       if (undo && !undo.hidden && !dlg.open) undo.style.bottom = bottomCover() + 12 + (bar.hidden ? 0 : 60) + "px";
+      if (first && !first.hidden && !dlg.open) first.style.bottom = bottomCover() + 12 + 60 + "px";
     }
     bar.addEventListener("click", function () {
       hideUndo();
+      hideFirst();
       render();
       dlg.showModal();
     });
@@ -945,6 +995,7 @@
     function lang() {
       bar.setAttribute("data-ui", ui());
       if (undo) undo.setAttribute("data-ui", ui());
+      if (first) first.setAttribute("data-ui", ui());
       if (dlg.open) render();
     }
     if (window.MutationObserver) new MutationObserver(lang).observe(root, { attributes: true, attributeFilter: ["data-ui", "data-lang"] });

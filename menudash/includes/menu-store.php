@@ -30,6 +30,29 @@ function mdash_dir( $sub = '' ) {
 	return $dir;
 }
 
+/**
+ * The index file of photos/ or icons/: index-<random>.json, so the web can't fetch it by its
+ * name (it lists every photo the owner uploaded, also those not on the menu yet), even on
+ * servers that ignore .htaccess. It stays with the files, so a reinstall finds it again;
+ * an index.json of version 2.12 and older is renamed the first time.
+ */
+function mdash_index_file( $sub ) {
+	static $found = array();
+	if ( isset( $found[ $sub ] ) ) {
+		return $found[ $sub ];
+	}
+	$dir   = mdash_dir( $sub );
+	$files = glob( "$dir/index-*.json" );
+	if ( $files ) {
+		return $found[ $sub ] = $files[0];
+	}
+	$file = "$dir/index-" . strtolower( wp_generate_password( 16, false ) ) . '.json';
+	if ( file_exists( "$dir/index.json" ) && ! @rename( "$dir/index.json", $file ) ) { // phpcs:ignore
+		return $found[ $sub ] = "$dir/index.json"; // can't rename: keep the old one working
+	}
+	return $found[ $sub ] = $file;
+}
+
 function mdash_url( $path = '' ) {
 	$up = wp_upload_dir( null, false );
 	return set_url_scheme( trailingslashit( $up['baseurl'] ) . 'menudash/' . ltrim( $path, '/' ) );

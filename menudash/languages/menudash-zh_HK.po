@@ -1469,3 +1469,10 @@ msgstr "想點的菜下方的「%s」按鈕會把它做成像小傳單一樣的�
 #, php-format
 msgid "A \"%s\" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your site's name (with MenuDash Restaurant also your address and phone), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
 msgstr "想點的菜下方的「%s」按鈕會把它做成像小傳單一樣的圖片：您的標誌、菜式（不含價格）、您網站的名稱（有 MenuDash Restaurant 時還有您的地址和電話），以及前往菜單的 QR 碼。客人可以把它存到相簿，或連同菜單連結傳給朋友。圖片是在客人的手機上產生的，不會傳送任何資料給您。"
+
+#, php-format
+msgid "Only the first %d rows were read."
+msgstr "只讀取了前 %d 行。"
+
+msgid "The file is too large to be a menu."
+msgstr "檔案太大，不像是菜單。"

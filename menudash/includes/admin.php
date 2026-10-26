@@ -770,6 +770,8 @@ function mdash_admin_page() {
 		<?php endif; ?>
 		<?php mdash_origin_admin_card(); ?>
 		<?php mdash_list_admin_card(); ?>
+		<?php // The server's folder path and limits: for administrators only, not for Editors. ?>
+		<?php if ( current_user_can( 'manage_options' ) ) : ?>
 		<details class="mdash-card mdash-diag">
 			<summary><?php esc_html_e( 'Server details', 'menudash' ); ?></summary>
 			<?php
@@ -793,6 +795,7 @@ function mdash_admin_page() {
 			?>
 			<table class="widefat striped"><?php foreach ( $rows as $k => $v ) : ?><tr><th><?php echo esc_html( $k ); ?></th><td><?php echo esc_html( $v ); ?></td></tr><?php endforeach; ?></table>
 		</details>
+		<?php endif; ?>
 		<?php elseif ( 'menudash-design' !== $page ) : ?>
 		<?php /** An add-on's tab. */ do_action( 'menudash_admin_tab', $page ); ?>
 		<?php elseif ( 'menudash-design' === $page ) : ?>

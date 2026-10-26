@@ -73,9 +73,13 @@ function mdash_list_markup() {
 	ob_start();
 	?>
 <button type="button" class="mdash-listbar" hidden aria-haspopup="dialog"><?php echo mdash_ui( 'list_title' ); // phpcs:ignore -- fixed strings ?> <span class="mdash-listbar-n">0</span></button>
-<?php // A dish taken off with its + on the menu: a few seconds to put it back. ?>
-<p class="mdash-undo" hidden role="status"><span class="mdash-undo-t"><?php echo mdash_ui( 'list_gone' ); // phpcs:ignore ?></span> <button type="button" class="mdash-undo-b"><?php echo mdash_ui( 'list_undo' ); // phpcs:ignore ?></button></p>
-<dialog class="mdash-dlg mdash-list-dlg" aria-labelledby="mdash-list-title"<?php if ( mdash_list_share_on() ) : ?> data-site="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" data-logo="<?php echo esc_url( mdash_list_logo() ); ?>" data-place="<?php echo esc_attr( wp_json_encode( mdash_list_place() ) ); ?>" data-menu="<?php echo esc_url( mdash_list_menu_url() ); ?>" data-qr="<?php echo esc_url( MENUDASH_URL . 'assets/vendor/qrcode.js?ver=1.4.4' ); ?>" data-pic="<?php echo esc_url( MENUDASH_URL . 'assets/list-picture.js?ver=' . MENUDASH_VERSION ); ?>"<?php echo mdash_list_previewing() ? ' data-preview' : ''; ?> data-msg="<?php echo esc_attr( wp_json_encode( mdash_strings()['list_msg'] ) ); ?>"<?php endif; ?> data-sure="<?php echo esc_attr( wp_json_encode( mdash_strings()['list_sure'] ) ); ?>">
+<?php // A dish taken off with its + on the menu, or the whole selection cleared: a few seconds to put it back. ?>
+<p class="mdash-undo" hidden role="status"><span class="mdash-undo-t"><?php echo mdash_ui( 'list_gone' ); // phpcs:ignore ?></span><span class="mdash-undo-all" hidden><?php echo mdash_ui( 'list_cleared' ); // phpcs:ignore ?></span> <button type="button" class="mdash-undo-b"><?php echo mdash_ui( 'list_undo' ); // phpcs:ignore ?></button></p>
+<?php // While the selection is empty, on a phone: what the + is for. menu.js puts it over the first dish with a + (specials, lunch or menu); nothing is stored for it. ?>
+<p class="mdash-list-hint" hidden><?php echo mdash_ui( 'list_hint' ); // phpcs:ignore ?></p>
+<?php // After the first + of the visit: where the selection is, for a few seconds over the bar (it can't be tapped, so it never gets in the way). ?>
+<p class="mdash-list-first" hidden role="status"><?php echo mdash_ui( 'list_first' ); // phpcs:ignore ?></p>
+<dialog class="mdash-dlg mdash-list-dlg" aria-labelledby="mdash-list-title"<?php if ( mdash_list_share_on() ) : ?> data-site="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" data-logo="<?php echo esc_url( mdash_list_logo() ); ?>" data-place="<?php echo esc_attr( wp_json_encode( mdash_list_place() ) ); ?>" data-menu="<?php echo esc_url( mdash_list_menu_url() ); ?>" data-qr="<?php echo esc_url( MENUDASH_URL . 'assets/vendor/qrcode.js?ver=1.4.4' ); ?>" data-pic="<?php echo esc_url( MENUDASH_URL . 'assets/list-picture.js?ver=' . MENUDASH_VERSION ); ?>"<?php echo mdash_list_previewing() ? ' data-preview' : ''; ?> data-msg="<?php echo esc_attr( wp_json_encode( mdash_strings()['list_msg'] ) ); ?>"<?php endif; ?>>
 	<form method="dialog"><button class="mdash-close" aria-label="<?php echo esc_attr( mdash_ui_plain( 'close' ) ); ?>">&times;</button></form>
 	<?php if ( mdash_list_share_on() ) : ?>
 	<?php // While the picture shows: ‹ back to the list, top left (the ✕ stays top right). ?>
@@ -97,6 +101,8 @@ function mdash_list_markup() {
 		<p class="mdash-list-pic-hold" hidden><?php echo mdash_ui( 'list_hold' ); // phpcs:ignore ?></p>
 		<?php // Side by side: save on the left, share (with the menu's link) on the right. ?>
 		<p class="mdash-list-pic-btns"><button type="button" class="mdash-list-save"><?php echo mdash_ui( 'list_save' ); // phpcs:ignore ?></button><button type="button" class="mdash-list-send"><?php echo mdash_ui( 'list_send' ); // phpcs:ignore ?></button></p>
+		<?php // What the two buttons do, and that the order is still given to the staff. ?>
+		<p class="mdash-list-pic-tip"><?php echo mdash_ui( 'list_pictip' ); // phpcs:ignore ?></p>
 	</div>
 	<?php endif; ?>
 	<p class="mdash-list-actions"><button type="button" class="mdash-list-clear"><?php echo mdash_ui( 'list_clear' ); // phpcs:ignore ?></button></p>

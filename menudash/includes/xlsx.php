@@ -26,7 +26,8 @@ if ( defined( 'MENUDASH_PURE' ) && ! function_exists( '__' ) ) {
 	}
 }
 
-const MDASH_XLSX_MAX_PART  = 8388608;  // 8 MB per XML part (a 1'000-dish menu is about 0.5 MB).
+const MDASH_XLSX_MAX_PART  = 4194304;  // 4 MB per XML part (a 1'000-dish menu is about 0.5 MB).
+const MDASH_XLSX_MAX_ALL   = 16777216; // 16 MB for all the parts read from one file (the XML parser's memory is not counted in PHP's memory_limit).
 const MDASH_XLSX_MAX_PARTS = 400;      // Entries in the ZIP.
 const MDASH_XLSX_MAX_ROWS  = 3000;
 const MDASH_XLSX_MAX_COLS  = 60;
@@ -65,6 +66,13 @@ function mdash_xlsx_part( $zip, $name, &$error ) {
 	$xml = $zip->getFromName( $name, MDASH_XLSX_MAX_PART + 1 );
 	if ( false === $xml || strlen( $xml ) > MDASH_XLSX_MAX_PART ) {
 		$error = __( 'A part of the file is too large to be a menu.', 'menudash' );
+		return null;
+	}
+	static $read = array(); // bytes read so far, per open file
+	$file        = spl_object_id( $zip );
+	$read[ $file ] = ( isset( $read[ $file ] ) ? $read[ $file ] : 0 ) + strlen( $xml );
+	if ( $read[ $file ] > MDASH_XLSX_MAX_ALL ) {
+		$error = __( 'The file is too large to be a menu.', 'menudash' );
 		return null;
 	}
 	if ( preg_match( '/<!DOCTYPE|<!ENTITY/i', $xml ) ) {

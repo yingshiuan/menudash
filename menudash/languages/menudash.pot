@@ -1583,3 +1583,10 @@ msgstr ""
 #, php-format
 msgid "A \"%s\" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your site's name (with MenuDash Restaurant also your address and phone), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
 msgstr ""
+
+#, php-format
+msgid "Only the first %d rows were read."
+msgstr ""
+
+msgid "The file is too large to be a menu."
+msgstr ""

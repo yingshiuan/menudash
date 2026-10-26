@@ -4,7 +4,7 @@
  *
  * A custom SVG is cleaned (includes/svg-clean.php) and drawn through the same <symbol>
  * sprite as the defaults. A custom PNG/JPEG/WebP is resized to 96 px and shown as an
- * <img>. Custom icons live in uploads/menudash/icons/ with an index.json, beside the
+ * <img>. Custom icons live in uploads/menudash/icons/ with an index (mdash_index_file()), beside the
  * photos, so updating or reinstalling the plugin keeps them.
  */
 
@@ -70,7 +70,7 @@ function mdash_chip_counts( $menu ) {
 function mdash_icon_index( $fresh = false ) {
 	static $idx = null;
 	if ( null === $idx || $fresh ) {
-		$f   = mdash_dir( 'icons' ) . '/index.json';
+		$f   = mdash_index_file( 'icons' );
 		$idx = file_exists( $f ) ? json_decode( (string) file_get_contents( $f ), true ) : array(); // phpcs:ignore
 		$idx = is_array( $idx ) ? array_intersect_key( $idx, mdash_icon_keys() ) : array();
 	}
@@ -78,7 +78,7 @@ function mdash_icon_index( $fresh = false ) {
 }
 
 function mdash_icon_save_index( $idx ) {
-	file_put_contents( mdash_dir( 'icons' ) . '/index.json', wp_json_encode( $idx, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ), LOCK_EX ); // phpcs:ignore
+	file_put_contents( mdash_index_file( 'icons' ), wp_json_encode( $idx, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ), LOCK_EX ); // phpcs:ignore
 	mdash_icon_index( true );
 	mdash_purge_caches();
 }

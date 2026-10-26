@@ -18,6 +18,10 @@ if ( defined( 'MENUDASH_PURE' ) && ! function_exists( '__' ) ) {
 }
 
 const MDASH_LANGS = array( 'en', 'de', 'zh' );
+// Rows (dishes and category lines) and columns read from a CSV, as for an Excel file
+// (xlsx.php): a 2 MB file of empty columns must not keep the server busy.
+const MDASH_CSV_MAX_ROWS = 5000;
+const MDASH_CSV_MAX_COLS = 60;
 
 /** Header aliases, compared after mdash_header_key(): lowercase, letters and digits only. */
 function mdash_columns() {
@@ -181,7 +185,12 @@ function mdash_parse_csv( $bytes ) {
 	rewind( $h );
 	$rows = array();
 	while ( ( $row = fgetcsv( $h, 0, $delim, '"', '' ) ) !== false ) {
-		$rows[] = $row;
+		if ( count( $rows ) >= MDASH_CSV_MAX_ROWS ) {
+			/* translators: %d: the number of rows read. */
+			$warnings[] = sprintf( __( 'Only the first %d rows were read.', 'menudash' ), MDASH_CSV_MAX_ROWS );
+			break;
+		}
+		$rows[] = array_slice( $row, 0, MDASH_CSV_MAX_COLS );
 	}
 	fclose( $h );
 
@@ -195,11 +204,12 @@ function mdash_parse_csv( $bytes ) {
 	// Map header cells to fields. The first matching column wins; a plain "Name" or
 	// "Description" only counts when no language-specific column claimed that field.
 	$header = array_map( 'trim', $rows[0] );
+	$keys   = array_map( 'mdash_header_key', $header );
 	$col    = array();
 	foreach ( mdash_columns() as $field => $aliases ) {
 		foreach ( $aliases as $alias ) {
-			foreach ( $header as $i => $cell ) {
-				if ( mdash_header_key( $cell ) === $alias && ! in_array( $i, $col, true ) ) {
+			foreach ( $keys as $i => $key ) {
+				if ( $key === $alias && ! in_array( $i, $col, true ) ) {
 					$col[ $field ] = $i;
 					break 2;
 				}

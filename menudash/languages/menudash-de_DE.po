@@ -1474,3 +1474,10 @@ msgstr "Eine Schaltfläche «%s» unter der Auswahl macht daraus ein Bild wie ei
 #, php-format
 msgid "A \"%s\" button under the selection makes a picture of it like a small flyer: your logo, the dishes (without prices), your site's name (with MenuDash Restaurant also your address and phone), and a QR code to the menu. Guests save it to their photos or send it to friends with the menu link. It is made on the guest's phone; nothing is sent to you."
 msgstr "Eine Schaltfläche «%s» unter der Auswahl macht daraus ein Bild wie ein kleiner Flyer: Ihr Logo, die Gerichte (ohne Preise), der Name Ihrer Website (mit MenuDash Restaurant auch Ihre Adresse und Telefonnummer) und ein QR-Code zur Speisekarte. Gäste sichern es in ihren Fotos oder senden es mit dem Link zur Speisekarte an Freunde. Das Bild entsteht auf dem Handy des Gastes; an Sie wird nichts gesendet."
+
+#, php-format
+msgid "Only the first %d rows were read."
+msgstr "Nur die ersten %d Zeilen wurden gelesen."
+
+msgid "The file is too large to be a menu."
+msgstr "Die Datei ist zu groß für eine Speisekarte."

@@ -5,7 +5,7 @@
  * Each upload is re-encoded at 200, 400 and 800 px (WebP when the server can, otherwise PNG so
  * the cut-outs keep their transparency) and the original is thrown away. Every upload gets
  * a new file name, so a replaced photo gets a new URL and no cache can show the old one.
- * photos/index.json maps each photo to the name the owner gave it, which is what the
+ * photos/index-<random>.json (mdash_index_file()) maps each photo to the name the owner gave it, which is what the
  * matching reads; it lives beside the files so a reinstall finds them again.
  */
 
@@ -16,14 +16,14 @@ const MDASH_SIZES = array( 800, 400, 200 );
 const MDASH_MAX_PIXELS = 40000000;
 
 function mdash_photo_index() {
-	$f   = mdash_dir( 'photos' ) . '/index.json';
+	$f   = mdash_index_file( 'photos' );
 	$idx = file_exists( $f ) ? json_decode( (string) file_get_contents( $f ), true ) : array(); // phpcs:ignore
 	return is_array( $idx ) ? $idx : array();
 }
 
 function mdash_photo_save_index( $idx ) {
 	ksort( $idx );
-	file_put_contents( mdash_dir( 'photos' ) . '/index.json', wp_json_encode( $idx, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ), LOCK_EX ); // phpcs:ignore
+	file_put_contents( mdash_index_file( 'photos' ), wp_json_encode( $idx, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ), LOCK_EX ); // phpcs:ignore
 	mdash_purge_caches();
 }
 

@@ -75,6 +75,7 @@ function mdash_strings() {
 		// Sent with the picture and the menu's link ("Teilen" under the picture); %s: the restaurant's name.
 		'list_msg'   => array( 'de' => 'Das ist meine Auswahl. Schau dir die Speisekarte von %s an:', 'en' => 'This is my selection. Have a look at the %s menu:', 'zh' => '這是我想點的菜。來看看 %s 的菜單：' ),
 		'list_hold'  => array( 'de' => 'Bild gedrückt halten, um es in den Fotos zu sichern.', 'en' => 'Press and hold the picture to save it to your photos.', 'zh' => '長按圖片即可儲存到相簿。' ),
+		'list_pictip' => array( 'de' => 'Speichern: ins Fotoalbum. Teilen: mit Link zur Speisekarte. Bestellen Sie bei unserem Personal.', 'en' => 'Save: to your photos. Share: with the menu link. Please order with our staff.', 'zh' => '儲存：存到相簿。分享：連同菜單連結。點餐請找服務人員。' ), // under Save / Share
 		'list_back'  => array( 'de' => 'Zurück zur Auswahl', 'en' => 'Back to my selection', 'zh' => '返回想點的菜' ),
 		'list_title' => array( 'de' => 'Meine Auswahl', 'en' => 'My selection', 'zh' => '我想點的菜' ),
 		'list_tip'   => array( 'de' => 'Bitte bestellen Sie Ihre Gerichte bei unserem Servicepersonal.', 'en' => 'Please order your dishes with our service staff.', 'zh' => '請向我們的服務人員點餐。' ),
@@ -86,8 +87,11 @@ function mdash_strings() {
 		'list_q'     => array( 'de' => 'Frage', 'en' => 'Question', 'zh' => '有疑問' ),
 		'list_price' => array( 'de' => 'Richtpreis. Der Endpreis richtet sich nach Ihrer Bestellung beim Personal.', 'en' => 'A guide only. The final price is based on your order with our staff.', 'zh' => '僅供參考，最終價格以您向服務人員點的餐為準。' ),
 		'list_clear' => array( 'de' => 'Auswahl leeren', 'en' => 'Clear selection', 'zh' => '全部清空' ),
-		'list_sure'  => array( 'de' => 'Die ganze Auswahl leeren?', 'en' => 'Clear your whole selection?', 'zh' => '確定全部清空？' ),
+		'list_cleared' => array( 'de' => 'Auswahl geleert', 'en' => 'Selection cleared', 'zh' => '已清空' ), // "Clear" empties at once; Undo brings it back
 		'list_empty' => array( 'de' => 'Ihre Auswahl ist leer. Tippen Sie bei einem Gericht auf +.', 'en' => 'Your selection is empty. Tap + beside a dish.', 'zh' => '還沒有選菜。請點選菜式旁的 +。' ),
+		// The two hints (menu.js): a line over the dishes while the selection is empty, and a note over the bar after the first +.
+		'list_hint'  => array( 'de' => 'Mit + Gerichte merken – bestellen Sie dann bei unserem Personal.', 'en' => 'Tap + to save dishes, then order with our staff.', 'zh' => '按 + 記下想點的菜，再向服務人員點餐。' ),
+		'list_first' => array( 'de' => 'Ihre Auswahl finden Sie hier unten.', 'en' => 'Your selection is down here.', 'zh' => '想點的菜在下面這裡。' ),
 		'list_own'   => array( 'de' => 'Ihre Auswahl bleibt nur auf Ihrem Handy und wird nicht gesendet.', 'en' => 'Your selection stays on your phone and is not sent.', 'zh' => '選好的菜只保存在您的手機上，不會傳送出去。' ),
 	) );
 	return $strings;
