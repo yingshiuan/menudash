@@ -221,7 +221,7 @@ function mdash_handle_list() {
 
 /**
  * Up to three dishes for the Guest list card's example phones, those with a photo first:
- * array( no, name in $lang (else German), photo URL or '' ).
+ * array( no, name in $lang (else German), photo URL or '', price, measure ).
  */
 function mdash_list_admin_dishes( $lang ) {
 	$menu   = mdash_get_menu();
@@ -232,7 +232,7 @@ function mdash_list_admin_dishes( $lang ) {
 	foreach ( $menu ? $menu['sections'] : array() as $sec ) {
 		foreach ( $sec['dishes'] as $d ) {
 			$pid  = isset( $match['dish'][ $d['key'] ] ) ? $match['dish'][ $d['key'] ] : '';
-			$item = array( $d['no'], '' !== $d['name'][ $lang ] ? $d['name'][ $lang ] : $d['name']['de'], $pid && isset( $photos[ $pid ] ) ? mdash_photo_url( $photos[ $pid ], 400 ) : '' );
+			$item = array( $d['no'], '' !== $d['name'][ $lang ] ? $d['name'][ $lang ] : $d['name']['de'], $pid && isset( $photos[ $pid ] ) ? mdash_photo_url( $photos[ $pid ], 400 ) : '', (string) $d['price'], (string) $d['measure'] );
 			if ( $item[2] ) {
 				$with[] = $item;
 			} else {
@@ -244,7 +244,22 @@ function mdash_list_admin_dishes( $lang ) {
 		}
 	}
 	$out = array_slice( array_merge( $with, $without ), 0, 3 );
-	return $out ? $out : array( array( '12', 'Nasi Lemak', '' ) );
+	return $out ? $out : array( array( '12', 'Nasi Lemak', '', '18', '' ) );
+}
+
+/**
+ * The total the example selection shows: as for guests (menu.js), only when every price is a plain
+ * number without a measure; else ''. $dishes: two at most, the first twice, as that phone shows them.
+ */
+function mdash_list_admin_total( $dishes ) {
+	$sum = 0;
+	foreach ( $dishes as $i => $d ) {
+		if ( ! preg_match( '/^\d+(\.\d+)?$/', $d[3] ) || '' !== $d[4] ) {
+			return '';
+		}
+		$sum += ( $i ? 1 : 2 ) * (float) $d[3];
+	}
+	return $dishes ? rtrim( rtrim( number_format( $sum, 2, '.', '' ), '0' ), '.' ) : '';
 }
 
 /** A dish's photo in the example phones, or an empty round space. */
@@ -274,6 +289,7 @@ function mdash_list_admin_card() {
 		);
 	}
 	$dishes = mdash_list_admin_dishes( $lang );
+	$total  = mdash_list_admin_total( array_slice( $dishes, 0, 2 ) );
 	$colors = mdash_colors();
 	$words  = mdash_strings();
 	$style  = sprintf( '--p-bg: %s; --p-accent: %s; --p-on: %s;', $colors['bg'], $colors['accent'], mdash_on_accent( $colors['accent'] ) );
@@ -287,7 +303,7 @@ function mdash_list_admin_card() {
 		<?php endif; ?>
 
 		<h3 class="mdash-list-story-h"><?php esc_html_e( 'How guests use it', 'menudash' ); ?></h3>
-		<ol class="mdash-list-story" style="<?php echo esc_attr( $style ); ?>">
+		<ol class="mdash-list-story<?php echo mdash_list_prices_on() ? '' : ' mdash-story-noprice'; // admin.js changes it with the switch, before saving. ?>" style="<?php echo esc_attr( $style ); ?>">
 			<li>
 				<div class="mdash-story-phone" aria-hidden="true">
 					<span class="s-head"><?php echo esc_html_x( 'Menu', 'restaurant menu (tab)', 'menudash' ); ?></span>
@@ -302,9 +318,12 @@ function mdash_list_admin_card() {
 				<div class="mdash-story-phone" aria-hidden="true">
 					<span class="s-title"><?php echo esc_html( $words['list_title'][ $lang ] ); ?></span>
 					<?php foreach ( array_slice( $dishes, 0, 2 ) as $i => $d ) : ?>
-						<span class="s-row"><b><?php echo esc_html( $d[0] ); ?></b><span class="s-name"><?php echo esc_html( $d[1] ); ?></span><?php echo mdash_list_admin_thumb( $d ); // phpcs:ignore -- escaped there ?><span class="s-x">×</span></span>
+						<span class="s-row"><b><?php echo esc_html( $d[0] ); ?></b><span class="s-name"><?php echo esc_html( $d[1] ); ?></span><span class="s-price"><?php echo esc_html( trim( mdash_price_show( $d[3] ) . ' ' . $d[4] ) ); ?></span><?php echo mdash_list_admin_thumb( $d ); // phpcs:ignore -- escaped there ?><span class="s-x">×</span></span>
 						<span class="s-ctl"><span>−</span> <?php echo $i ? 1 : 2; ?> <span>+</span></span>
 					<?php endforeach; ?>
+					<?php if ( '' !== $total ) : ?>
+						<span class="s-total"><?php echo esc_html( $words['list_total'][ $lang ] ); ?> <strong><?php echo esc_html( $total ); ?></strong></span>
+					<?php endif; ?>
 					<?php if ( mdash_list_share_on() ) : ?>
 						<span class="s-share"><?php echo esc_html( $words['list_share'][ $lang ] ); ?></span>
 					<?php endif; ?>

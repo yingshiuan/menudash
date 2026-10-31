@@ -195,6 +195,11 @@
 .mdash-admin .s-bar { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); padding: 6px 16px; border-radius: 999px; background: var(--p-accent); color: var(--p-on); font-weight: 700; white-space: nowrap; }
 .mdash-admin .s-bar em { font-style: normal; opacity: .85; }
 .mdash-admin .s-title { padding-bottom: 6px; border-bottom: 1.5px solid #2B1D1A; font-size: 17px; font-weight: 800; }
+.mdash-admin .mdash-story-phone .s-row { gap: 5px; } /* room for the name beside the price */
+.mdash-admin .mdash-story-phone .s-row img, .mdash-admin .mdash-story-phone .s-row i { width: 30px; height: 30px; }
+.mdash-admin .s-price { flex: none; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mdash-admin .s-total { justify-content: space-between; margin-top: 6px; font-weight: 800; }
+.mdash-admin .mdash-list-story.mdash-story-noprice .s-price, .mdash-admin .mdash-list-story.mdash-story-noprice .s-total { display: none; }
 .mdash-admin .s-x { flex: none; color: #75625C; font-size: 15px; }
 .mdash-admin .s-ctl { gap: 8px !important; padding: 0 0 6px 2.3em; border-bottom: 1px solid rgba(43, 29, 26, .1); font-weight: 700; }
 .mdash-admin .s-ctl span { display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid rgba(43, 29, 26, .3); border-radius: 50%; font-weight: 400; }

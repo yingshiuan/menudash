@@ -266,11 +266,13 @@
   });
 })();
 
-/* Guest list card: "share as a picture" and "prices" can only be ticked while the list is on. */
+/* Guest list card: "share as a picture" and "prices" can only be ticked while the list is on; the example phone follows "prices" at once. */
 (function () {
   var on = document.querySelector('.mdash-list-card input[name="list_on"]');
   var share = document.querySelector('.mdash-list-card input[name="list_share"]');
   var prices = document.querySelector('.mdash-list-card input[name="list_prices"]');
   if (!on || !share || !prices) return;
   on.addEventListener("change", function () { share.disabled = prices.disabled = !on.checked; });
+  var story = document.querySelector(".mdash-list-story");
+  if (story) prices.addEventListener("change", function () { story.classList.toggle("mdash-story-noprice", !prices.checked); });
 })();
