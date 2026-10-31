@@ -476,6 +476,7 @@
     var empty = dlg.querySelector(".mdash-list-empty");
     var totalBox = dlg.querySelector(".mdash-list-total");
     var priceNote = dlg.querySelector(".mdash-list-price");
+    var noPrice = dlg.hasAttribute("data-noprice"); // Dashboard: no prices or total in the selection.
     var shareBtn = dlg.querySelector(".mdash-list-share"), canvasOk = !!document.createElement("canvas").getContext;
     var labels = dlg.querySelector(".mdash-list-labels");
     // The two hints: a line over the dishes while the selection is empty, and after the first +
@@ -607,7 +608,7 @@
         ctl.appendChild(el("span", "mdash-li-n", String(it.n)));
         ctl.appendChild(button("mdash-li-more", "+", say(more) + ": " + d.name));
         li.appendChild(ctl);
-        li.appendChild(el("span", "mdash-li-price", d.price + (d.measure ? " " + d.measure : "")));
+        if (!noPrice) li.appendChild(el("span", "mdash-li-price", d.price + (d.measure ? " " + d.measure : "")));
         li.appendChild(button("mdash-li-del", "×", say(remove) + ": " + d.name));
         if (pics) {
           var ph = el("span", "mdash-li-img" + (d.sq ? " mdash-li-sq" : ""));
@@ -627,9 +628,11 @@
         else sums = false;
       });
       empty.hidden = items.length > 0;
-      totalBox.hidden = !items.length || !sums;
-      priceNote.hidden = totalBox.hidden; // "A guide only": the bill is what is ordered.
-      totalBox.querySelector("strong").textContent = String(parseFloat(sum.toFixed(2)));
+      if (totalBox) {
+        totalBox.hidden = !items.length || !sums;
+        priceNote.hidden = totalBox.hidden; // "A guide only": the bill is what is ordered.
+        totalBox.querySelector("strong").textContent = String(parseFloat(sum.toFixed(2)));
+      }
       dlg.querySelector(".mdash-list-clear").hidden = !items.length;
       if (shareBtn) shareBtn.hidden = !items.length || !canvasOk;
     }

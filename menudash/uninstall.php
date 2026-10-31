@@ -18,6 +18,7 @@ function mdash_uninstall_site() {
 	delete_option( 'menudash_chips_off' );
 	delete_option( 'menudash_list' );
 	delete_option( 'menudash_list_share' );
+	delete_option( 'menudash_list_prices' );
 	delete_transient( 'menudash_menu_pages' );
 }
 

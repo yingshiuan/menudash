@@ -1476,3 +1476,11 @@ msgstr "只讀取了前 %d 行。"
 
 msgid "The file is too large to be a menu."
 msgstr "檔案太大，不像是菜單。"
+
+#: includes/list.php
+msgid "Show prices and the total in the selection"
+msgstr "在想點的菜中顯示價格和合計"
+
+#: includes/list.php
+msgid "Off: the selection shows the dishes without prices and without a total. The menu keeps its prices."
+msgstr "關閉時：想點的菜只列出菜名，不顯示價格和合計。菜單上的價格不變。"

@@ -1590,3 +1590,11 @@ msgstr ""
 
 msgid "The file is too large to be a menu."
 msgstr ""
+
+#: includes/list.php
+msgid "Show prices and the total in the selection"
+msgstr ""
+
+#: includes/list.php
+msgid "Off: the selection shows the dishes without prices and without a total. The menu keeps its prices."
+msgstr ""

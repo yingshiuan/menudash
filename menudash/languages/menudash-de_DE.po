@@ -1481,3 +1481,11 @@ msgstr "Nur die ersten %d Zeilen wurden gelesen."
 
 msgid "The file is too large to be a menu."
 msgstr "Die Datei ist zu groß für eine Speisekarte."
+
+#: includes/list.php
+msgid "Show prices and the total in the selection"
+msgstr "Preise und Total in der Auswahl zeigen"
+
+#: includes/list.php
+msgid "Off: the selection shows the dishes without prices and without a total. The menu keeps its prices."
+msgstr "Aus: Die Auswahl zeigt die Gerichte ohne Preise und ohne Total. Die Speisekarte behält ihre Preise."

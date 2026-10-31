@@ -204,5 +204,5 @@
 .mdash-admin .mdash-story-shot iframe { display: block; flex: none; width: 270px; height: 480px; border: 0; transform: scale(.7407); transform-origin: 0 0; pointer-events: none; }
 .mdash-admin .mdash-list-form { max-width: 76ch; padding-top: 4px; border-top: 1px solid #f0f0f1; }
 .mdash-admin .mdash-list-form .mdash-muted { display: block; margin-top: 4px; padding-left: 24px; }
-.mdash-admin .mdash-list-share-opt { padding-left: 24px; } /* under the list switch: it needs the list */
+.mdash-admin .mdash-list-share-opt, .mdash-admin .mdash-list-prices-opt { padding-left: 24px; } /* under the list switch: it needs the list */
 .mdash-admin .mdash-list-stats .dashicons { color: var(--mdash-admin-accent); }

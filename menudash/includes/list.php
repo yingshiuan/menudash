@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 const MDASH_LIST_OPTION       = 'menudash_list';
 const MDASH_LIST_SHARE_OPTION = 'menudash_list_share'; // '1' (the default) or '0'
+const MDASH_LIST_PRICES_OPTION = 'menudash_list_prices'; // '1' (the default) or '0'
 
 add_action( 'admin_post_menudash_list', 'mdash_handle_list' );
 // The menu page, kept for a day (mdash_list_menu_url()): looked up again once a page is saved,
@@ -38,6 +39,11 @@ function mdash_list_on() {
  */
 function mdash_list_share_on() {
 	return '0' !== get_option( MDASH_LIST_SHARE_OPTION, '1' );
+}
+
+/** True when the selection shows each dish's price and the total. On by default; it needs the list. */
+function mdash_list_prices_on() {
+	return '0' !== get_option( MDASH_LIST_PRICES_OPTION, '1' );
 }
 
 /**
@@ -79,7 +85,7 @@ function mdash_list_markup() {
 <p class="mdash-list-hint" hidden><?php echo mdash_ui( 'list_hint' ); // phpcs:ignore ?></p>
 <?php // After the first + of the visit: where the selection is, for a few seconds over the bar (it can't be tapped, so it never gets in the way). ?>
 <p class="mdash-list-first" hidden role="status"><?php echo mdash_ui( 'list_first' ); // phpcs:ignore ?></p>
-<dialog class="mdash-dlg mdash-list-dlg" aria-labelledby="mdash-list-title"<?php if ( mdash_list_share_on() ) : ?> data-site="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" data-logo="<?php echo esc_url( mdash_list_logo() ); ?>" data-place="<?php echo esc_attr( wp_json_encode( mdash_list_place() ) ); ?>" data-menu="<?php echo esc_url( mdash_list_menu_url() ); ?>" data-qr="<?php echo esc_url( MENUDASH_URL . 'assets/vendor/qrcode.js?ver=1.4.4' ); ?>" data-pic="<?php echo esc_url( MENUDASH_URL . 'assets/list-picture.js?ver=' . MENUDASH_VERSION ); ?>"<?php echo mdash_list_previewing() ? ' data-preview' : ''; ?> data-msg="<?php echo esc_attr( wp_json_encode( mdash_strings()['list_msg'] ) ); ?>"<?php endif; ?>>
+<dialog class="mdash-dlg mdash-list-dlg" aria-labelledby="mdash-list-title"<?php echo mdash_list_prices_on() ? '' : ' data-noprice'; ?><?php if ( mdash_list_share_on() ) : ?> data-site="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" data-logo="<?php echo esc_url( mdash_list_logo() ); ?>" data-place="<?php echo esc_attr( wp_json_encode( mdash_list_place() ) ); ?>" data-menu="<?php echo esc_url( mdash_list_menu_url() ); ?>" data-qr="<?php echo esc_url( MENUDASH_URL . 'assets/vendor/qrcode.js?ver=1.4.4' ); ?>" data-pic="<?php echo esc_url( MENUDASH_URL . 'assets/list-picture.js?ver=' . MENUDASH_VERSION ); ?>"<?php echo mdash_list_previewing() ? ' data-preview' : ''; ?> data-msg="<?php echo esc_attr( wp_json_encode( mdash_strings()['list_msg'] ) ); ?>"<?php endif; ?>>
 	<form method="dialog"><button class="mdash-close" aria-label="<?php echo esc_attr( mdash_ui_plain( 'close' ) ); ?>">&times;</button></form>
 	<?php if ( mdash_list_share_on() ) : ?>
 	<?php // While the picture shows: ‹ back to the list, top left (the ✕ stays top right). ?>
@@ -89,8 +95,10 @@ function mdash_list_markup() {
 	<p class="mdash-list-tip"><?php echo mdash_ui( 'list_tip' ); // phpcs:ignore ?></p>
 	<ol class="mdash-list-items"></ol>
 	<p class="mdash-list-empty" hidden><?php echo mdash_ui( 'list_empty' ); // phpcs:ignore ?></p>
+	<?php if ( mdash_list_prices_on() ) : ?>
 	<p class="mdash-list-total" hidden><span><?php echo mdash_ui( 'list_total' ); // phpcs:ignore ?></span> <strong></strong></p>
 	<p class="mdash-list-price" hidden><?php echo mdash_ui( 'list_price' ); // phpcs:ignore ?></p>
+	<?php endif; ?>
 	<p class="mdash-list-own"><?php echo mdash_ui( 'list_own' ); // phpcs:ignore ?></p>
 	<?php if ( mdash_list_share_on() ) : ?>
 	<?php // "Share": the list drawn as a picture on the phone (menu.js), shown below in its place. ?>
@@ -195,9 +203,11 @@ function mdash_handle_list() {
 	}
 	$on    = isset( $_POST['list_on'] ) && '1' === $_POST['list_on']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- compared only
 	$share = isset( $_POST['list_share'] ) && '1' === $_POST['list_share']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- compared only
+	$prices = isset( $_POST['list_prices'] ) && '1' === $_POST['list_prices']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- compared only
 	update_option( MDASH_LIST_OPTION, $on ? '1' : '0', true ); // Read on every menu page.
-	if ( $on ) { // Unchanged while the list is off: the box is greyed out then and sends nothing.
+	if ( $on ) { // Unchanged while the list is off: the boxes are greyed out then and send nothing.
 		update_option( MDASH_LIST_SHARE_OPTION, $share ? '1' : '0', true );
+		update_option( MDASH_LIST_PRICES_OPTION, $prices ? '1' : '0', true );
 	}
 	mdash_purge_caches();
 	mdash_back(
@@ -318,6 +328,8 @@ function mdash_list_admin_card() {
 			<?php wp_nonce_field( 'menudash_list' ); ?>
 			<p><label><input type="checkbox" name="list_on" value="1" <?php checked( mdash_list_on() ); ?>> <strong><?php esc_html_e( 'Show the + buttons and the selection on the menu', 'menudash' ); ?></strong></label>
 				<span class="mdash-muted"><?php esc_html_e( 'Only on phones (screens up to 781 pixels wide), where guests read the menu at the table; computers and large tablets show the menu without the + buttons.', 'menudash' ); ?></span></p>
+			<p class="mdash-list-prices-opt"><label><input type="checkbox" name="list_prices" value="1" <?php checked( mdash_list_prices_on() ); ?> <?php disabled( ! mdash_list_on() ); ?>> <strong><?php esc_html_e( 'Show prices and the total in the selection', 'menudash' ); ?></strong></label>
+				<span class="mdash-muted"><?php esc_html_e( 'Off: the selection shows the dishes without prices and without a total. The menu keeps its prices.', 'menudash' ); ?></span></p>
 			<p class="mdash-list-share-opt"><label><input type="checkbox" name="list_share" value="1" <?php checked( mdash_list_share_on() ); ?> <?php disabled( ! mdash_list_on() ); ?>> <strong><?php esc_html_e( 'Guests can share their selection as a picture', 'menudash' ); ?></strong></label>
 				<span class="mdash-muted"><?php
 				echo esc_html(
