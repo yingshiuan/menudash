@@ -1,0 +1,24 @@
+# Runs dev/test.sh (parser, Excel reader, SVG cleaning, origin list) in WordPress
+# Playground's PHP on every push and pull request: on PHP 7.4, the oldest the plugin
+# supports, and on 8.3. Needs only Node; no WordPress install, no database.
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run the tests
+        run: sh dev/test.sh ${{ matrix.php }}
