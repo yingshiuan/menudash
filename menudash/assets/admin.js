@@ -11,12 +11,41 @@
     if (!input) return;
     // Boxes with their own file-name line (the CSV boxes) show the chosen file there.
     var name = box.querySelector(".mdash-drop-name");
+    // 2.14.0: the next step. With no file the upload button waits quietly; once a file is chosen
+    // the box says so, the button comes forward and a line says what to do: click it.
+    var form = box.closest("form");
+    var send = form && form.querySelector('.mdash-upload-btns [type="submit"]:not([name="clear"])');
+    var i18n = window.menudashAdminI18n || {};
+    var next = null;
+    if (send) {
+      next = document.createElement("p");
+      next.className = "mdash-next";
+      next.setAttribute("aria-live", "polite");
+      next.hidden = true;
+      send.closest(".mdash-upload-btns").before(next);
+      send.classList.add("is-waiting");
+    }
     if (name) {
       input.addEventListener("change", function () {
         var f = input.files && input.files[0];
         name.textContent = f ? f.name : name.getAttribute("data-empty");
         box.classList.toggle("has-file", !!f);
+        box.setAttribute("data-state", f ? (i18n.notLive || "Chosen, not live yet") : "");
+        if (!send) return;
+        send.classList.toggle("is-waiting", !f);
+        send.classList.toggle("is-next", !!f);
+        next.hidden = !f;
+        var label = send.value || send.textContent.trim();
+        next.textContent = f ? (i18n.nextStep || "Next: click “%s” to put it live.").replace("%s", function () { return label; }) : "";
+        if (f) {
+          send.classList.remove("is-pulse");
+          void send.offsetWidth; // Restart the pulse for a second file.
+          send.classList.add("is-pulse");
+        }
       });
+    }
+    if (form && send) {
+      form.addEventListener("submit", function () { form.setAttribute("data-sent", "1"); });
     }
     ["dragenter", "dragover"].forEach(function (t) {
       box.addEventListener(t, function (e) { e.preventDefault(); box.classList.add("over"); });
@@ -40,6 +69,14 @@
       }
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
+  });
+  // A file chosen and not uploaded: ask before leaving, so nobody walks away thinking it is live.
+  window.addEventListener("beforeunload", function (e) {
+    var waiting = Array.prototype.some.call(document.querySelectorAll("[data-drop].has-file"), function (box) {
+      var f = box.closest("form");
+      return f && !f.hasAttribute("data-sent");
+    });
+    if (waiting) { e.preventDefault(); e.returnValue = ""; }
   });
 })();
 
@@ -275,4 +312,73 @@
   on.addEventListener("change", function () { share.disabled = prices.disabled = !on.checked; });
   var story = document.querySelector(".mdash-list-story");
   if (story) prices.addEventListener("change", function () { story.classList.toggle("mdash-story-noprice", !prices.checked); });
+})();
+
+// 2.14.0: a jump link ("Further down" on the Menu tab, the section links on Statistics) makes
+// the whole part it lands on light up for a moment, so the eye finds it. On Statistics a part is
+// its title and every card under it, up to the next part's title: one ring drawn around them all.
+(function () {
+  var box = null, timer = 0;
+  // A broken address (#%E0%A4%A) must not stop the scripts below: no flash, that's all.
+  function unhash(h) { try { return decodeURIComponent(h); } catch (e) { return ""; } }
+  function flash(id) {
+    var el = id && document.getElementById(id);
+    if (!el || !el.closest(".mdash-admin")) return;
+    var parts = [el];
+    if (el.classList.contains("mdash-stats-part")) {
+      for (var n = el.nextElementSibling; n && !n.classList.contains("mdash-stats-part"); n = n.nextElementSibling) {
+        if (n.offsetHeight && !/^(SCRIPT|STYLE)$/.test(n.tagName)) parts.push(n);
+      }
+    }
+    var top = Infinity, left = Infinity, bottom = -Infinity, right = -Infinity;
+    parts.forEach(function (p) {
+      var r = p.getBoundingClientRect();
+      top = Math.min(top, r.top); left = Math.min(left, r.left); bottom = Math.max(bottom, r.bottom); right = Math.max(right, r.right);
+    });
+    if (box) box.remove();
+    box = document.createElement("div");
+    box.className = "mdash-flash-box";
+    box.setAttribute("aria-hidden", "true");
+    box.style.cssText = "top:" + (top + scrollY - 6) + "px;left:" + (left + scrollX - 6) + "px;width:" + (right - left + 12) + "px;height:" + (bottom - top + 12) + "px";
+    document.body.appendChild(box);
+    clearTimeout(timer);
+    timer = setTimeout(function () { if (box) { box.remove(); box = null; } }, 2400);
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest(".mdash-quick a[href^='#'], .mdash-stats-jumps a[href^='#']");
+    // After the browser has jumped, so the ring is measured where the part now is.
+    if (a) { var id = unhash(a.getAttribute("href").slice(1)); setTimeout(function () { flash(id); }, 50); }
+  });
+  if (location.hash.length > 1) flash(unhash(location.hash.slice(1)));
+})();
+
+// 2.14.0: the check tables (menu, today's specials, lunch) show their first 5 dishes; a button
+// under each shows the rest, and again shows fewer. A heading row shows when a dish under it does.
+(function () {
+  var T = window.menudashAdminI18n || {};
+  var FIRST = 5;
+  document.querySelectorAll(".mdash-admin table.mdash-table").forEach(function (table) {
+    var dishes = Array.prototype.filter.call(table.querySelectorAll("tbody tr"), function (tr) { return !tr.classList.contains("mdash-sec"); });
+    if (dishes.length <= FIRST + 1) return; // One more row isn't worth a button.
+    var heads = table.querySelectorAll("tbody tr.mdash-sec");
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "button mdash-show-all";
+    table.parentNode.insertBefore(btn, table.nextSibling);
+    function set(all) {
+      dishes.forEach(function (tr, i) { tr.hidden = !all && i >= FIRST; });
+      heads.forEach(function (h) {
+        var tb = h.closest("tbody");
+        h.hidden = !Array.prototype.some.call(tb.querySelectorAll("tr:not(.mdash-sec)"), function (tr) { return !tr.hidden; });
+      });
+      btn.textContent = all ? (T.showFewer || "Show fewer") : (T.showAll || "Show all %s dishes").replace("%s", dishes.length);
+      btn.setAttribute("aria-expanded", all ? "true" : "false");
+    }
+    btn.addEventListener("click", function () {
+      var all = btn.getAttribute("aria-expanded") !== "true";
+      set(all);
+      if (!all) table.scrollIntoView({ block: "nearest" });
+    });
+    set(false);
+  });
 })();

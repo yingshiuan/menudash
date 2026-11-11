@@ -1330,6 +1330,16 @@ msgstr "Das sieht nicht nach einer Excel-Arbeitsmappe (.xlsx) aus."
 msgid "The workbook has no sheets with cells in them."
 msgstr "Die Arbeitsmappe hat keine Tabellenblätter mit ausgefüllten Zellen."
 
+#. translators: %s: the button's label, e.g. "Upload menu".
+#: includes/admin.php
+#, php-format
+msgid "Next: click “%s” to put it live."
+msgstr "Nächster Schritt: Auf „%s“ klicken – erst dann ist die Datei online."
+
+#: includes/admin.php
+msgid "Chosen, not live yet"
+msgstr "Ausgewählt, noch nicht online"
+
 #~ msgid "Guests tap + beside a dish to put it on their own list, then show the list to your staff when they order. The list shows each dish with its number and German name, whatever language the guest reads the menu in, and guests can mark a dish they have a question about. Nothing is ordered online and nothing is sent: the list stays on the guest's phone until they close the page."
 #~ msgstr "Gäste tippen bei einem Gericht auf +, um es auf ihre eigene Liste zu setzen, und zeigen die Liste beim Bestellen Ihrem Personal. Die Liste zeigt jedes Gericht mit Nummer und deutschem Namen, egal in welcher Sprache der Gast die Speisekarte liest, und Gäste können ein Gericht markieren, zu dem sie eine Frage haben. Es wird nichts online bestellt und nichts gesendet: Die Liste bleibt auf dem Handy des Gastes, bis er die Seite schliesst."
 
@@ -1489,3 +1499,12 @@ msgstr "Preise und Total in der Auswahl zeigen"
 #: includes/list.php
 msgid "Off: the selection shows the dishes without prices and without a total. The menu keeps its prices."
 msgstr "Aus: Die Auswahl zeigt die Gerichte ohne Preise und ohne Total. Die Speisekarte behält ihre Preise."
+
+#: includes/admin.php
+#. translators: %s: number of dishes.
+msgid "Show all %s dishes"
+msgstr "Alle %s Gerichte zeigen"
+
+#: includes/admin.php
+msgid "Show fewer"
+msgstr "Weniger zeigen"

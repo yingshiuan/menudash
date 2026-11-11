@@ -1325,6 +1325,16 @@ msgstr "這看起來不是 Excel 活頁簿（.xlsx）。"
 msgid "The workbook has no sheets with cells in them."
 msgstr "活頁簿中沒有含內容的工作表。"
 
+#. translators: %s: the button's label, e.g. "Upload menu".
+#: includes/admin.php
+#, php-format
+msgid "Next: click “%s” to put it live."
+msgstr "下一步：按「%s」，檔案才會上線。"
+
+#: includes/admin.php
+msgid "Chosen, not live yet"
+msgstr "已選擇，尚未上線"
+
 #~ msgid "Guests tap + beside a dish to put it on their own list, then show the list to your staff when they order. The list shows each dish with its number and German name, whatever language the guest reads the menu in, and guests can mark a dish they have a question about. Nothing is ordered online and nothing is sent: the list stays on the guest's phone until they close the page."
 #~ msgstr "客人點選菜式旁的 +，即可將菜式加入自己的清單，點餐時再出示給您的服務人員。無論客人用哪種語言瀏覽菜單，清單都會顯示每道菜的編號和德文名稱；客人也可以標記有疑問的菜式。不會在線上點餐，也不會傳送任何資料：清單只保存在客人的手機上，直到關閉頁面為止。"
 
@@ -1484,3 +1494,12 @@ msgstr "在想點的菜中顯示價格和合計"
 #: includes/list.php
 msgid "Off: the selection shows the dishes without prices and without a total. The menu keeps its prices."
 msgstr "關閉時：想點的菜只列出菜名，不顯示價格和合計。菜單上的價格不變。"
+
+#: includes/admin.php
+#. translators: %s: number of dishes.
+msgid "Show all %s dishes"
+msgstr "顯示全部 %s 道菜"
+
+#: includes/admin.php
+msgid "Show fewer"
+msgstr "顯示較少"

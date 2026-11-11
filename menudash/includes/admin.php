@@ -90,6 +90,14 @@ function mdash_admin_assets( $hook ) {
 		'uploadFail'  => __( 'failed', 'menudash' ),
 		'confirmDel'  => __( 'Delete this photo?', 'menudash' ),
 		'deleteFail'  => __( 'Could not delete.', 'menudash' ),
+		// 2.14.0: the step after choosing a file (assets/admin.js).
+		/* translators: %s: the button's label, e.g. "Upload menu". */
+		'nextStep'    => __( 'Next: click “%s” to put it live.', 'menudash' ),
+		'notLive'     => __( 'Chosen, not live yet', 'menudash' ),
+		// 2.14.0: the check tables show 5 dishes, then a button for the rest.
+		/* translators: %s: number of dishes. */
+		'showAll'     => __( 'Show all %s dishes', 'menudash' ),
+		'showFewer'   => __( 'Show fewer', 'menudash' ),
 	);
 	wp_add_inline_script( 'menudash-admin', 'var menudashAdminI18n = ' . wp_json_encode( $i18n, JSON_HEX_TAG | JSON_HEX_AMP ) . ';', 'before' );
 }
@@ -586,6 +594,16 @@ function mdash_admin_page() {
 			<?php endif; ?>
 		<?php endif; ?>
 		<?php if ( 'menudash' === $page ) : ?>
+		<?php // Quick links to the cards further down, below the uploads and the check. ?>
+		<p class="mdash-quick">
+			<?php // 2.14.0: no "Further down:" label: the links read like Statistics' section links. ?>
+			<a href="#mdash-origin"><?php esc_html_e( 'Meat and fish origin', 'menudash' ); ?></a> ·
+			<a href="#mdash-guest-list"><?php esc_html_e( 'Guest selection', 'menudash' ); ?></a>
+			<span class="mdash-quick-state<?php echo mdash_list_on() ? ' is-on' : ''; ?>"><?php echo mdash_list_on() ? esc_html_x( 'on', 'guest list switched on', 'menudash' ) : esc_html_x( 'off', 'guest list switched off', 'menudash' ); ?></span>
+		</p>
+		<?php // 2.14.0: a part title like Statistics' ("Visits"), with where the menu is as its line. ?>
+		<div class="mdash-part">
+			<h2><?php echo esc_html_x( 'Menu', 'restaurant menu (heading)', 'menudash' ); ?></h2>
 		<p class="mdash-lead">
 			<?php if ( $pages ) : ?>
 				<?php esc_html_e( 'The menu is on:', 'menudash' ); ?>
@@ -600,13 +618,7 @@ function mdash_admin_page() {
 			<?php endif; ?>
 			<?php esc_html_e( 'Changes here show there straight away.', 'menudash' ); ?>
 		</p>
-		<?php // Quick links to the cards further down, below the uploads and the check. ?>
-		<p class="mdash-quick">
-			<?php esc_html_e( 'Further down:', 'menudash' ); ?>
-			<a href="#mdash-origin"><?php esc_html_e( 'Meat and fish origin', 'menudash' ); ?></a> ·
-			<a href="#mdash-guest-list"><?php esc_html_e( 'Guest selection', 'menudash' ); ?></a>
-			<span class="mdash-quick-state<?php echo mdash_list_on() ? ' is-on' : ''; ?>"><?php echo mdash_list_on() ? esc_html_x( 'on', 'guest list switched on', 'menudash' ) : esc_html_x( 'off', 'guest list switched off', 'menudash' ); ?></span>
-		</p>
+		</div>
 
 		<div class="mdash-cards">
 			<section class="mdash-card">
@@ -756,7 +768,7 @@ function mdash_admin_page() {
 
 				<?php if ( $menu ) : ?>
 					<?php // Every dish: a long table, so folded away; open right after an upload, to check it. ?>
-					<details class="mdash-check-menu"<?php echo $report ? ' open' : ''; ?>>
+					<details class="mdash-check-menu" open><?php // 2.14.0: open, as the table shows 5 dishes until "Show all". ?>
 					<summary><h3><?php echo esc_html_x( 'Menu', 'restaurant menu (heading)', 'menudash' ); ?> <small>
 					<?php
 					/* translators: 1: dishes with a photo, 2: all dishes. */
@@ -890,7 +902,12 @@ function mdash_admin_page() {
 								<?php /* translators: %s: file name of the uploaded icon. */ ?>
 								<small><?php echo esc_html( isset( $custom[ $key ] ) ? sprintf( __( 'Your icon: %s', 'menudash' ), $custom[ $key ]['name'] ) : __( 'Default icon', 'menudash' ) ); ?></small></span>
 							<?php /* translators: %s: icon name, e.g. Spicy. */ ?>
-							<input type="file" name="icon_<?php echo esc_attr( $key ); ?>" accept=".svg,image/svg+xml,image/png,image/jpeg,image/webp" aria-label="<?php echo esc_attr( sprintf( __( 'New %s icon', 'menudash' ), $label ) ); ?>">
+							<?php // 2.14.0: the same chooser as the upload boxes (a button and the chosen file's name), not the browser's own. ?>
+							<label class="mdash-icon-pick">
+								<input type="file" class="mdash-file" name="icon_<?php echo esc_attr( $key ); ?>" accept=".svg,image/svg+xml,image/png,image/jpeg,image/webp" aria-label="<?php echo esc_attr( sprintf( __( 'New %s icon', 'menudash' ), $label ) ); ?>">
+								<span class="button" aria-hidden="true"><?php esc_html_e( 'Choose file', 'menudash' ); ?></span>
+								<span class="mdash-drop-name" data-empty="<?php esc_attr_e( 'or drop it here', 'menudash' ); ?>"><?php esc_html_e( 'or drop it here', 'menudash' ); ?></span>
+							</label>
 							<?php if ( isset( $custom[ $key ] ) ) : ?>
 								<button class="button-link" name="reset" value="<?php echo esc_attr( $key ); ?>"><?php esc_html_e( 'Back to default', 'menudash' ); ?></button>
 							<?php endif; ?>

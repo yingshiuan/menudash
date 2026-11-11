@@ -14,6 +14,8 @@ The page has three tabs, each also listed in the left bar under MenuDash:
 
 Add-ons (MenuDash Restaurant, Specials, Gift Cards) add their own tabs and boxes; their guide comes with them.
 
+At the top of the **Menu** tab, links jump to the cards further down (**Meat and fish origin**, **Guest selection** with *on* or *off*); the card you jump to lights up for a moment. Under them, the page title says which page the menu is on.
+
 ---
 
 ## Changing the menu (prices, dishes, texts)
@@ -88,7 +90,7 @@ In **MenuDash → Menu → 2. Dish photos**, click **Choose photos**, select all
 
 ### 3. Check
 
-Below the uploads is a list of every dish with its photo, or **"no photo"**, plus its marks and price. **Photos not shown** lists photos that are not on the menu, either because they match no dish or because a newer photo fits the same dish. Rename and upload them again, or delete them.
+Below the uploads is a list of every dish with its photo, or **"no photo"**, plus its marks and price (the menu, and today's specials and the lunch menu with MenuDash Specials). Each list shows its first 5 dishes; **Show all … dishes** under it shows the rest, and **Show fewer** folds it again. **Photos not shown** lists photos that are not on the menu, either because they match no dish or because a newer photo fits the same dish. Rename and upload them again, or delete them.
 
 <img src="dashboard/06-check.png" alt="The check: photo count, photos not shown, and every dish" width="820">
 
@@ -171,7 +173,7 @@ Chinese always uses the device's Chinese font.
 
 ## Diet icons
 
-The six marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free, Lactose-free) come with icons. To use your own, go to **MenuDash → Colours, fonts & icons → Diet icons**, choose a file next to the mark, and click **Save icons**. "Not spicy" uses the Spicy icon, crossed out.
+The six marks (Recommended, Spicy, Vegan, Vegetarian, Gluten-free, Lactose-free) come with icons. To use your own, go to **MenuDash → Colours, fonts & icons → Diet icons**, click **Choose file** in the mark's box (or drop the file on it): the box turns solid with ✓ and the file name and says *Chosen, not live yet*; then click **Save icons and filters**. "Not spicy" uses the Spicy icon, crossed out.
 
 Each mark there also has a **Filter button on the menu** tick box, with the number of dishes in the live menu that have the mark. A button shows on the menu when it is ticked **and** at least one dish has the mark ("No dish marked: not shown on the menu" otherwise). Uploading a new menu never changes the tick boxes. Unticking hides only the button; the icons beside the dishes stay. Spicy covers both Spicy and Not spicy.
 

@@ -1598,3 +1598,23 @@ msgstr ""
 #: includes/list.php
 msgid "Off: the selection shows the dishes without prices and without a total. The menu keeps its prices."
 msgstr ""
+
+#. translators: %s: the button's label, e.g. "Upload menu".
+#: includes/admin.php
+#, php-format
+msgid "Next: click “%s” to put it live."
+msgstr ""
+
+#: includes/admin.php
+msgid "Chosen, not live yet"
+msgstr ""
+
+
+#: includes/admin.php
+#. translators: %s: number of dishes.
+msgid "Show all %s dishes"
+msgstr ""
+
+#: includes/admin.php
+msgid "Show fewer"
+msgstr ""
